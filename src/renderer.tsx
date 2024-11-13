@@ -28,15 +28,19 @@
 
 import './index.css';
 
+import { createRoot } from 'react-dom/client';
+
 declare global {
   interface Window {
     openWorkspace: () => Promise<string>;
   }
 }
 
-async function run() {
-  const ws = await window.openWorkspace();
-  console.log(`The ws is ${ws}`);
-}
+// async function run() {
+//   const ws = await window.openWorkspace();
+//   console.log(`The ws is ${ws}`);
+// }
 
-run();
+// run();
+
+createRoot(document.querySelector('#root')).render(<div>Hello</div>)
