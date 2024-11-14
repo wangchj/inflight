@@ -26,10 +26,16 @@
  * ```
  */
 
+import {
+  createTheme,
+  Chip,
+  MantineProvider,
+} from '@mantine/core';
+import '@mantine/core/styles.css';
 import './index.css';
 
 import { createRoot } from 'react-dom/client';
-
+import { App } from './app';
 declare global {
   interface Window {
     openWorkspace: () => Promise<string>;
@@ -43,4 +49,12 @@ declare global {
 
 // run();
 
-createRoot(document.querySelector('#root')).render(<div>Hello</div>)
+const theme = createTheme({
+  /** Put your mantine theme override here */
+});
+
+createRoot(document.querySelector('#root')).render(
+  <MantineProvider theme={theme}>
+    <App/>
+  </MantineProvider>
+);
