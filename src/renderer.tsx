@@ -26,35 +26,43 @@
  * ```
  */
 
-import {
-  createTheme,
-  Chip,
-  MantineProvider,
-} from '@mantine/core';
 import '@mantine/core/styles.css';
-import './index.css';
-
+import { createTheme, MantineProvider } from '@mantine/core';
 import { createRoot } from 'react-dom/client';
-import { App } from './app';
+import { Provider } from 'react-redux';
+import { store } from 'renderer/redux/store';
+import { App } from 'renderer/ui/app';
+import { Project } from 'types/project';
+import { Request } from 'types/request';
+import { Workspace } from 'types/workspace';
+
 declare global {
   interface Window {
-    openWorkspace: () => Promise<string>;
+    openWorkspace: () => Promise<Workspace>;
+    saveWorkspace: (workspace: Workspace) => Promise<void>;
+    openProject: (path: string) => Promise<Project>;
+    sendRequest: (request: Request) => Promise<string>;
+    onFlushWorkspace: (callback: () => void) => void;
   }
 }
-
-// async function run() {
-//   const ws = await window.openWorkspace();
-//   console.log(`The ws is ${ws}`);
-// }
-
-// run();
 
 const theme = createTheme({
   /** Put your mantine theme override here */
 });
 
 createRoot(document.querySelector('#root')).render(
-  <MantineProvider theme={theme}>
-    <App/>
-  </MantineProvider>
+  <Provider store={store}>
+    <MantineProvider theme={theme}>
+      <App/>
+    </MantineProvider>
+  </Provider>
 );
+
+/**
+ * Handles flush workspace event from the main process.
+ *
+ * The purpose is to flush the redux state to the main process to be saved on disk.
+ */
+window.onFlushWorkspace(() => {
+  window.saveWorkspace(store.getState().workspace);
+});
