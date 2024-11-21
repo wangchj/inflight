@@ -1,12 +1,11 @@
-import { Group, Tree, TreeNodeData } from '@mantine/core';
+import { Group, Tree } from '@mantine/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { IconChevronRight } from '@tabler/icons-react';
 import { Folder } from 'types/folder';
 import { Item } from 'types/item';
-import { Project } from 'types/project';
 import { TreeNode } from 'types/tree-node';
 import { RootState } from 'renderer/redux/store';
-import { openRequest } from 'renderer/redux/workspace-slice';
+import { workspaceSlice } from 'renderer/redux/workspace-slice';
 
 /**
  * Makes Mantine tree node data.
@@ -55,7 +54,7 @@ export default function ProjectTree() {
    */
   function onSelect(node: TreeNode) {
     if ((node as TreeNode).item.type === 'request') {
-      dispatch(openRequest(node));
+      dispatch(workspaceSlice.actions.openRequest(node));
     }
   }
 

@@ -116,7 +116,7 @@ async function saveWorkspace(event: IpcMainInvokeEvent, workspace: Workspace) {
   try {
     fs.writeFileSync(
       `${os.homedir()}/.fetchy/workspace.json`,
-      JSON.stringify(workspace),
+      JSON.stringify(workspace, null, 2),
       'utf-8'
     );
   }

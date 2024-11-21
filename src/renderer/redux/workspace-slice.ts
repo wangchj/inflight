@@ -2,7 +2,6 @@ import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { TreeNode } from 'types/tree-node';
 import { Workspace } from 'types/workspace';
-import { Request } from 'types/request';
 
 const initialState: Workspace = {};
 
@@ -48,9 +47,42 @@ export const workspaceSlice = createSlice({
 
       state.selectedRequest = node.value;
     },
+
+    /**
+     * Closes an opened request.
+     *
+     * @param state The workspace state.
+     * @param action The action that contains the id of the request to close.
+     */
+    closeRequest(state, action: PayloadAction<string>) {
+      const openedRequests = state.openedRequests;
+
+      if (!openedRequests || openedRequests.length === 0) {
+        return;
+      }
+
+      state.openedRequests = openedRequests.filter(
+        openRequest => openRequest.path !== action.payload
+      );
+
+      if (state.openedRequests.length === 0) {
+        delete state.selectedRequest;
+      }
+      else if (state.selectedRequest === action.payload) {
+        state.selectedRequest = state.openedRequests[0].path;
+      }
+    },
+
+    /**
+     * Sets the selected request.
+     *
+     * @param state The workspace state
+     * @param action The action that contains the selected request path (id).
+     */
+    setSelectedRequest(state, action: PayloadAction<string>) {
+      state.selectedRequest = action.payload;
+    },
   },
 });
 
-// Action creators are generated for each case reducer function
-export const { openRequest, setWorkspace } = workspaceSlice.actions
 export default workspaceSlice.reducer
