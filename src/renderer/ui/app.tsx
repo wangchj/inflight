@@ -1,4 +1,4 @@
-import { AppShell } from '@mantine/core';
+import { AppShell, Button } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import PageLoading from './layout/page-loading';
 import ProjectTree from './project-tree';
@@ -7,7 +7,7 @@ import { Request } from 'types/request';
 import { useDispatch, useSelector } from 'react-redux';
 import { workspaceSlice } from 'renderer/redux/workspace-slice';
 import { projectSlice } from 'renderer/redux/project-slice';
-import { RootState } from 'renderer/redux/store';
+import { RootState, store } from 'renderer/redux/store';
 import OpenedRequests from './opened-requests';
 
 /**
@@ -80,9 +80,10 @@ export function App() {
       navbar={{
         width: 300,
         breakpoint: 'sm',
-
       }}
-      padding="md"
+      footer={{
+        height: 50,
+      }}
     >
       <AppShell.Navbar p="md">
         <ProjectTree/>
@@ -91,6 +92,10 @@ export function App() {
       <AppShell.Main>
         <OpenedRequests/>
       </AppShell.Main>
+
+      <AppShell.Footer>
+        <Button onClick={() => console.log(JSON.stringify(store.getState().workspace, null, 2))}>Print workspace</Button>
+      </AppShell.Footer>
     </AppShell>
   );
 }

@@ -1,7 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
+import OpenedRequests from 'renderer/ui/opened-requests';
 import { TreeNode } from 'types/tree-node';
 import { Workspace } from 'types/workspace';
+import { set } from 'lodash';
+import { AwsSigv4Auth } from 'types/auth';
 
 const initialState: Workspace = {};
 
@@ -28,14 +31,13 @@ export const workspaceSlice = createSlice({
      */
     openRequest(state, action: PayloadAction<TreeNode>) {
       const node = action.payload;
+      const openedRequests = state.openedRequests;
+      const index = openedRequests ?
+        openedRequests.findIndex(openedRequest => openedRequest.path === node.value) :
+        -1;
 
-      // Check if the request is already opened.
-      const opened = Array.isArray(state.openedRequests) &&
-        state.openedRequests.reduce((acc, curr) => acc || curr.path === node.value, false);
-
-      // If not already opened, add to opened requests.
-      if (!opened) {
-        if (!Array.isArray(state.openedRequests)) {
+      if (index === -1) {
+        if (!Array.isArray(openedRequests)) {
           state.openedRequests = [];
         }
 
@@ -43,9 +45,12 @@ export const workspaceSlice = createSlice({
           path: node.value,
           request: JSON.parse(JSON.stringify(node.item)) // Deep copy
         });
-      }
 
-      state.selectedRequest = node.value;
+        state.selectedRequestIndex = state.openedRequests.length - 1;
+      }
+      else {
+        state.selectedRequestIndex = index;
+      }
     },
 
     /**
@@ -57,20 +62,101 @@ export const workspaceSlice = createSlice({
     closeRequest(state, action: PayloadAction<string>) {
       const openedRequests = state.openedRequests;
 
-      if (!openedRequests || openedRequests.length === 0) {
-        return;
-      }
+      const index = openedRequests.findIndex(
+        openedRequest => openedRequest.path === action.payload
+      );
 
       state.openedRequests = openedRequests.filter(
         openRequest => openRequest.path !== action.payload
       );
 
       if (state.openedRequests.length === 0) {
-        delete state.selectedRequest;
+        delete state.selectedRequestIndex;
       }
-      else if (state.selectedRequest === action.payload) {
-        state.selectedRequest = state.openedRequests[0].path;
+      else if (state.selectedRequestIndex === index) {
+        state.selectedRequestIndex = (index === 0 ? 0 : index - 1);
       }
+      else if (state.selectedRequestIndex > index) {
+        state.selectedRequestIndex = state.selectedRequestIndex - 1;
+      }
+    },
+
+    /**
+     * Modifies the currently selected request object.
+     *
+     * @param state The workspace object.
+     * @param action The action with payload.
+     */
+    updateRequest(state, action: PayloadAction<{path: string, value: any}>) {
+      const openedRequest = state.openedRequests?.[state.selectedRequestIndex];
+      if (openedRequest) {
+        set(openedRequest, `request.${action.payload.path}`, action.payload.value);
+        openedRequest.dirty = true;
+      }
+    },
+
+    /**
+     * Sets auth type of selected request object.
+     *
+     * @param state The workspace object.
+     * @param action The action that contains the updated auth type.
+     */
+    setAuthType(state, action: PayloadAction<string>) {
+      const openedRequest = state.openedRequests?.[state.selectedRequestIndex];
+      const request = openedRequest?.request;
+
+      if (!request) {
+        return;
+      }
+
+      switch (action.payload) {
+        case 'aws_sigv4':
+          request.auth = {
+            type: action.payload,
+            source: 'aws_cli_profile',
+            profile: 'default',
+          } as AwsSigv4Auth;
+          break;
+
+        default:
+          delete request.auth;
+      }
+
+      openedRequest.dirty = true;
+    },
+
+    /**
+     * Sets AWS auth credentials source type.
+     *
+     * @param state The workspace object.
+     * @param action The action that contains the credentials source type.
+     */
+    setAwsCredsSource(state, action: PayloadAction<string>) {
+      const openedRequest = state.openedRequests?.[state.selectedRequestIndex];
+      const request = openedRequest?.request;
+
+      if (!request) {
+        return;
+      }
+
+      switch (action.payload) {
+        case 'aws_cli_profile':
+          request.auth = {
+            type: request.auth.type,
+            source: 'aws_cli_profile',
+            profile: 'default',
+          } as AwsSigv4Auth;
+          break;
+
+        case 'inline':
+          request.auth = {
+            type: request.auth.type,
+            source: 'inline',
+          } as AwsSigv4Auth;
+          break;
+      }
+
+      openedRequest.dirty = true;
     },
 
     /**
@@ -80,7 +166,9 @@ export const workspaceSlice = createSlice({
      * @param action The action that contains the selected request path (id).
      */
     setSelectedRequest(state, action: PayloadAction<string>) {
-      state.selectedRequest = action.payload;
+      state.selectedRequestIndex = state.openedRequests.findIndex(
+        openedRequest => openedRequest.path === action.payload
+      );
     },
   },
 });

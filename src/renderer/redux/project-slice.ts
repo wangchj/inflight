@@ -13,7 +13,11 @@ export const projectSlice = createSlice({
   reducers: {
     setProject(state, action: PayloadAction<Project>) {
       return action.payload;
-    }
+    },
+
+    setRequest(state, action) {
+
+    },
   },
 });
 

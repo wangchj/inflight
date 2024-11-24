@@ -4,5 +4,5 @@ import { OpenedRequest } from "./opened-request";
 export interface Workspace {
   projectRef?: Ref;
   openedRequests?: OpenedRequest[];
-  selectedRequest?: string;
+  selectedRequestIndex?: number;
 }

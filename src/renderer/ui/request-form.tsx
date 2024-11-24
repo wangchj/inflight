@@ -12,40 +12,82 @@ import { useState } from "react";
 import { Request } from "types/request"
 import RequestConfig from "./request-config";
 import RequestOutput from "./request-output";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "renderer/redux/store";
+import { workspaceSlice } from "renderer/redux/workspace-slice";
 
-interface RequestFormProps {
-  request: Request;
-}
 
-export default function RequestForm({request}: RequestFormProps) {
+export default function RequestForm() {
   const [selectedTab, setSelectedTab] = useState<string>('Config');
   const [output, setOutput] = useState<string>();
 
+  const dispatch = useDispatch();
+  const workspace = useSelector((state: RootState) => state.workspace);
+  const request = workspace.openedRequests[workspace.selectedRequestIndex].request;
+
+  /**
+   * Handles Send button click event.
+   */
   async function onSendClick() {
-    const resp = await window.sendRequest(request);
-    console.log(resp);
+    // const resp = await window.sendRequest(request);
+    // console.log(resp);
   }
+
+  /**
+   * Handles Save button click event.
+   */
+  async function onSaveClick() {
+
+  }
+
 
   return (
     <Stack>
-      {/* URL bar */}
       <Group grow preventGrowOverflow={false}>
+        <Group
+          gap="xs"
+          style={{flexGrow: 1}}
+        >
           <Select
-            // style={{flexGrow: 0, flexShrink: 1}}
+            style={{flexGrow: 0, width: '100px'}}
             data={['GET', 'POST']}
             value={request.method}
-            style={{flexGrow: 0, width: '100px'}}
+            onChange={
+              value => value === null ? null : dispatch(
+                workspaceSlice.actions.updateRequest({path: 'method', value})
+              )
+            }
           />
-        <TextInput
-          style={{flexGrow: 1}}
-          value={request.url}
-        />
-        <Button
+
+          <TextInput
+            style={{flexGrow: 1}}
+            value={request.url}
+            onChange={
+              event => dispatch(
+                workspaceSlice.actions.updateRequest(
+                  {path: 'url', value: event.currentTarget.value}
+                )
+              )
+            }
+          />
+        </Group>
+
+        <Group
+          gap="xs"
           style={{flexGrow: 0, flexShrink: 1}}
-          onClick={onSendClick}
         >
-          Send
-        </Button>
+          <Button
+            onClick={onSendClick}
+          >
+            Send
+          </Button>
+
+          <Button
+            onClick={onSaveClick}
+          >
+            Save
+          </Button>
+        </Group>
       </Group>
 
       <Box>
