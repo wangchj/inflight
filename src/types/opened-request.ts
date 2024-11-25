@@ -2,9 +2,9 @@ import { Request } from "types/request";
 
 export interface OpenedRequest {
   /**
-   * The path of the request within the project tree.
+   * The id of the request within the project.
    */
-  path?: string;
+  id: string;
 
   /**
    * The request config.

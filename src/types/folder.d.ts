@@ -1,5 +1,7 @@
-import { Item } from 'types/item';
+import { Request } from 'types/request';
 
-export interface Folder extends Item {
-  items: Item[];
+export interface Folder {
+  name: string;
+  folders?: Folder[];
+  requests?: string[];
 }

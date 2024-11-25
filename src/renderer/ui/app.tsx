@@ -2,7 +2,6 @@ import { AppShell, Button } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import PageLoading from './layout/page-loading';
 import ProjectTree from './project-tree';
-import { TreeNode } from 'types/tree-node';
 import { Request } from 'types/request';
 import { useDispatch, useSelector } from 'react-redux';
 import { workspaceSlice } from 'renderer/redux/workspace-slice';
@@ -66,11 +65,6 @@ export function App() {
     openWorkspace();
   }, []);
 
-  function onSelect(node: TreeNode) {
-    setRequest(node.item as Request);
-
-  }
-
   if (loading) {
     return <PageLoading/>
   }
@@ -95,6 +89,7 @@ export function App() {
 
       <AppShell.Footer>
         <Button onClick={() => console.log(JSON.stringify(store.getState().workspace, null, 2))}>Print workspace</Button>
+        <Button onClick={() => console.log(JSON.stringify(store.getState().project, null, 2))}>Print project</Button>
       </AppShell.Footer>
     </AppShell>
   );

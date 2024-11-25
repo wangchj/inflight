@@ -9,20 +9,20 @@ export default function OpenedRequests() {
   const dispatch = useDispatch();
   const workspace = useSelector((state: RootState) => state.workspace);
   const openedRequests = workspace.openedRequests;
-  const selectedRequest = openedRequests[workspace.selectedRequestIndex];
+  const selectedRequest = openedRequests?.[workspace.selectedRequestIndex];
 
   return Array.isArray(openedRequests) && openedRequests.length > 0 ?
     (
       <Tabs
-        value={selectedRequest.path}
+        value={selectedRequest.id}
         onChange={id => dispatch(workspaceSlice.actions.setSelectedRequest(id))}
       >
         <Tabs.List>
           {
-            openedRequests.map(request => (
+            openedRequests.map((request, index) => (
               <Tabs.Tab
-                key={request.path}
-                value={request.path}
+                key={request.id}
+                value={request.id}
               >
                 <Group gap="sm">
                   {request.request.name}
@@ -33,7 +33,7 @@ export default function OpenedRequests() {
                     size="sm"
                     onClick={(event: MouseEvent) => {
                       event.stopPropagation();
-                      dispatch(workspaceSlice.actions.closeRequest(request.path));
+                      dispatch(workspaceSlice.actions.closeRequest(index));
                     }}
                   />
                 </Group>
@@ -44,8 +44,8 @@ export default function OpenedRequests() {
 
         {openedRequests.map(openedRequest => (
           <Tabs.Panel
-            key={openedRequest.path}
-            value={openedRequest.path}
+            key={openedRequest.id}
+            value={openedRequest.id}
           >
             <Box p="md">
               <RequestForm/>

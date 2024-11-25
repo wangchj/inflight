@@ -1,6 +1,7 @@
-import { Item } from 'types/item';
 import { Auth } from 'types/auth';
-export interface Request extends Item {
+
+export interface Request {
+  name?: string;
   method: 'GET' | 'POST';
   url: string;
   auth?: Auth;

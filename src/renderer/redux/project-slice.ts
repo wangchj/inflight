@@ -4,7 +4,10 @@ import { Project } from 'types/project';
 
 const initialState: Project = {
   name: '',
-  items: []
+  requests: {},
+  tree: {
+    name: ''
+  },
 };
 
 export const projectSlice = createSlice({

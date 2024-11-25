@@ -30,19 +30,28 @@ export default function RequestConfig({request}: RequestConfigProps) {
         <Tabs.Tab value="body">Body</Tabs.Tab>
       </Tabs.List>
 
-      <Tabs.Panel value="auth">
+      <Tabs.Panel
+        key={`${request.name}_auth`}
+        value="auth"
+      >
         <Box pt="md" style={{maxWidth: '500px'}}>
           <RequestAuth/>
         </Box>
       </Tabs.Panel>
 
-      <Tabs.Panel value="headers">
+      <Tabs.Panel
+        key={`${request.name}_headers`}
+        value="headers"
+      >
         <Box pt="md">
           Headers panel
         </Box>
       </Tabs.Panel>
 
-      <Tabs.Panel value="body">
+      <Tabs.Panel
+        key={`${request.name}_body`}
+        value="body"
+      >
         <Box pt="md">
           Body panel
         </Box>

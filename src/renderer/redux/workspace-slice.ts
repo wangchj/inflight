@@ -1,10 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
-import OpenedRequests from 'renderer/ui/opened-requests';
-import { TreeNode } from 'types/tree-node';
 import { Workspace } from 'types/workspace';
 import { set } from 'lodash';
 import { AwsSigv4Auth } from 'types/auth';
+import { Request } from 'types/request';
 
 const initialState: Workspace = {};
 
@@ -29,21 +28,20 @@ export const workspaceSlice = createSlice({
      * @param state The workspace object.
      * @param action The action.
      */
-    openRequest(state, action: PayloadAction<TreeNode>) {
-      const node = action.payload;
+    openRequest(state, action: PayloadAction<{id: string, request: Request}>) {
+      // const node = action.payload;
       const openedRequests = state.openedRequests;
       const index = openedRequests ?
-        openedRequests.findIndex(openedRequest => openedRequest.path === node.value) :
-        -1;
+        openedRequests.findIndex(openedRequest => openedRequest.id === action.payload.id) : -1;
 
       if (index === -1) {
         if (!Array.isArray(openedRequests)) {
           state.openedRequests = [];
         }
-
         state.openedRequests.push({
-          path: node.value,
-          request: JSON.parse(JSON.stringify(node.item)) // Deep copy
+          id: action.payload.id,
+          // Deep copy
+          request: JSON.parse(JSON.stringify(action.payload.request))
         });
 
         state.selectedRequestIndex = state.openedRequests.length - 1;
@@ -59,16 +57,10 @@ export const workspaceSlice = createSlice({
      * @param state The workspace state.
      * @param action The action that contains the id of the request to close.
      */
-    closeRequest(state, action: PayloadAction<string>) {
-      const openedRequests = state.openedRequests;
+    closeRequest(state, action: PayloadAction<number>) {
+      const index = action.payload;
 
-      const index = openedRequests.findIndex(
-        openedRequest => openedRequest.path === action.payload
-      );
-
-      state.openedRequests = openedRequests.filter(
-        openRequest => openRequest.path !== action.payload
-      );
+      state.openedRequests = state.openedRequests.filter((_, i) => i !== index);
 
       if (state.openedRequests.length === 0) {
         delete state.selectedRequestIndex;
@@ -167,7 +159,7 @@ export const workspaceSlice = createSlice({
      */
     setSelectedRequest(state, action: PayloadAction<string>) {
       state.selectedRequestIndex = state.openedRequests.findIndex(
-        openedRequest => openedRequest.path === action.payload
+        openedRequest => openedRequest.id === action.payload
       );
     },
   },

@@ -1,6 +1,8 @@
-import { Item } from 'types/item';
+import { Request } from 'types/request';
+import { Folder } from 'types/folder';
 
 export interface Project {
   name: string;
-  items: Item[];
+  requests: Record<string, Request>;
+  tree: Folder;
 }
