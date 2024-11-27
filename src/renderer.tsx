@@ -41,6 +41,7 @@ declare global {
     openWorkspace: () => Promise<Workspace>;
     saveWorkspace: (workspace: Workspace) => Promise<void>;
     openProject: (path: string) => Promise<Project>;
+    saveProject: (path: string, project: Project) => Promise<void>;
     sendRequest: (request: Request) => Promise<string>;
     onFlushWorkspace: (callback: () => void) => void;
   }

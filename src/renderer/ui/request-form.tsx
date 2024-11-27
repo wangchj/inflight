@@ -13,8 +13,9 @@ import { Request } from "types/request"
 import RequestConfig from "./request-config";
 import RequestOutput from "./request-output";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "renderer/redux/store";
+import { RootState, store } from "renderer/redux/store";
 import { workspaceSlice } from "renderer/redux/workspace-slice";
+import { projectSlice } from "renderer/redux/project-slice";
 
 
 export default function RequestForm() {
@@ -37,9 +38,23 @@ export default function RequestForm() {
    * Handles Save button click event.
    */
   async function onSaveClick() {
+    const openedRequest = workspace.openedRequests[workspace.selectedRequestIndex];
 
+    if (openedRequest.dirty) {
+      dispatch(projectSlice.actions.setRequest({
+        id: openedRequest.id, request: openedRequest.request
+      }));
+
+      try {
+        await window.saveProject(workspace.projectRef.$ref, store.getState().project);
+        dispatch(workspaceSlice.actions.setDirty(false));
+        await window.saveWorkspace(store.getState().workspace);
+      }
+      catch (error) {
+        console.log("Error saving project", error);
+      }
+    }
   }
-
 
   return (
     <Stack>

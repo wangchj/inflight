@@ -88,6 +88,24 @@ export const workspaceSlice = createSlice({
     },
 
     /**
+     * Updates the dirty flag of the currently selected tab.
+     *
+     * @param state The workspace object.
+     * @param action Payload of true or false meaning dirty or not dirty.
+     */
+    setDirty(state, action: PayloadAction<boolean>) {
+      const openedRequest = state.openedRequests?.[state.selectedRequestIndex];
+      if (openedRequest) {
+        if (action.payload) {
+          openedRequest.dirty = true;
+        }
+        else {
+          delete openedRequest.dirty;
+        }
+      }
+    },
+
+    /**
      * Sets auth type of selected request object.
      *
      * @param state The workspace object.

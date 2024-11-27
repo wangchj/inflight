@@ -1,5 +1,5 @@
 import { exec } from 'child_process';
-import { app, BrowserWindow, ipcMain, IpcMainEvent, IpcMainInvokeEvent } from 'electron';
+import { app, BrowserWindow, ipcMain, IpcMainInvokeEvent } from 'electron';
 import fs from 'fs';
 import os from 'os';
 import { Project } from 'types/project';
@@ -44,6 +44,7 @@ const createWindow = (): void => {
 app.on('ready', () => {
   ipcMain.handle('openWorkspace', openWorkspace);
   ipcMain.handle('openProject', (event, path) => openProject(event, path));
+  ipcMain.handle('saveProject', (event, path, project) => saveProject(event, path, project));
   ipcMain.handle('sendRequest', (event, request) => sendRequest(event, request));
   ipcMain.handle('saveWorkspace', (event, workspace) => saveWorkspace(event, workspace));
   createWindow();
@@ -99,6 +100,16 @@ async function openProject(event: IpcMainInvokeEvent, path: string): Promise<Pro
   catch (error) {
     return;
   }
+}
+
+/**
+ * Saves the project to disk.
+ *
+ * @param event Electron invoke event.
+ * @param project
+ */
+async function saveProject(event: IpcMainInvokeEvent, path: string, project: Project) {
+  fs.writeFileSync(path, JSON.stringify(project, null, 2), 'utf-8');
 }
 
 async function sendRequest(event: IpcMainInvokeEvent, request: Request): Promise<string> {
