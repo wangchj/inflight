@@ -1,0 +1,4 @@
+.body-Textarea-root, .body-Textarea-wrapper, .body-Textarea-input {
+  height: 100%;
+  flex-grow: 1;
+}

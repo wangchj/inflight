@@ -6,7 +6,7 @@ import { AwsSigv4Auth } from "types/auth";
 
 const authTypeOptions = [
   {value: 'none',      label: 'None'},
-  {value: 'aws_sigv4', label: 'AWS Signature 4'},
+  {value: 'aws_sigv4', label: 'AWS Signature Version 4'},
 ];
 
 const credentialSourceOptions = [

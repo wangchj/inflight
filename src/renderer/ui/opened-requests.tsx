@@ -16,26 +16,35 @@ export default function OpenedRequests() {
       <Tabs
         value={selectedRequest.id}
         onChange={id => dispatch(workspaceSlice.actions.setSelectedRequest(id))}
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          height: '100%',
+        }}
       >
-        <Tabs.List>
+        <Tabs.List
+          style={{flexGrow: 0, flexShrink: 1}}
+        >
           {
             openedRequests.map((request, index) => (
               <Tabs.Tab
                 key={request.id}
                 value={request.id}
               >
-                <Group gap="sm">
+                <Group gap="lg">
                   {request.request.name}
 
-                  {request.dirty && <Text c={'blue'} size='xs'>●</Text>}
+                  <Group gap="sm">
+                    {request.dirty && <Text c={'yellow'} opacity={0.5} size='xs'>●</Text>}
 
-                  <CloseButton
-                    size="sm"
-                    onClick={(event: MouseEvent) => {
-                      event.stopPropagation();
-                      dispatch(workspaceSlice.actions.closeRequest(index));
-                    }}
-                  />
+                    <CloseButton
+                      size="sm"
+                      onClick={(event: MouseEvent) => {
+                        event.stopPropagation();
+                        dispatch(workspaceSlice.actions.closeRequest(index));
+                      }}
+                    />
+                  </Group>
                 </Group>
               </Tabs.Tab>
             ))
@@ -46,8 +55,11 @@ export default function OpenedRequests() {
           <Tabs.Panel
             key={openedRequest.id}
             value={openedRequest.id}
+            style={{
+              flexGrow: 1,
+            }}
           >
-            <Box p="md">
+            <Box p="md" style={{height: '100%'}}>
               <RequestForm/>
             </Box>
           </Tabs.Panel>

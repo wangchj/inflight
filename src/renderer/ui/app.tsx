@@ -78,12 +78,18 @@ export function App() {
       footer={{
         height: 50,
       }}
+      style={{height: '100%'}}
     >
       <AppShell.Navbar p="md">
         <ProjectTree/>
       </AppShell.Navbar>
 
-      <AppShell.Main>
+      <AppShell.Main style={{
+        // display:'flex',
+        // flexDirection: 'column',
+        height: '100%',
+        // height: '100vh',
+      }}>
         <OpenedRequests/>
       </AppShell.Main>
 

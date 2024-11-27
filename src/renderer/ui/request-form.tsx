@@ -57,7 +57,9 @@ export default function RequestForm() {
   }
 
   return (
-    <Stack>
+    <Stack
+      h="100%"
+    >
       <Group grow preventGrowOverflow={false}>
         <Group
           gap="xs"
@@ -105,7 +107,7 @@ export default function RequestForm() {
         </Group>
       </Group>
 
-      <Box>
+      <Box flex="0">
         <SegmentedControl
           data={['Config', 'Output']}
           value={selectedTab}
