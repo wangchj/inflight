@@ -5,11 +5,18 @@ import {
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "renderer/redux/store";
+import ResultHeaders from "./result-headers";
+import ResultBody from "./result-body";
 
 export default function RequestOutput() {
   const [selectedTab, setSelectedTab] = useState<string>('body');
   const workspace = useSelector((state: RootState) => state.workspace);
   const openedRequest = workspace.openedRequests[workspace.selectedRequestIndex];
+  const result = useSelector((state: RootState) => state.results)[openedRequest.id];
+
+  if (!result) {
+    return <div>Click on send to initiate the request.</div>
+  }
 
   return (
     <Tabs
@@ -26,38 +33,27 @@ export default function RequestOutput() {
           flexGrow: 0,
         }}
       >
-        <Tabs.Tab value="request_headers">Request headers</Tabs.Tab>
-        <Tabs.Tab value="response_headers">Response headers</Tabs.Tab>
         <Tabs.Tab value="body">Body</Tabs.Tab>
+        <Tabs.Tab value="headers">Headers</Tabs.Tab>
       </Tabs.List>
-
-      <Tabs.Panel
-        key={`${openedRequest.id}_request_headers`}
-        value="request_headers"
-        style={{flexGrow: 1}}
-      >
-        <Box pt="md">
-          Request headers
-        </Box>
-      </Tabs.Panel>
-
-      <Tabs.Panel
-        key={`${openedRequest.id}_response_headers`}
-        value="response_headers"
-        style={{flexGrow: 1}}
-      >
-        <Box pt="md" h="100%">
-          Response headers
-        </Box>
-      </Tabs.Panel>
 
       <Tabs.Panel
         key={`${openedRequest.id}_response_body`}
         value="body"
         style={{flexGrow: 1}}
       >
-        <Box pt="md" style={{maxWidth: '500px'}}>
-          Response body
+        <Box pt="md" h="100%">
+          <ResultBody requestResult={result}/>
+        </Box>
+      </Tabs.Panel>
+
+      <Tabs.Panel
+        key={`${openedRequest.id}_result_headers`}
+        value="headers"
+        style={{flexGrow: 1}}
+      >
+        <Box pt="md" h="100%">
+          <ResultHeaders requestResult={result}/>
         </Box>
       </Tabs.Panel>
     </Tabs>

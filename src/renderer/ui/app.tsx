@@ -96,6 +96,7 @@ export function App() {
       <AppShell.Footer>
         <Button onClick={() => console.log(JSON.stringify(store.getState().workspace, null, 2))}>Print workspace</Button>
         <Button onClick={() => console.log(JSON.stringify(store.getState().project, null, 2))}>Print project</Button>
+        <Button onClick={() => console.log(JSON.stringify(store.getState().results, null, 2))}>Print Results</Button>
       </AppShell.Footer>
     </AppShell>
   );

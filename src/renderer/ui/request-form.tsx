@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   Group,
+  Notification,
   SegmentedControl,
   Select,
   Stack,
@@ -16,25 +17,34 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState, store } from "renderer/redux/store";
 import { workspaceSlice } from "renderer/redux/workspace-slice";
 import { projectSlice } from "renderer/redux/project-slice";
-// import { SignatureV4, HttpRequest } from '@smithy/signature-v4';
-// import { Credentials } from '@aws-sdk/types';
-// import { fromIni } from '@aws-sdk/credential-provider-ini';
+import { resultsSlice } from "renderer/redux/results-slice";
 
 export default function RequestForm() {
-  const [selectedTab, setSelectedTab] = useState<string>('Config');
-  const [output, setOutput] = useState<string>();
+  // const [selectedTab, setSelectedTab] = useState<string>('Config');
+  const [selectedTab, setSelectedTab] = useState<string>('Output');
+  // const [output, setOutput] = useState<string>();
+  const [error, setError] = useState<string>();
 
   const dispatch = useDispatch();
   const workspace = useSelector((state: RootState) => state.workspace);
-  const request = workspace.openedRequests[workspace.selectedRequestIndex].request;
+  const openedRequest = workspace.openedRequests[workspace.selectedRequestIndex];
+  const request = openedRequest.request;
+  const results = useSelector((state: RootState) => state.results);
 
   /**
    * Handles Send button click event.
    */
   async function onSendClick() {
-    const resp = await window.sendRequest(request);
-    console.log(resp);
+    setError('');
 
+    try {
+      const resp = await window.sendRequest(request);
+      dispatch(resultsSlice.actions.setResult({id: openedRequest.id, result: resp}));
+      setSelectedTab('Output');
+    }
+    catch (error) {
+      setError(error.message.replace('Error invoking remote method \'sendRequest\': ', ''));
+    }
   }
 
   /**
@@ -109,6 +119,8 @@ export default function RequestForm() {
           </Button>
         </Group>
       </Group>
+
+      {error && <Notification color="red" onClose={() => setError('')}>{error}</Notification>}
 
       <Box flex="0">
         <SegmentedControl

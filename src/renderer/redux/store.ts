@@ -1,11 +1,13 @@
-import { configureStore } from '@reduxjs/toolkit'
-import workspaceSlice from './workspace-slice'
-import projectSlice from './project-slice'
+import { configureStore } from '@reduxjs/toolkit';
+import workspaceSlice from './workspace-slice';
+import projectSlice from './project-slice';
+import resultsSlice from './results-slice';
 
 export const store = configureStore({
   reducer: {
     workspace: workspaceSlice,
     project: projectSlice,
+    results: resultsSlice,
   },
 })
 

@@ -1,4 +1,4 @@
-import { Select, Stack, TextInput, Textarea } from "@mantine/core";
+import { Textarea } from "@mantine/core";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "renderer/redux/store";
 import { workspaceSlice } from "renderer/redux/workspace-slice";
@@ -24,7 +24,6 @@ export default function RequestBody() {
           value: event.currentTarget.value
         }))
       }
-      // onChange={event => console.log(event.currentTarget.value)}
     />
   )
 }
