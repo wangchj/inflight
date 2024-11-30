@@ -1,3 +1,5 @@
+import { PeerCertificate } from "tls";
+
 export interface Response {
   httpVersion: string;
   statusCode?: number;
@@ -5,4 +7,5 @@ export interface Response {
   headers: any;
   rawHeaders: string[];
   data?: string;
+  peerCertificate: Omit<PeerCertificate, 'pubkey', 'raw'> & {pubkey?: string, raw: string};
 }

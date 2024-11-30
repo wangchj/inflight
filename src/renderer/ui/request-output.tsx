@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "renderer/redux/store";
 import ResultHeaders from "./result-headers";
 import ResultBody from "./result-body";
+import ServerCertificate from "./server-certificate";
 
 export default function RequestOutput() {
   const [selectedTab, setSelectedTab] = useState<string>('body');
@@ -35,6 +36,7 @@ export default function RequestOutput() {
       >
         <Tabs.Tab value="body">Body</Tabs.Tab>
         <Tabs.Tab value="headers">Headers</Tabs.Tab>
+        <Tabs.Tab value="server_certificate">Server Certificate</Tabs.Tab>
       </Tabs.List>
 
       <Tabs.Panel
@@ -52,10 +54,24 @@ export default function RequestOutput() {
         value="headers"
         style={{flexGrow: 1}}
       >
-        <Box pt="md" h="100%">
+        <Box pt="md">
           <ResultHeaders requestResult={result}/>
         </Box>
       </Tabs.Panel>
+
+      {
+        result.response.peerCertificate && (
+          <Tabs.Panel
+            key={`${openedRequest.id}_server_certificate`}
+            value="server_certificate"
+            style={{flexGrow: 1}}
+          >
+            <Box pt="md">
+              <ServerCertificate requestResult={result}/>
+            </Box>
+          </Tabs.Panel>
+        )
+      }
     </Tabs>
   )
 }

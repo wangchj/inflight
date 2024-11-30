@@ -3,11 +3,15 @@
  */
 
 import https, { RequestOptions } from "https";
+import { TLSSocket } from "tls";
 import { Response } from "types/response";
 
 export async function sendRequest(requestOptions: RequestOptions): Promise<Response> {
   return new Promise((resolve, reject) => {
     const clientRequest = https.request(requestOptions, res => {
+      const socket = res.socket as TLSSocket;
+      const peerCertificate = socket.getPeerCertificate()
+
       let data = '';
 
       res.on('data', (chunk) => {
@@ -22,6 +26,11 @@ export async function sendRequest(requestOptions: RequestOptions): Promise<Respo
           headers: {...res.headers},
           rawHeaders: res.rawHeaders,
           data: data,
+          peerCertificate: {
+            ...peerCertificate,
+            pubkey: peerCertificate.pubkey?.toString('hex'),
+            raw: peerCertificate.raw?.toString('hex'),
+          },
         });
       });
 
