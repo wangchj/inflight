@@ -53,7 +53,7 @@ function AwsAuthSigv4Form({auth}: {auth: AwsSigv4Auth}) {
 
   return (
     <Stack>
-      <Select
+      {/* <Select
         label="Credentials source"
         data={credentialSourceOptions}
         value={auth.source}
@@ -62,11 +62,12 @@ function AwsAuthSigv4Form({auth}: {auth: AwsSigv4Auth}) {
             workspaceSlice.actions.setAwsCredsSource(value)
           )
         }
-      />
+      /> */}
 
       {auth.source === 'aws_cli_profile' && (
         <TextInput
           label="Profile"
+          description="The AWS CLI profile. If not specified, the default profile is used."
           value={auth.profile}
           onChange={
             event => dispatch(

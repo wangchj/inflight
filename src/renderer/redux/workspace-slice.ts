@@ -141,33 +141,33 @@ export const workspaceSlice = createSlice({
      * @param state The workspace object.
      * @param action The action that contains the credentials source type.
      */
-    setAwsCredsSource(state, action: PayloadAction<string>) {
-      const openedRequest = state.openedRequests?.[state.selectedRequestIndex];
-      const request = openedRequest?.request;
+    // setAwsCredsSource(state, action: PayloadAction<string>) {
+    //   const openedRequest = state.openedRequests?.[state.selectedRequestIndex];
+    //   const request = openedRequest?.request;
 
-      if (!request) {
-        return;
-      }
+    //   if (!request) {
+    //     return;
+    //   }
 
-      switch (action.payload) {
-        case 'aws_cli_profile':
-          request.auth = {
-            type: request.auth.type,
-            source: 'aws_cli_profile',
-            profile: 'default',
-          } as AwsSigv4Auth;
-          break;
+    //   switch (action.payload) {
+    //     case 'aws_cli_profile':
+    //       request.auth = {
+    //         type: request.auth.type,
+    //         source: 'aws_cli_profile',
+    //         profile: 'default',
+    //       } as AwsSigv4Auth;
+    //       break;
 
-        case 'inline':
-          request.auth = {
-            type: request.auth.type,
-            source: 'inline',
-          } as AwsSigv4Auth;
-          break;
-      }
+    //     case 'inline':
+    //       request.auth = {
+    //         type: request.auth.type,
+    //         source: 'inline',
+    //       } as AwsSigv4Auth;
+    //       break;
+    //   }
 
-      openedRequest.dirty = true;
-    },
+    //   openedRequest.dirty = true;
+    // },
 
     /**
      * Sets the selected request.

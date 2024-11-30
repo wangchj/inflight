@@ -35,6 +35,7 @@ import { App } from 'renderer/ui/app';
 import { Project } from 'types/project';
 import { Request } from 'types/request';
 import { Workspace } from 'types/workspace';
+import { RequestResult } from 'types/request-result';
 
 declare global {
   interface Window {
@@ -42,7 +43,7 @@ declare global {
     saveWorkspace: (workspace: Workspace) => Promise<void>;
     openProject: (path: string) => Promise<Project>;
     saveProject: (path: string, project: Project) => Promise<void>;
-    sendRequest: (request: Request) => Promise<string>;
+    sendRequest: (request: Request) => Promise<RequestResult>;
     onFlushWorkspace: (callback: () => void) => void;
   }
 }

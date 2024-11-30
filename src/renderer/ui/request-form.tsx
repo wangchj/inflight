@@ -16,7 +16,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState, store } from "renderer/redux/store";
 import { workspaceSlice } from "renderer/redux/workspace-slice";
 import { projectSlice } from "renderer/redux/project-slice";
-
+// import { SignatureV4, HttpRequest } from '@smithy/signature-v4';
+// import { Credentials } from '@aws-sdk/types';
+// import { fromIni } from '@aws-sdk/credential-provider-ini';
 
 export default function RequestForm() {
   const [selectedTab, setSelectedTab] = useState<string>('Config');
@@ -30,8 +32,9 @@ export default function RequestForm() {
    * Handles Send button click event.
    */
   async function onSendClick() {
-    // const resp = await window.sendRequest(request);
-    // console.log(resp);
+    const resp = await window.sendRequest(request);
+    console.log(resp);
+
   }
 
   /**

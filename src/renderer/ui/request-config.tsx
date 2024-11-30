@@ -2,14 +2,7 @@ import './request-body.css';
 
 import {
   Box,
-  Button,
-  Group,
-  SegmentedControl,
-  Select,
-  Stack,
   Tabs,
-  TextInput,
-  Title
 } from "@mantine/core";
 import { useState } from "react";
 import { Request } from "types/request"
@@ -19,6 +12,7 @@ import RequestBody from "./request-body";
 interface RequestConfigProps {
   request: Request;
 }
+
 export default function RequestConfig({request}: RequestConfigProps) {
   const [selectedTab, setSelectedTab] = useState<string>('auth');
 
