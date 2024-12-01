@@ -8,13 +8,14 @@ import { useState } from "react";
 import { Request } from "types/request"
 import RequestAuth from "./request-auth";
 import RequestBody from "./request-body";
+import RequestHeaders from './request-headers';
 
 interface RequestConfigProps {
   request: Request;
 }
 
 export default function RequestConfig({request}: RequestConfigProps) {
-  const [selectedTab, setSelectedTab] = useState<string>('auth');
+  const [selectedTab, setSelectedTab] = useState<string>('headers');
 
   return (
     <Tabs
@@ -52,7 +53,7 @@ export default function RequestConfig({request}: RequestConfigProps) {
         style={{flexGrow: 1}}
       >
         <Box pt="md">
-          Headers panel
+          <RequestHeaders/>
         </Box>
       </Tabs.Panel>
 

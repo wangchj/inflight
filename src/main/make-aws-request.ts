@@ -50,7 +50,14 @@ export default async function makeRequestOptionsForAws(request: Request): Promis
     ...signingParams,
     headers: {
       ...signingParams.headers,
-      ...signature.headers
+      ...signature.headers,
+      ...(request.headers ?
+        Object.fromEntries(
+          request.headers
+            .filter(header => header.enabled && !!header.key)
+            .map(header => [header.key, header.value])
+        ) : {}
+      ),
     }
   };
 

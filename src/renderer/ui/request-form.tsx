@@ -20,9 +20,7 @@ import { projectSlice } from "renderer/redux/project-slice";
 import { resultsSlice } from "renderer/redux/results-slice";
 
 export default function RequestForm() {
-  // const [selectedTab, setSelectedTab] = useState<string>('Config');
-  const [selectedTab, setSelectedTab] = useState<string>('Output');
-  // const [output, setOutput] = useState<string>();
+  const [selectedTab, setSelectedTab] = useState<string>('Config');
   const [error, setError] = useState<string>();
 
   const dispatch = useDispatch();

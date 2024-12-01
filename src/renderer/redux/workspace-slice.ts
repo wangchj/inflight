@@ -4,6 +4,7 @@ import { Workspace } from 'types/workspace';
 import { set } from 'lodash';
 import { AwsSigv4Auth } from 'types/auth';
 import { Request } from 'types/request';
+import { Header } from 'types/header';
 
 const initialState: Workspace = {};
 
@@ -180,6 +181,81 @@ export const workspaceSlice = createSlice({
         openedRequest => openedRequest.id === action.payload
       );
     },
+
+    /**
+     * Adds a new empty request header to the selected request.
+     *
+     * @param state The workspace object.
+     */
+    addEmptyHeader(state) {
+      const openedRequest = state.openedRequests?.[state.selectedRequestIndex];
+      const request = openedRequest.request;
+
+      if (!request.headers) {
+        request.headers = [];
+      }
+
+      request.headers.push({key: '', value: '', enabled: true});
+
+      openedRequest.dirty = true;
+    },
+
+    /**
+     * Updates header key.
+     *
+     * @param state The workspace object.
+     * @param action An action that contains the header index and the updated key.
+     */
+    updateHeaderKey(state, action: PayloadAction<{index: number, value: string}>) {
+      const openedRequest = state.openedRequests[state.selectedRequestIndex];
+      const request = openedRequest.request;
+      request.headers[action.payload.index].key = action.payload.value;
+      openedRequest.dirty = true;
+    },
+
+    /**
+     * Updates header value.
+     *
+     * @param state The workspace object.
+     * @param action An action that contains the header index and the updated value.
+     */
+    updateHeaderValue(state, action: PayloadAction<{index: number, value: string}>) {
+      const openedRequest = state.openedRequests[state.selectedRequestIndex];
+      const request = openedRequest.request;
+      request.headers[action.payload.index].value = action.payload.value;
+      openedRequest.dirty = true;
+    },
+
+    /**
+     * Toggles a request header on or off.
+     *
+     * @param state The workspace object.
+     * @param action An action that contains the header.
+     */
+    toggleHeader(state, action: PayloadAction<number>) {
+      const openedRequest = state.openedRequests[state.selectedRequestIndex];
+      const request = openedRequest.request;
+      request.headers[action.payload].enabled = !request.headers[action.payload].enabled;
+      openedRequest.dirty = true;
+    },
+
+    /**
+     * Deletes a header from the currently selected request.
+     *
+     * @param state The workspace object.
+     * @param action Contains the index of the header.
+     */
+    deleteHeader(state, action: PayloadAction<number>) {
+      const openedRequest = state.openedRequests[state.selectedRequestIndex];
+      const request = openedRequest.request;
+      if (request.headers && request.headers[action.payload]) {
+        request.headers.splice(action.payload, 1);
+        if (request.headers.length === 0) {
+          delete request.headers;
+        }
+        openedRequest.dirty = true;
+      }
+    }
   },
 });
 
