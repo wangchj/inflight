@@ -11,7 +11,7 @@ import { RequestOptions } from "https";
  * @param request The request params.
  * @returns NodeJS RequestOptions object.
  */
-export default async function makeAwsRequest(request: Request): Promise<RequestOptions> {
+export default async function makeRequestOptionsForAws(request: Request): Promise<RequestOptions> {
   // TODO: validate request params.
   // The request.auth.type must be 'aws_sigv4'
   // The required params should be specified: region, service, keys.
@@ -34,8 +34,6 @@ export default async function makeAwsRequest(request: Request): Promise<RequestO
       // Date format: YYYYMMDD'T'HHMMSS'Z'
       'x-amz-date': new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z',
     },
-    username: url.username ? url.username : undefined,
-    password: url.password ? url.password : undefined,
     body: request.body ? request.body : undefined
   };
 
@@ -48,11 +46,15 @@ export default async function makeAwsRequest(request: Request): Promise<RequestO
 
   const signature = await signer.sign(signingParams);
 
-  return {
+  const res = {
     ...signingParams,
     headers: {
       ...signingParams.headers,
       ...signature.headers
     }
-  }
+  };
+
+  delete res.body;
+
+  return res;
 }

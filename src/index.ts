@@ -5,7 +5,7 @@ import os from 'os';
 import { Project } from 'types/project';
 import { Request } from 'types/request';
 import { Workspace } from 'types/workspace';
-import makeAwsRequest from 'main/make-aws-request';
+import makeRequestOptionsForAws from 'main/make-aws-request';
 import * as client from 'main/client';
 import { RequestResult } from 'types/request-result';
 
@@ -23,7 +23,7 @@ if (require('electron-squirrel-startup')) {
 const createWindow = (): void => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    height: 800,
+    height: 1200,
     width: 1600,
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
@@ -123,8 +123,8 @@ async function saveProject(event: IpcMainInvokeEvent, path: string, project: Pro
  * @returns The result object that contains the request info that's sent and the response object.
  */
 async function sendRequest(event: IpcMainInvokeEvent, request: Request): Promise<RequestResult> {
-  const requestOptions = await makeAwsRequest(request);
-  const resp = await client.sendRequest(requestOptions);
+  const requestOptions = await makeRequestOptionsForAws(request);
+  const resp = await client.sendRequest(requestOptions, request);
   return {
     requestOptions,
     response: resp

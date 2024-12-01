@@ -4,9 +4,10 @@
 
 import https, { RequestOptions } from "https";
 import { TLSSocket } from "tls";
+import { Request } from "types/request";
 import { Response } from "types/response";
 
-export async function sendRequest(requestOptions: RequestOptions): Promise<Response> {
+export async function sendRequest(requestOptions: RequestOptions, request: Request): Promise<Response> {
   return new Promise((resolve, reject) => {
     const clientRequest = https.request(requestOptions, res => {
       const socket = res.socket as TLSSocket;
@@ -42,6 +43,10 @@ export async function sendRequest(requestOptions: RequestOptions): Promise<Respo
     clientRequest.on('error', error => {
       reject(error);
     });
+
+    if (request.body) {
+      clientRequest.write(request.body);
+    }
 
     clientRequest.end();
   });
