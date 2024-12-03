@@ -15,7 +15,7 @@ export default function RequestHeaders() {
   return (
     <Stack>
       {
-        (headers && headers.length > 0) ? (
+        (headers && headers.length > 0) && (
           <Table>
             <Table.Thead>
               <Table.Tr>
@@ -81,9 +81,6 @@ export default function RequestHeaders() {
               }
             </Table.Tbody>
           </Table>
-        ) :
-        (
-          <Box>No custom headers</Box>
         )
       }
 

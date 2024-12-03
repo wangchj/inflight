@@ -27,7 +27,6 @@ export default function RequestForm() {
   const workspace = useSelector((state: RootState) => state.workspace);
   const openedRequest = workspace.openedRequests[workspace.selectedRequestIndex];
   const request = openedRequest.request;
-  const results = useSelector((state: RootState) => state.results);
 
   /**
    * Handles Send button click event.
