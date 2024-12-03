@@ -4,14 +4,18 @@ import { Request } from "types/request";
 import { SignatureV4 } from '@smithy/signature-v4';
 import { Hash } from '@smithy/hash-node';
 import { RequestOptions } from "https";
+import { HttpRequest } from "@aws-sdk/types";
 
 /**
- * Make RequestOptions object for an AWS request.
+ * Updates specified request options params with AWS Signature V4 signature.
  *
+ * @param requestOptions The request options object to update.
  * @param request The request params.
- * @returns NodeJS RequestOptions object.
  */
-export default async function makeRequestOptionsForAws(request: Request): Promise<RequestOptions> {
+export default async function signRequestSigv4(
+  requestOptions: RequestOptions,
+  request: Request
+): Promise<void> {
   // TODO: validate request params.
   // The request.auth.type must be 'aws_sigv4'
   // The required params should be specified: region, service, keys.
@@ -20,12 +24,12 @@ export default async function makeRequestOptionsForAws(request: Request): Promis
   const url = new URL(request.url);
   const credentials = fromIni({profile: auth.profile});
 
-  const signingParams = {
-    method: request.method as string,
-    protocol: url.protocol,
-    hostname: url.hostname,
-    port: url.port ? parseInt(url.port) : undefined,
-    path: url.pathname,
+  const signingParams: HttpRequest = {
+    method: requestOptions.method,
+    protocol: requestOptions.protocol,
+    hostname: requestOptions.hostname,
+    port: requestOptions.port as number,
+    path: requestOptions.path,
     query: (url.searchParams && url.searchParams.size > 0) ?
       Object.fromEntries(url.searchParams.entries()) : undefined,
     fragment: url.hash ? url.hash : undefined,
@@ -46,22 +50,7 @@ export default async function makeRequestOptionsForAws(request: Request): Promis
 
   const signature = await signer.sign(signingParams);
 
-  const res = {
-    ...signingParams,
-    headers: {
-      ...signingParams.headers,
-      ...signature.headers,
-      ...(request.headers ?
-        Object.fromEntries(
-          request.headers
-            .filter(header => header.enabled && !!header.key)
-            .map(header => [header.key, header.value])
-        ) : {}
-      ),
-    }
+  requestOptions.headers = {
+    ...signature.headers
   };
-
-  delete res.body;
-
-  return res;
 }
