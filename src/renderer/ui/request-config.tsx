@@ -60,9 +60,9 @@ export default function RequestConfig({request}: RequestConfigProps) {
       <Tabs.Panel
         key={`${request.name}_body`}
         value="body"
-        style={{flexGrow: 1}}
+        style={{display:'flex', flexGrow: 1, flexShrink: 1}}
       >
-        <Box pt="md" h="100%">
+        <Box pt="md" style={{display: 'flex', flexGrow: 1, flexShrink: 1}}>
           <RequestBody/>
         </Box>
       </Tabs.Panel>

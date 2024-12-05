@@ -37,6 +37,21 @@ import { Request } from 'types/request';
 import { Workspace } from 'types/workspace';
 import { RequestResult } from 'types/request-result';
 
+import * as monaco from 'monaco-editor';
+// import { loader } from '@monaco-editor/react';
+
+// loader.config({ monaco });
+
+import { loader } from '@monaco-editor/react';
+
+self.MonacoEnvironment = {
+	getWorkerUrl: function (moduleId, label) {
+		return './vs/base/worker/workerMain.js';
+	}
+};
+
+loader.config({ paths: { vs: './vs' } });
+
 declare global {
   interface Window {
     openWorkspace: () => Promise<Workspace>;
