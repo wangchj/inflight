@@ -35,7 +35,7 @@ export default function OpenedRequests() {
                   {request.request.name}
 
                   <Group gap="sm">
-                    {request.dirty && <Text c={'yellow'} opacity={0.5} size='xs'>●</Text>}
+                    {request.dirty && <Text c={'gray'} opacity={0.2} size='xs'>●</Text>}
 
                     <CloseButton
                       size="sm"
