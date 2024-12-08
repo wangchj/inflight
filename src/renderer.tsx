@@ -28,6 +28,7 @@
 
 import '@mantine/core/styles.css';
 import { createTheme, MantineProvider } from '@mantine/core';
+import { loader } from '@monaco-editor/react';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { store } from 'renderer/redux/store';
@@ -36,13 +37,6 @@ import { Project } from 'types/project';
 import { Request } from 'types/request';
 import { Workspace } from 'types/workspace';
 import { RequestResult } from 'types/request-result';
-
-import * as monaco from 'monaco-editor';
-// import { loader } from '@monaco-editor/react';
-
-// loader.config({ monaco });
-
-import { loader } from '@monaco-editor/react';
 
 self.MonacoEnvironment = {
 	getWorkerUrl: function (moduleId, label) {

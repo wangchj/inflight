@@ -1,4 +1,3 @@
-import { Textarea } from "@mantine/core";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "renderer/redux/store";
 import { workspaceSlice } from "renderer/redux/workspace-slice";
@@ -12,32 +11,34 @@ export default function RequestBody() {
   const request = openedRequest.request;
 
   return (
-    <Editor
-
-      // height="200px"
-      defaultLanguage="json"
-      value={request.body}
-      // beforeMount={handleEditorWillMount}
-      // onMount={handleEditorDidMount}
-      options={{
-        minimap: {enabled: false}
+    <div
+      style={{
+        width: '100%',
+        position: 'relative'
       }}
-    />
+    >
+      <div
+        style={{
+          position:'absolute',
+          top:0,
+          left:0,
+          right: 0,
+          bottom:0,
+          overflow: 'hidden',
+        }}
+      >
+        <Editor
+          defaultLanguage="json"
+          value={request.body ?? ''}
+          onChange={
+            value => dispatch(workspaceSlice.actions.updateRequest({path: 'body', value}))
+          }
+          options={{
+            minimap: {enabled: false},
+            automaticLayout: true,
+          }}
+        />
+      </div>
+    </div>
   )
-  // return (
-  //   <Textarea
-  //     classNames={{
-  //       root: 'body-Textarea-root',
-  //       wrapper: 'body-Textarea-wrapper',
-  //       input: 'body-Textarea-input',
-  //     }}
-  //     value={request.body ?? ''}
-  //     onChange={
-  //       event => dispatch(workspaceSlice.actions.updateRequest({
-  //         path: 'body',
-  //         value: event.currentTarget.value
-  //       }))
-  //     }
-  //   />
-  // )
 }
