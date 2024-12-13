@@ -16,7 +16,7 @@ export default function RequestOutput() {
   const result = useSelector((state: RootState) => state.results)[openedRequest.id];
 
   if (!result) {
-    return <div>Click on send to initiate the request.</div>
+    return
   }
 
   return (

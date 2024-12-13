@@ -8,4 +8,5 @@ export interface Request {
   auth?: Auth;
   headers?: Header[];
   body?: string;
+  contentType?: string;
 }

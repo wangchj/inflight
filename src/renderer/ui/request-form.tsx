@@ -1,15 +1,12 @@
 import {
-  Box,
   Button,
   Group,
   Notification,
-  SegmentedControl,
   Select,
   Stack,
   TextInput,
-  Title
 } from "@mantine/core";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Request } from "types/request"
 import RequestConfig from "./request-config";
 import RequestOutput from "./request-output";
@@ -19,14 +16,33 @@ import { workspaceSlice } from "renderer/redux/workspace-slice";
 import { projectSlice } from "renderer/redux/project-slice";
 import { resultsSlice } from "renderer/redux/results-slice";
 
+import Split from 'react-split-grid';
+
 export default function RequestForm() {
-  const [selectedTab, setSelectedTab] = useState<string>('Config');
+  // const [selectedTab, setSelectedTab] = useState<string>('Config');
   const [error, setError] = useState<string>();
+
+  const [gridTemplateColumns, setGridTemplateColumns] = useState('1fr 0 0');
 
   const dispatch = useDispatch();
   const workspace = useSelector((state: RootState) => state.workspace);
   const openedRequest = workspace.openedRequests[workspace.selectedRequestIndex];
   const request = openedRequest.request;
+  const result = useSelector((state: RootState) => state.results)[openedRequest.id];
+
+  // Adjust split layout based on the result.
+  useEffect(() => {
+    if (result) {
+      if (gridTemplateColumns === '1fr') {
+        setGridTemplateColumns('1fr 1px 2fr');
+      }
+    }
+    else {
+      if (gridTemplateColumns !== '1fr') {
+        setGridTemplateColumns('1fr');
+      }
+    }
+  }, [result]);
 
   /**
    * Handles Send button click event.
@@ -37,7 +53,7 @@ export default function RequestForm() {
     try {
       const resp = await window.sendRequest(request);
       dispatch(resultsSlice.actions.setResult({id: openedRequest.id, result: resp}));
-      setSelectedTab('Output');
+      // setSelectedTab('Output');
     }
     catch (error) {
       setError(error.message.replace('Error invoking remote method \'sendRequest\': ', ''));
@@ -119,15 +135,20 @@ export default function RequestForm() {
 
       {error && <Notification color="red" onClose={() => setError('')}>{error}</Notification>}
 
-      <Box flex="0">
-        <SegmentedControl
-          data={['Config', 'Output']}
-          value={selectedTab}
-          onChange={setSelectedTab}
-        />
-      </Box>
-
-      {selectedTab === 'Output' ? <RequestOutput/> : <RequestConfig request={request}/>}
+      <Split
+        cursor="ew-resize"
+        // https://github.com/nathancahill/split/pull/728
+        // @ts-ignore
+        render={({getGridProps, getGutterProps}) => (
+          <div className="request-split-grid" {...getGridProps()}>
+            <RequestConfig request={request}/>
+            {result && <div className="split-handle" {...getGutterProps('column', 1)}></div>}
+            {result && <RequestOutput/>}
+          </div>
+        )}
+        gridTemplateColumns={gridTemplateColumns}
+        onDrag={(d, t, s) => setGridTemplateColumns(s)}
+      />
 
     </Stack>
   )

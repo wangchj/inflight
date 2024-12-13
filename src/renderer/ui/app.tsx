@@ -1,12 +1,12 @@
-import { AppShell, Button } from '@mantine/core';
+import './split-layout.css';
 import { useEffect, useState } from 'react';
 import PageLoading from './layout/page-loading';
 import ProjectTree from './project-tree';
-import { Request } from 'types/request';
 import { useDispatch, useSelector } from 'react-redux';
+import Split from 'react-split-grid';
 import { workspaceSlice } from 'renderer/redux/workspace-slice';
 import { projectSlice } from 'renderer/redux/project-slice';
-import { RootState, store } from 'renderer/redux/store';
+import { RootState } from 'renderer/redux/store';
 import OpenedRequests from './opened-requests';
 
 /**
@@ -19,9 +19,9 @@ export function App() {
   const [loading, setLoading] = useState<boolean>(true);
 
   /**
-   * Opened request node.
+   * Split pane widths.
    */
-  const [request, setRequest] = useState<Request>();
+  const [gridTemplateColumns, setGridTemplateColumns] = useState('300px 1px 1fr');
 
   /**
    * React Redux dispatch function.
@@ -70,34 +70,20 @@ export function App() {
   }
 
   return (
-    <AppShell
-      navbar={{
-        width: 300,
-        breakpoint: 'sm',
-      }}
-      footer={{
-        height: 50,
-      }}
-      style={{height: '100%'}}
-    >
-      <AppShell.Navbar p="md">
-        <ProjectTree/>
-      </AppShell.Navbar>
-
-      <AppShell.Main style={{
-        // display:'flex',
-        // flexDirection: 'column',
-        height: '100%',
-        // height: '100vh',
-      }}>
-        <OpenedRequests/>
-      </AppShell.Main>
-
-      <AppShell.Footer>
-        <Button onClick={() => console.log(JSON.stringify(store.getState().workspace, null, 2))}>Print workspace</Button>
-        <Button onClick={() => console.log(JSON.stringify(store.getState().project, null, 2))}>Print project</Button>
-        <Button onClick={() => console.log(JSON.stringify(store.getState().results, null, 2))}>Print Results</Button>
-      </AppShell.Footer>
-    </AppShell>
+    <Split
+      cursor="ew-resize"
+      // https://github.com/nathancahill/split/pull/728
+      // @ts-ignore
+      render={({getGridProps, getGutterProps}) => (
+        <div className='main-split-grid' {...getGridProps()}>
+          <ProjectTree/>
+          <div className="split-handle" {...getGutterProps('column', 1)}/>
+          <OpenedRequests/>
+        </div>
+      )}
+      gridTemplateColumns={gridTemplateColumns}
+      onDrag={(d, t, s) => setGridTemplateColumns(s)}
+      onDragEnd={() => console.log('on drag end')}
+    />
   );
 }

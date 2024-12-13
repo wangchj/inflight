@@ -1,0 +1,24 @@
+.main-split-grid {
+  height: 100%;
+  width: 100%;
+  display: grid;
+}
+
+.request-split-grid {
+  height: 100%;
+  width: 100%;
+  display: grid;
+  column-gap: 1em;
+}
+
+.split-handle {
+  cursor: ew-resize;
+  background-color: var(--mantine-color-default-border);
+}
+
+.split-handle:hover {
+  background-color: var(--mantine-primary-color-filled-hover);
+  padding-left: 1px;
+  padding-right: 1px;
+  z-index: 10;
+}
