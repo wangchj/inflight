@@ -23,7 +23,7 @@ export default function RequestForm() {
   // const [selectedTab, setSelectedTab] = useState<string>('Config');
   const [error, setError] = useState<string>();
 
-  const [gridTemplateColumns, setGridTemplateColumns] = useState('1fr 0 0');
+  const [gridTemplateColumns, setGridTemplateColumns] = useState('1fr');
 
   const dispatch = useDispatch();
   const workspace = useSelector((state: RootState) => state.workspace);
