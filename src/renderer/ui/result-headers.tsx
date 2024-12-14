@@ -39,7 +39,7 @@ export default function ResultHeaders({requestResult}: {requestResult: RequestRe
                 Object.entries(headers).map(entry => (
                   <Table.Tr key={entry[0]}>
                     <Table.Td w="20%"><Code color="none">{entry[0]}</Code></Table.Td>
-                    <Table.Td><Code color="none">{entry[1]}</Code></Table.Td>
+                    <Table.Td style={{lineBreak: 'anywhere'}}><Code color="none">{entry[1]}</Code></Table.Td>
                   </Table.Tr>
                 )) :
               (
@@ -65,7 +65,7 @@ export default function ResultHeaders({requestResult}: {requestResult: RequestRe
                 rawHeadersToEntries(rawHeaders).map(entry => (
                   <Table.Tr key={entry[0]}>
                     <Table.Td w="20%"><Code color="none">{entry[0]}</Code></Table.Td>
-                    <Table.Td><Code color="none">{entry[1]}</Code></Table.Td>
+                    <Table.Td style={{lineBreak: 'anywhere'}}><Code color="none">{entry[1]}</Code></Table.Td>
                   </Table.Tr>
                 )) :
               (
