@@ -7,5 +7,6 @@ export interface Response {
   headers: any;
   rawHeaders: string[];
   data?: string;
+  prettyData?: string;
   peerCertificate: Omit<PeerCertificate, 'pubkey', 'raw'> & {pubkey?: string, raw: string};
 }

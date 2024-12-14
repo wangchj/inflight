@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "renderer/redux/store";
 import { workspaceSlice } from "renderer/redux/workspace-slice";
-import Editor from '@monaco-editor/react';
+import Monaco from "./monaco";
 
 export default function RequestBody() {
   const dispatch = useDispatch();
@@ -11,34 +11,17 @@ export default function RequestBody() {
   const request = openedRequest.request;
 
   return (
-    <div
-      style={{
-        width: '100%',
-        position: 'relative'
+    <Monaco
+      defaultLanguage="json"
+      value={request.body ?? ''}
+      onChange={
+        value => dispatch(workspaceSlice.actions.updateRequest({path: 'body', value}))
+      }
+      options={{
+        minimap: {enabled: false},
+        automaticLayout: true,
+        wordWrap: 'on',
       }}
-    >
-      <div
-        style={{
-          position:'absolute',
-          top:0,
-          left:0,
-          right: 0,
-          bottom:0,
-          overflow: 'hidden',
-        }}
-      >
-        <Editor
-          defaultLanguage="json"
-          value={request.body ?? ''}
-          onChange={
-            value => dispatch(workspaceSlice.actions.updateRequest({path: 'body', value}))
-          }
-          options={{
-            minimap: {enabled: false},
-            automaticLayout: true,
-          }}
-        />
-      </div>
-    </div>
+    />
   )
 }

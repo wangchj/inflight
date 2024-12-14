@@ -17,6 +17,7 @@ import { projectSlice } from "renderer/redux/project-slice";
 import { resultsSlice } from "renderer/redux/results-slice";
 
 import Split from 'react-split-grid';
+import prettify from "renderer/utils/prettify";
 
 export default function RequestForm() {
   // const [selectedTab, setSelectedTab] = useState<string>('Config');
@@ -52,8 +53,8 @@ export default function RequestForm() {
 
     try {
       const resp = await window.sendRequest(request);
+      prettify(resp.response);
       dispatch(resultsSlice.actions.setResult({id: openedRequest.id, result: resp}));
-      // setSelectedTab('Output');
     }
     catch (error) {
       setError(error.message.replace('Error invoking remote method \'sendRequest\': ', ''));

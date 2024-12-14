@@ -1,5 +1,7 @@
+import { Box, SegmentedControl, Stack } from '@mantine/core';
 import { RequestResult } from "types/request-result";
-import Editor from '@monaco-editor/react';
+import Monaco from "./monaco";
+import { useState } from 'react';
 
 /**
  * Maps content-type to Monaco language.
@@ -9,6 +11,8 @@ const languageMap = new Map([
 ]);
 
 export default function ResultBody({requestResult}: {requestResult: RequestResult}) {
+  const hasPrettyData = !!requestResult.response.prettyData;
+  const [pretty, setPretty] = useState<boolean>(hasPrettyData);
   const contentType = requestResult.response.headers?.['content-type'];
   const data = requestResult.response.data;
 
@@ -17,32 +21,28 @@ export default function ResultBody({requestResult}: {requestResult: RequestResul
   }
 
   return (
-    <div
-      style={{
-        width: '100%',
-        position: 'relative'
-      }}
-    >
-      <div
-        style={{
-          position:'absolute',
-          top:0,
-          left:0,
-          right: 0,
-          bottom:0,
-          overflow: 'hidden',
-        }}
-      >
-        <Editor
+    <Stack style={{width: '100%', height: '100%'}}>
+      <Box>
+        <SegmentedControl
+          data={['Pretty', 'Raw']}
+          value={pretty ? 'Pretty' : 'Raw'}
+          onChange={value => setPretty(value === 'Pretty')}
+          readOnly={!hasPrettyData}
+        />
+      </Box>
+
+      <div style={{flexGrow: 1}}>
+        <Monaco
           language={languageMap.get(contentType)}
-          value={data}
+          value={pretty && hasPrettyData ? requestResult.response.prettyData : data}
           options={{
             readOnly: true,
             minimap: {enabled: false},
             automaticLayout: true,
+            wordWrap: 'on',
           }}
         />
       </div>
-    </div>
+    </Stack>
   )
 }
