@@ -45,7 +45,7 @@ export default function RequestOutput() {
         style={{display: 'flex', flexGrow: 1, flexShrink: 1}}
       >
         <Box pt="md" style={{display: 'flex', flexGrow: 1, flexShrink: 1}}>
-          <ResultBody requestResult={result}/>
+          <ResultBody id={openedRequest.id} requestResult={result}/>
         </Box>
       </Tabs.Panel>
 

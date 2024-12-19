@@ -7,7 +7,6 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
-import { Request } from "types/request"
 import RequestConfig from "./request-config";
 import RequestOutput from "./request-output";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,7 +16,6 @@ import { projectSlice } from "renderer/redux/project-slice";
 import { resultsSlice } from "renderer/redux/results-slice";
 
 import Split from 'react-split-grid';
-import prettify from "renderer/utils/prettify";
 
 export default function RequestForm() {
   // const [selectedTab, setSelectedTab] = useState<string>('Config');
@@ -53,7 +51,6 @@ export default function RequestForm() {
 
     try {
       const resp = await window.sendRequest(request);
-      prettify(resp.response);
       dispatch(resultsSlice.actions.setResult({id: openedRequest.id, result: resp}));
     }
     catch (error) {
