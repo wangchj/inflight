@@ -2,6 +2,7 @@ import { Box, CloseButton, Group, Tabs, Text } from '@mantine/core';
 import { MouseEvent } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from 'renderer/redux/store';
+import { resultsSlice } from 'renderer/redux/results-slice';
 import { workspaceSlice } from 'renderer/redux/workspace-slice';
 import RequestForm from './request-form';
 
@@ -41,6 +42,7 @@ export default function OpenedRequests() {
                       size="sm"
                       onClick={(event: MouseEvent) => {
                         event.stopPropagation();
+                        dispatch(resultsSlice.actions.deleteResult(request.id));
                         dispatch(workspaceSlice.actions.closeRequest(index));
                       }}
                     />

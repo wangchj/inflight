@@ -21,6 +21,16 @@ export const resultsSlice = createSlice({
     setResult(state, action: PayloadAction<{id: string, result: RequestResult}>) {
       state[action.payload.id] = action.payload.result;
     },
+
+    /**
+     * Deletes the result of request id.
+     *
+     * @param state The results slice.
+     * @param action The payload is the request id to delete.
+     */
+    deleteResult(state, action: PayloadAction<string>) {
+      delete state[action.payload];
+    },
   },
 });
 
