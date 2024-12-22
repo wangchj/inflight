@@ -1,11 +1,12 @@
-import { Group, Tree } from '@mantine/core';
-import { useDispatch, useSelector } from 'react-redux';
+import { Group, Tree, useTree } from '@mantine/core';
 import { IconChevronRight } from '@tabler/icons-react';
+import { useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Folder } from 'types/folder';
+import { Project } from 'types/project';
 import { TreeNode } from 'types/tree-node';
 import { RootState } from 'renderer/redux/store';
 import { workspaceSlice } from 'renderer/redux/workspace-slice';
-import { Project } from 'types/project';
 
 /**
  * Makes Mantine tree node data.
@@ -52,7 +53,18 @@ function makeData(project: Project, folder: Folder, path: string): TreeNode[] {
  */
 export default function ProjectTree() {
   const dispatch = useDispatch();
+  const workspace = useSelector((state: RootState) => state.workspace);
   const project = useSelector((state: RootState) => state.project);
+  const data = useMemo(() => makeData(project, project.tree, ''), [project]);
+  const tree = useTree({
+    initialExpandedState: workspace.treeExpandedState,
+    onNodeExpand: (value: string) => {
+      dispatch(workspaceSlice.actions.expandTreeNode(value));
+    },
+    onNodeCollapse: (value: string) => {
+      dispatch(workspaceSlice.actions.collapseTreeNode(value));
+    }
+  });
 
   /**
    * Handles tree node click/select event.
@@ -70,7 +82,8 @@ export default function ProjectTree() {
 
   return (
     <Tree
-      data={makeData(project, project.tree, '')}
+      data={data}
+      tree={tree}
       levelOffset={23}
       selectOnClick
       renderNode={({ node, expanded, hasChildren, elementProps }) => (

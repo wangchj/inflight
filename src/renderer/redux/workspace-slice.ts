@@ -255,7 +255,35 @@ export const workspaceSlice = createSlice({
         }
         openedRequest.dirty = true;
       }
-    }
+    },
+
+    /**
+     * Expands a tree folder node.
+     *
+     * @param state The workspace object.
+     * @param action Contains the id of the folder to expand.
+     */
+    expandTreeNode(state, action: PayloadAction<string>) {
+      if (!state.treeExpandedState) {
+        state.treeExpandedState = {};
+      }
+
+      state.treeExpandedState[action.payload] = true;
+    },
+
+    /**
+     * Collapses a tree folder node.
+     *
+     * @param state The workspace object.
+     * @param action Contains the id of the folder to collapse.
+     */
+    collapseTreeNode(state, action: PayloadAction<string>) {
+      if (!state.treeExpandedState) {
+        state.treeExpandedState = {};
+      }
+
+      state.treeExpandedState[action.payload] = false;
+    },
   },
 });
 
