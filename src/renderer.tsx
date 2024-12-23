@@ -54,6 +54,7 @@ declare global {
     saveProject: (path: string, project: Project) => Promise<void>;
     sendRequest: (request: Request) => Promise<RequestResult>;
     onFlushWorkspace: (callback: () => void) => void;
+    monaco: any;
   }
 }
 

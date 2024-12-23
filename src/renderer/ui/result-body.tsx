@@ -4,6 +4,7 @@ import Monaco from "./monaco";
 import { memo, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { resultsSlice } from "renderer/redux/results-slice";
+import resultEditorPath from 'renderer/utils/result-editor-path';
 
 /**
  * Maps content-type to Monaco language.
@@ -87,7 +88,7 @@ function ResultBody({id, requestResult}: {id: string, requestResult: RequestResu
 
       <div style={{flexGrow: 1}}>
         <Monaco
-          path={`results/${id}`}
+          path={resultEditorPath(id)}
           keepCurrentModel
           onMount={onEditorMount}
           language={languageMap.get(contentType)}

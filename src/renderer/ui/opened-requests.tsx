@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from 'renderer/redux/store';
 import { resultsSlice } from 'renderer/redux/results-slice';
 import { workspaceSlice } from 'renderer/redux/workspace-slice';
+import resultEditorPath from 'renderer/utils/result-editor-path';
 import RequestForm from './request-form';
 
 export default function OpenedRequests() {
@@ -42,6 +43,17 @@ export default function OpenedRequests() {
                       size="sm"
                       onClick={(event: MouseEvent) => {
                         event.stopPropagation();
+
+                        // Look for Monaco model
+                        const model = window.monaco.editor.getModels()?.find(
+                          (m: any) => m._associatedResource.path === resultEditorPath(request.id)
+                        );
+
+                        // Dispose Monaco model if exists.
+                        if (model) {
+                          model.dispose();
+                        }
+
                         dispatch(resultsSlice.actions.deleteResult(request.id));
                         dispatch(workspaceSlice.actions.closeRequest(index));
                       }}
