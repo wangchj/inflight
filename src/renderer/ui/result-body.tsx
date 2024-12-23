@@ -2,74 +2,79 @@ import { Box, SegmentedControl, Stack } from '@mantine/core';
 import { RequestResult } from "types/request-result";
 import Monaco from "./monaco";
 import { memo, useEffect, useRef, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { resultsSlice } from "renderer/redux/results-slice";
 import resultEditorPath from 'renderer/utils/result-editor-path';
+import getEditorLanguage from 'renderer/utils/get-editor-language';
 
 /**
- * Maps content-type to Monaco language.
+ * Debounce updateEditorContent() calls.
  */
-const languageMap = new Map([
-  ['application/json', 'json']
-]);
+let updateTimer: ReturnType<typeof setTimeout>;
 
+/**
+ * The result body UI component.
+ *
+ * @param id The request id
+ * @param requestResult The request result object.
+ */
 function ResultBody({id, requestResult}: {id: string, requestResult: RequestResult}) {
-  const dispatch = useDispatch();
-  const monacoRef = useRef(null);
-  const [editor, setEditor] = useState<any>();
+  const editorRef = useRef(null);
   const [pretty, setPretty] = useState<boolean>(true);
   const contentType = requestResult.response.headers?.['content-type'];
-  const data = requestResult.response.data;
+  const response = requestResult.response;
+  const data = response.data;
 
   /**
    * Handles Monaco editor onMount event.
    *
-   * @param _editor The editor instance.
+   * @param editor The editor instance.
    */
-  async function onEditorMount(_editor: any, monaco: any) {
-    setEditor(_editor);
-    monacoRef.current = monaco;
+  async function onEditorMount(editor: any, monaco: any) {
+    editorRef.current = editor;
+
+    if (data && data.length > 0 && !editor.getValue()) {
+      updateEditorContent(pretty);
+    }
   }
 
   /**
-   * Tells Monaco Editor to format the current editor content.
+   * Update the Monaco editor content to be in sync with data.
+   *
+   * @param p Determine if content should be formatted.
    */
-  async function prettify() {
-    if (editor && data && languageMap.get(contentType) && !requestResult.prettied) {
-      editor.updateOptions({readOnly: false});
-      await editor.getAction('editor.action.formatDocument').run();
-      editor.updateOptions({readOnly: true});
-      dispatch(resultsSlice.actions.setResult({id, result: {...requestResult, prettied: true}}));
+  function updateEditorContent(p: boolean) {
+    const editor = editorRef.current;
+
+    if (!editor) {
+      return;
     }
+
+    if (updateTimer) {
+      clearTimeout(updateTimer);
+    }
+
+    updateTimer = setTimeout(async () => {
+      editor.setValue(data);
+
+      if (p && getEditorLanguage(contentType)) {
+        editor.updateOptions({readOnly: false});
+        await editor.getAction('editor.action.formatDocument').run();
+        editor.updateOptions({readOnly: true});
+      }
+    }, 100)
   }
 
   /**
    * Handles pretty toggle event.
    */
   function onPrettyChange(value: string) {
-    if (value === 'Pretty') {
-      prettify();
-    }
-    else {
-      if (editor) {
-        editor.updateOptions({readOnly: false});
-        editor.setValue(data);
-        editor.updateOptions({readOnly: true});
-        dispatch(resultsSlice.actions.setResult({id, result: {...requestResult, prettied: false}}));
-      }
-    }
-
-    setPretty(value === 'Pretty');
+    const p = value === 'Pretty';
+    setPretty(p);
+    updateEditorContent(p)
   }
 
-  /**
-   * Handles editor mount event.
-   */
   useEffect(() => {
-    if (pretty) {
-      prettify();
-    }
-  }, [editor]);
+    updateEditorContent(pretty);
+  }, [response]);
 
   if (!data) {
     return <div>The response does not contain data.</div>
@@ -91,9 +96,9 @@ function ResultBody({id, requestResult}: {id: string, requestResult: RequestResu
           path={resultEditorPath(id)}
           keepCurrentModel
           onMount={onEditorMount}
-          language={languageMap.get(contentType)}
-          defaultValue={data}
+          language={getEditorLanguage(contentType)}
           options={{
+            readOnly: true,
             minimap: {enabled: false},
             automaticLayout: true,
             wordWrap: 'on',
