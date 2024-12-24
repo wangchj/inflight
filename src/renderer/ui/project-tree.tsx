@@ -1,4 +1,4 @@
-import { Group, Tree, useTree } from '@mantine/core';
+import { Box, Group, RenderTreeNodePayload, Tree, useTree } from '@mantine/core';
 import { IconChevronRight } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -80,32 +80,45 @@ export default function ProjectTree() {
     }
   }
 
+  function renderNode(
+    {node, level, expanded, hasChildren, elementProps}: RenderTreeNodePayload
+  ) {
+    const pl = `calc(var(--mantine-spacing-sm) + var(--level-offset) * ${level - 1})`;
+
+    return (
+      <Group
+        gap={5}
+        {...elementProps}
+        onClick={event => {
+          elementProps.onClick(event);
+          onSelect(node as TreeNode);
+        }}
+        pl={pl}
+        pr="sm"
+        fz="sm"
+      >
+        {hasChildren && (
+          <IconChevronRight
+            size={16}
+            style={{ transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)' }}
+          />
+        )}
+
+
+        <span>{node.label}</span>
+      </Group>
+    )
+  }
+
   return (
-    <Tree
-      data={data}
-      tree={tree}
-      levelOffset={23}
-      selectOnClick
-      renderNode={({ node, expanded, hasChildren, elementProps }) => (
-
-        <Group
-          gap={5}
-          {...elementProps}
-          onClick={event => {
-            elementProps.onClick(event);
-            onSelect(node as TreeNode);
-          }}
-        >
-          {hasChildren && (
-            <IconChevronRight
-              size={18}
-              style={{ transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)' }}
-            />
-          )}
-          <span>{node.label}</span>
-        </Group>
-
-      )}
-    />
+    <Box mt="sm" mb="sm">
+      <Tree
+        data={data}
+        tree={tree}
+        levelOffset={23}
+        selectOnClick
+        renderNode={renderNode}
+      />
+    </Box>
   )
 }
