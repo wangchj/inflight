@@ -6,6 +6,7 @@ import { resultsSlice } from 'renderer/redux/results-slice';
 import { workspaceSlice } from 'renderer/redux/workspace-slice';
 import resultEditorPath from 'renderer/utils/result-editor-path';
 import RequestForm from './request-form';
+import MethodIcon from './method-icon';
 
 export default function OpenedRequests() {
   const dispatch = useDispatch();
@@ -34,7 +35,11 @@ export default function OpenedRequests() {
                 value={request.id}
               >
                 <Group gap="lg">
-                  {request.request.name}
+
+                  <Group gap="xs">
+                    <MethodIcon method={request.request.method}/>
+                    {request.request.name}
+                  </Group>
 
                   <Group gap="sm">
                     {request.dirty && <Text c={'gray'} opacity={0.2} size='xs'>●</Text>}

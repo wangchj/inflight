@@ -3,7 +3,7 @@ import { Header } from 'types/header';
 
 export interface Request {
   name?: string;
-  method: 'GET' | 'POST';
+  method: string;
   url: string;
   auth?: Auth;
   headers?: Header[];

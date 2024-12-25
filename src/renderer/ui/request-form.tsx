@@ -90,8 +90,8 @@ export default function RequestForm() {
           style={{flexGrow: 1}}
         >
           <Select
-            style={{flexGrow: 0, width: '100px'}}
-            data={['GET', 'POST']}
+            style={{flexGrow: 0, width: '120px'}}
+            data={['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS']}
             value={request.method}
             onChange={
               value => value === null ? null : dispatch(
