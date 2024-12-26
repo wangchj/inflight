@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, nanoid } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { Workspace } from 'types/workspace';
 import { set } from 'lodash';
@@ -50,6 +50,29 @@ export const workspaceSlice = createSlice({
       else {
         state.selectedRequestIndex = index;
       }
+    },
+
+    /**
+     * Add a new opened request.
+     *
+     * @param state The workspace object.
+     */
+    newRequest(state) {
+      if (!Array.isArray(state.openedRequests)) {
+        state.openedRequests = [];
+      }
+
+      state.openedRequests.push({
+        id: nanoid(),
+        request: {
+          name: 'Unnamed request',
+          method: 'GET',
+          url: '',
+        },
+        dirty: true
+      });
+
+      state.selectedRequestIndex = state.openedRequests.length - 1;
     },
 
     /**

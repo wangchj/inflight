@@ -1,4 +1,5 @@
-import { Box, CloseButton, Group, Tabs, Text } from '@mantine/core';
+import { Box, Button, CloseButton, Divider, Group, Tabs, Text } from '@mantine/core';
+import { IconPlus } from '@tabler/icons-react';
 import { MouseEvent } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from 'renderer/redux/store';
@@ -14,7 +15,7 @@ export default function OpenedRequests() {
   const openedRequests = workspace.openedRequests;
   const selectedRequest = openedRequests?.[workspace.selectedRequestIndex];
 
-  return Array.isArray(openedRequests) && openedRequests.length > 0 ?
+  return openedRequests?.length ?
     (
       <Tabs
         value={selectedRequest.id}
@@ -42,7 +43,7 @@ export default function OpenedRequests() {
                   </Group>
 
                   <Group gap="sm">
-                    {request.dirty && <Text c={'gray'} opacity={0.2} size='xs'>●</Text>}
+                    {request.dirty && <Text c={'gray'} opacity={0.4} size='xs'>●</Text>}
 
                     <CloseButton
                       size="sm"
@@ -68,6 +69,19 @@ export default function OpenedRequests() {
               </Tabs.Tab>
             ))
           }
+
+          <Divider orientation="vertical" ml="md" mt="sm" mb="sm"/>
+
+          <div style={{display: 'flex', alignItems: 'center'}}>
+            <Button
+              variant="transparent"
+              color="dark"
+              onClick={() => dispatch(workspaceSlice.actions.newRequest())}
+            >
+              <IconPlus size="18"/>
+            </Button>
+          </div>
+
         </Tabs.List>
 
         {openedRequests.map(openedRequest => (
@@ -85,5 +99,23 @@ export default function OpenedRequests() {
         ))}
       </Tabs>
     ):
-    <div>No request selected</div>
+    (
+      <div
+        style={{
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center'
+        }
+      }>
+        <Button
+          leftSection={<IconPlus/>}
+          onClick={() => dispatch(workspaceSlice.actions.newRequest())}
+        >
+          Start a New Request
+        </Button>
+      </div>
+    )
+
 }

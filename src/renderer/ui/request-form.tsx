@@ -110,6 +110,7 @@ export default function RequestForm() {
                 )
               )
             }
+            placeholder="Request URL"
           />
         </Group>
 
