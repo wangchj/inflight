@@ -57,7 +57,10 @@ function ResultBody({id, requestResult}: {id: string, requestResult: RequestResu
 
       if (p && getEditorLanguage(contentType)) {
         editor.updateOptions({readOnly: false});
-        await editor.getAction('editor.action.formatDocument').run();
+        const action = editor.getAction('editor.action.formatDocument');
+        if (action) {
+          await action.run();
+        }
         editor.updateOptions({readOnly: true});
       }
     }, 100)

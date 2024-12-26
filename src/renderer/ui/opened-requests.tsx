@@ -37,9 +37,18 @@ export default function OpenedRequests() {
               >
                 <Group gap="lg">
 
-                  <Group gap="xs">
+                  <Group
+                    gap="xs"
+                    maw="20em"
+                    wrap="nowrap"
+                    style={{
+                      overflow: 'hidden'
+                    }}
+                  >
                     <MethodIcon method={request.request.method}/>
-                    {request.request.name}
+                    <div style={{overflow: 'hidden', textOverflow: 'ellipsis'}}>
+                      {request.request.name || request.request.url || 'New Request'}
+                    </div>
                   </Group>
 
                   <Group gap="sm">
@@ -113,7 +122,7 @@ export default function OpenedRequests() {
           leftSection={<IconPlus/>}
           onClick={() => dispatch(workspaceSlice.actions.newRequest())}
         >
-          Start a New Request
+          New Request
         </Button>
       </div>
     )

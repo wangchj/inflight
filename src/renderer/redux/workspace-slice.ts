@@ -65,7 +65,6 @@ export const workspaceSlice = createSlice({
       state.openedRequests.push({
         id: nanoid(),
         request: {
-          name: 'Unnamed request',
           method: 'GET',
           url: '',
         },
