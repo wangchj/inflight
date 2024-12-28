@@ -57,6 +57,7 @@ export default function ProjectTree() {
     return (
       <Group
         gap={8}
+        wrap='nowrap'
         {...elementProps}
         onClick={event => {
           elementProps.onClick(event);
@@ -78,7 +79,7 @@ export default function ProjectTree() {
         {node.nodeProps.type === 'folder' && <FolderIcon size="1em" opacity={0.8}/>}
         {node.nodeProps.type === 'request' && getRequestIcon(node.value)}
 
-        <span>{node.label}</span>
+        <div style={{textWrap: 'nowrap', overflow: 'hidden'}}>{node.label}</div>
       </Group>
     )
   }
@@ -93,7 +94,7 @@ export default function ProjectTree() {
     const request = project.requests[requestId];
 
     return (
-      <div style={{display: 'flex', width: '2em', justifyContent: 'flex-end'}}>
+      <div style={{display: 'flex', width: '2em', minWidth: '2em', justifyContent: 'flex-end'}}>
         <MethodIcon method={request?.method}/>
       </div>
     )

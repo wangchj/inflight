@@ -62,7 +62,7 @@ function makeRequestNode(project: Project, requestId: string): TreeNodeData {
 
   return {
     value: requestId,
-    label: request.name,
+    label: request.name || request.url,
     nodeProps: {
       type: 'request'
     }
