@@ -7,6 +7,7 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
+import Split from 'react-split-grid';
 import RequestConfig from "./request-config";
 import RequestOutput from "./request-output";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,8 +15,7 @@ import { RootState, store } from "renderer/redux/store";
 import { workspaceSlice } from "renderer/redux/workspace-slice";
 import { projectSlice } from "renderer/redux/project-slice";
 import { resultsSlice } from "renderer/redux/results-slice";
-
-import Split from 'react-split-grid';
+import { openSaveRequestModal, SaveRequestModal } from "./save-request-modal";
 
 export default function RequestForm() {
   // const [selectedTab, setSelectedTab] = useState<string>('Config');
@@ -62,21 +62,24 @@ export default function RequestForm() {
    * Handles Save button click event.
    */
   async function onSaveClick() {
-    const openedRequest = workspace.openedRequests[workspace.selectedRequestIndex];
+    if (openedRequest.folderId) {
+      if (openedRequest.dirty) {
+        dispatch(projectSlice.actions.setRequest({
+          id: openedRequest.id, request: openedRequest.request
+        }));
 
-    if (openedRequest.dirty) {
-      dispatch(projectSlice.actions.setRequest({
-        id: openedRequest.id, request: openedRequest.request
-      }));
-
-      try {
-        await window.saveProject(workspace.projectRef.$ref, store.getState().project);
-        dispatch(workspaceSlice.actions.setDirty(false));
-        await window.saveWorkspace(store.getState().workspace);
+        try {
+          await window.saveProject(workspace.projectRef.$ref, store.getState().project);
+          dispatch(workspaceSlice.actions.setDirty(false));
+          await window.saveWorkspace(store.getState().workspace);
+        }
+        catch (error) {
+          console.log("Error saving project", error);
+        }
       }
-      catch (error) {
-        console.log("Error saving project", error);
-      }
+    }
+    else {
+      openSaveRequestModal(openedRequest);
     }
   }
 
@@ -149,6 +152,7 @@ export default function RequestForm() {
         onDrag={(d, t, s) => setGridTemplateColumns(s)}
       />
 
+      <SaveRequestModal/>
     </Stack>
   )
 }

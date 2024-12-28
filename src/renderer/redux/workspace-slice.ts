@@ -4,7 +4,7 @@ import { Workspace } from 'types/workspace';
 import { set } from 'lodash';
 import { AwsSigv4Auth } from 'types/auth';
 import { Request } from 'types/request';
-import { Header } from 'types/header';
+import { OpenedRequest } from 'types/opened-request';
 
 const initialState: Workspace = {};
 
@@ -29,7 +29,7 @@ export const workspaceSlice = createSlice({
      * @param state The workspace object.
      * @param action The action.
      */
-    openRequest(state, action: PayloadAction<{id: string, request: Request}>) {
+    openRequest(state, action: PayloadAction<{id: string, folderId: string, request: Request}>) {
       // const node = action.payload;
       const openedRequests = state.openedRequests;
       const index = openedRequests ?
@@ -41,6 +41,7 @@ export const workspaceSlice = createSlice({
         }
         state.openedRequests.push({
           id: action.payload.id,
+          folderId: action.payload.folderId,
           // Deep copy
           request: JSON.parse(JSON.stringify(action.payload.request))
         });
@@ -111,6 +112,25 @@ export const workspaceSlice = createSlice({
     },
 
     /**
+     * Sets the selected OpenedRequest object.
+     *
+     * @param state The workspace object.
+     * @param action The payload is the object to use.
+     */
+    setRequest(state, action: PayloadAction<OpenedRequest>) {
+      const index = state.selectedRequestIndex;
+      const requests = state.openedRequests;
+
+      if (!Array.isArray(requests) || typeof index !== 'number' || index < 0 ||
+        index > requests.length - 1)
+      {
+        return;
+      }
+
+      requests[index] = action.payload;
+    },
+
+    /**
      * Updates the dirty flag of the currently selected tab.
      *
      * @param state The workspace object.
@@ -157,40 +177,6 @@ export const workspaceSlice = createSlice({
 
       openedRequest.dirty = true;
     },
-
-    /**
-     * Sets AWS auth credentials source type.
-     *
-     * @param state The workspace object.
-     * @param action The action that contains the credentials source type.
-     */
-    // setAwsCredsSource(state, action: PayloadAction<string>) {
-    //   const openedRequest = state.openedRequests?.[state.selectedRequestIndex];
-    //   const request = openedRequest?.request;
-
-    //   if (!request) {
-    //     return;
-    //   }
-
-    //   switch (action.payload) {
-    //     case 'aws_cli_profile':
-    //       request.auth = {
-    //         type: request.auth.type,
-    //         source: 'aws_cli_profile',
-    //         profile: 'default',
-    //       } as AwsSigv4Auth;
-    //       break;
-
-    //     case 'inline':
-    //       request.auth = {
-    //         type: request.auth.type,
-    //         source: 'inline',
-    //       } as AwsSigv4Auth;
-    //       break;
-    //   }
-
-    //   openedRequest.dirty = true;
-    // },
 
     /**
      * Sets the selected request.
