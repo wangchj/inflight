@@ -81,8 +81,16 @@ export const workspaceSlice = createSlice({
      * @param state The workspace state.
      * @param action The action that contains the id of the request to close.
      */
-    closeRequest(state, action: PayloadAction<number>) {
-      const index = action.payload;
+    closeRequest(state, action: PayloadAction<number | string>) {
+      const index = typeof action.payload === 'number' ? action.payload :
+        state.openedRequests?.findIndex(r => r.id === action.payload);
+
+      if (!Array.isArray(state.openedRequests) ||
+          index < 0 ||
+          index > state.openedRequests.length - 1)
+      {
+        return;
+      }
 
       state.openedRequests = state.openedRequests.filter((_, i) => i !== index);
 

@@ -16,8 +16,8 @@ export default function makeTree(project: Project, rootId: string): TreeNodeData
   const folder = project.folders?.[rootId];
 
   return [
-    ...(folder?.folders?.map(folderId => makeFolderNode(project, folderId)) ?? []),
-    ...(folder?.requests?.map(requestId => makeRequestNode(project, requestId)) ?? [])
+    ...(folder?.folders?.map(folderId => makeFolderNode(project, folderId, rootId)) ?? []),
+    ...(folder?.requests?.map(requestId => makeRequestNode(project, requestId, rootId)) ?? [])
   ]
   .filter(node => !!node);
 }
@@ -27,9 +27,10 @@ export default function makeTree(project: Project, rootId: string): TreeNodeData
  *
  * @param project The project object.
  * @param folderId The folder id.
+ * @param parentId The id of the parent folder.
  * @returns A folder node or undefined.
  */
-function makeFolderNode(project: Project, folderId: string): TreeNodeData {
+function makeFolderNode(project: Project, folderId: string, parentId: string): TreeNodeData {
   const folder = project.folders?.[folderId];
 
   if (!folder) {
@@ -41,7 +42,8 @@ function makeFolderNode(project: Project, folderId: string): TreeNodeData {
     label: folder.name,
     children: makeTree(project, folderId),
     nodeProps: {
-      type: 'folder'
+      type: 'folder',
+      parentId,
     }
   };
 }
@@ -51,9 +53,10 @@ function makeFolderNode(project: Project, folderId: string): TreeNodeData {
  *
  * @param project The project object.
  * @param folderId The request id.
+ * @param parentId The id of the parent folder.
  * @returns A request node or undefined.
  */
-function makeRequestNode(project: Project, requestId: string): TreeNodeData {
+function makeRequestNode(project: Project, requestId: string, parentId: string): TreeNodeData {
   const request = project.requests?.[requestId];
 
   if (!request) {
@@ -64,25 +67,8 @@ function makeRequestNode(project: Project, requestId: string): TreeNodeData {
     value: requestId,
     label: request.name || request.url,
     nodeProps: {
-      type: 'request'
+      type: 'request',
+      parentId,
     }
   };
 }
-
-// export function makeTreeNode(folder: Folder, parent: TreeNodeData, path: string): TreeNodeData {
-//   const res: TreeNodeData = {
-//     value: path,
-//     label: path === '' ? 'Project' : folder.name,
-//     nodeProps: {
-//       folder,
-//       parent
-//     },
-//   };
-
-//   if (Array.isArray(folder.folders) && folder.folders.length > 0) {
-//     const children = folder.folders.map(f => makeTreeNode(f, res, `${path}/${f.name}`))
-//     res.children = children;
-//   }
-
-//   return res;
-// }
