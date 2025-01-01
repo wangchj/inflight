@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, nanoid } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import getDescendantFolderIds from 'renderer/utils/get-descendant-folder-ids';
 import getDescendantRequestIds from 'renderer/utils/get-descendant-request-ids';
@@ -115,6 +115,35 @@ export const projectSlice = createSlice({
       if (Array.isArray(folder.requests)) {
         folder.requests = folder.requests.filter(requestId => requestId !== id);
       }
+    },
+
+    /**
+     * Adds a new folder to the project.
+     *
+     * @param state The project object.
+     * @param action The payload has the following:
+     * - name: Name of the new folder
+     * - parentId: The id of the parent folder to which the new folder is added.
+     */
+    newFolder(state, action: PayloadAction<{name: string, parentId: string}>) {
+      const {name, parentId} = action.payload;
+
+      if (!state.folders || !state.folders[parentId]) {
+        return;
+      }
+
+      const parent = state.folders[parentId];
+      const newId = nanoid();
+
+      state.folders[newId] = {
+        name: name
+      };
+
+      if (!Array.isArray(parent.folders)) {
+        parent.folders = [];
+      }
+
+      parent.folders.push(newId);
     },
   },
 });

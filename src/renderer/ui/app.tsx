@@ -8,6 +8,7 @@ import { workspaceSlice } from 'renderer/redux/workspace-slice';
 import { projectSlice } from 'renderer/redux/project-slice';
 import { RootState } from 'renderer/redux/store';
 import OpenedRequests from './opened-requests';
+import { NewFolderModal } from './new-folder-modal';
 
 /**
  * The app root component.
@@ -70,20 +71,24 @@ export function App() {
   }
 
   return (
-    <Split
-      cursor="ew-resize"
-      // https://github.com/nathancahill/split/pull/728
-      // @ts-ignore
-      render={({getGridProps, getGutterProps}) => (
-        <div className='main-split-grid' {...getGridProps()}>
-          <ProjectTree/>
-          <div className="split-handle" {...getGutterProps('column', 1)}/>
-          <OpenedRequests/>
-        </div>
-      )}
-      gridTemplateColumns={gridTemplateColumns}
-      onDrag={(d, t, s) => setGridTemplateColumns(s)}
-      onDragEnd={() => console.log('on drag end')}
-    />
+    <>
+      <Split
+        cursor="ew-resize"
+        // https://github.com/nathancahill/split/pull/728
+        // @ts-ignore
+        render={({getGridProps, getGutterProps}) => (
+          <div className='main-split-grid' {...getGridProps()}>
+            <ProjectTree/>
+            <div className="split-handle" {...getGutterProps('column', 1)}/>
+            <OpenedRequests/>
+          </div>
+        )}
+        gridTemplateColumns={gridTemplateColumns}
+        onDrag={(d, t, s) => setGridTemplateColumns(s)}
+        onDragEnd={() => console.log('on drag end')}
+      />
+
+      <NewFolderModal/>
+    </>
   );
 }

@@ -2,12 +2,14 @@ import { configureStore } from '@reduxjs/toolkit';
 import workspaceSlice from './workspace-slice';
 import projectSlice from './project-slice';
 import resultsSlice from './results-slice';
+import uiSlice from './ui-slice';
 
 export const store = configureStore({
   reducer: {
     workspace: workspaceSlice,
     project: projectSlice,
     results: resultsSlice,
+    ui: uiSlice,
   },
 })
 

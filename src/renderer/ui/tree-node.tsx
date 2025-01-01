@@ -1,21 +1,17 @@
-import { Group, Menu, RenderTreeNodePayload, TreeNodeData } from "@mantine/core";
-import { IconChevronRight, IconDots, IconFolder, IconFolderOpen, IconTrash } from "@tabler/icons-react";
-import { useState } from "react";
+import { Group, RenderTreeNodePayload, TreeNodeData } from "@mantine/core";
+import { IconChevronRight, IconFolder, IconFolderOpen } from "@tabler/icons-react";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState, store } from "renderer/redux/store";
-import { projectSlice } from "renderer/redux/project-slice";
+import { RootState } from "renderer/redux/store";
 import { workspaceSlice } from "renderer/redux/workspace-slice";
 import MethodIcon from "./method-icon";
-import getDescendantRequestIds from "renderer/utils/get-descendant-request-ids";
+import NodeMenu from "./node-menu";
 
 /**
  * Project tree node component.
  */
 export default function TreeNode({payload}: {payload: RenderTreeNodePayload}) {
   const dispatch = useDispatch();
-  const workspace = useSelector((state: RootState) => state.workspace);
   const project = useSelector((state: RootState) => state.project);
-  const [menuOpen, setMenuOpen] = useState<boolean>(false);
   const {node, level, expanded, selected, hasChildren, elementProps} = payload;
 
   const pl = `calc(var(--mantine-spacing-sm) + var(--level-offset) * ${level - 1})`;
@@ -53,40 +49,6 @@ export default function TreeNode({payload}: {payload: RenderTreeNodePayload}) {
     )
   }
 
-  /**
-   * Handles delete menu item click.
-   *
-   * @param node The node on which delete is clicked.
-   */
-  async function onDeleteClick(node: TreeNodeData) {
-    switch (node.nodeProps.type) {
-      case 'folder':
-        const requestIds = getDescendantRequestIds(project, node.value);
-        requestIds.forEach(i => dispatch(workspaceSlice.actions.closeRequest(i)));
-        dispatch(projectSlice.actions.deleteFolder({
-          id: node.value,
-          parentId: node.nodeProps.parentId
-        }));
-        break;
-
-      case 'request':
-        dispatch(workspaceSlice.actions.closeRequest(node.value));
-        dispatch(projectSlice.actions.deleteRequest({
-          id: node.value,
-          parentId: node.nodeProps.parentId
-        }));
-        break;
-    }
-
-    try {
-      await window.saveProject(workspace.projectRef.$ref, store.getState().project);
-      await window.saveWorkspace(store.getState().workspace);
-    }
-    catch (error) {
-      console.error("Error saving project", error);
-    }
-  }
-
   return (
     <Group
       gap={8}
@@ -103,10 +65,11 @@ export default function TreeNode({payload}: {payload: RenderTreeNodePayload}) {
       pb="0.2em"
       fz="sm"
     >
-      {hasChildren && (
+      {node.nodeProps.type === 'folder' && (
         <IconChevronRight
           size={16}
           style={{ transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)' }}
+          visibility={hasChildren ? 'visible' : 'hidden'}
         />
       )}
 
@@ -115,44 +78,12 @@ export default function TreeNode({payload}: {payload: RenderTreeNodePayload}) {
 
       <div style={{textWrap: 'nowrap', overflow: 'hidden'}}>{node.label}</div>
 
-      <div style=
-        {{
-          position: 'absolute',
-          right: '0',
-          top: '0.3em',
-          display: hovered || menuOpen ? 'block' : 'none'
-        }}
-      >
-        <div style={{
-          backgroundColor: selected ? 'var(--mantine-color-gray-1)' : 'white',
-          paddingLeft: '0.6em',
-          paddingRight: '0.6em',
-          overflow: 'hidden'
-        }}>
-          <Menu
-            opened={menuOpen}
-            onChange={setMenuOpen}
-            shadow="sm"
-          >
-            <Menu.Target>
-              <IconDots size="18px" onClick={e => e.stopPropagation()}/>
-            </Menu.Target>
-            <Menu.Dropdown>
-              <Menu.Item
-                color="red"
-                leftSection={<IconTrash size="1em"/>}
-                fz="xs"
-                onClick={(e: any) => {
-                  e.stopPropagation();
-                  onDeleteClick(node);
-                }}
-              >
-                Delete
-              </Menu.Item>
-            </Menu.Dropdown>
-          </Menu>
-        </div>
-      </div>
+      <NodeMenu
+        node={node}
+        deletable
+        hovered={hovered}
+        backgroundColor={selected ? 'var(--mantine-color-gray-1)' : 'white'}
+      />
     </Group>
   )
 }
