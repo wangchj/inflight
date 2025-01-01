@@ -9,6 +9,7 @@ import { projectSlice } from 'renderer/redux/project-slice';
 import { RootState } from 'renderer/redux/store';
 import OpenedRequests from './opened-requests';
 import { NewFolderModal } from './new-folder-modal';
+import { DeleteModal } from './delete-modal';
 
 /**
  * The app root component.
@@ -89,6 +90,7 @@ export function App() {
       />
 
       <NewFolderModal/>
+      <DeleteModal/>
     </>
   );
 }

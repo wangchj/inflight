@@ -38,7 +38,7 @@ export default function ProjectTree() {
   }
 
   return (
-    <Stack>
+    <Stack gap="xs">
       <div style={{
         backgroundColor: 'var(--mantine-color-gray-0)',
         paddingInline: '1em',
