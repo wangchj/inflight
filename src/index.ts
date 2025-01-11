@@ -80,7 +80,7 @@ app.on('activate', () => {
  */
 async function openWorkspace(): Promise<Workspace> {
   try {
-    const str = fs.readFileSync(`${os.homedir()}/.fetchy/workspace.json`, 'utf-8');
+    const str = fs.readFileSync(`${os.homedir()}/.fetch/workspace.json`, 'utf-8');
     return JSON.parse(str);
   }
   catch (error) {
@@ -161,7 +161,7 @@ async function sendRequest(event: IpcMainInvokeEvent, request: Request): Promise
 async function saveWorkspace(event: IpcMainInvokeEvent, workspace: Workspace) {
   try {
     fs.writeFileSync(
-      `${os.homedir()}/.fetchy/workspace.json`,
+      `${os.homedir()}/.fetch/workspace.json`,
       JSON.stringify(workspace, null, 2),
       'utf-8'
     );

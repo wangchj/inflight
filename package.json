@@ -1,8 +1,8 @@
 {
-  "name": "fetchy",
-  "productName": "fetchy",
+  "name": "fetch",
+  "productName": "fetch",
   "version": "1.0.0",
-  "description": "Fetchy REST API test client.",
+  "description": "Fetch REST API test client.",
   "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",
