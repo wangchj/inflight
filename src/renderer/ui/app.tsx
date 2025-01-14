@@ -10,6 +10,7 @@ import { RootState } from 'renderer/redux/store';
 import OpenedRequests from './opened-requests';
 import { NewFolderModal } from './new-folder-modal';
 import { DeleteModal } from './delete-modal';
+import NavBar from './navbar';
 
 /**
  * The app root component.
@@ -72,7 +73,15 @@ export function App() {
   }
 
   return (
-    <>
+    <div
+      style={{
+        height: '100%',
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'row'
+      }}
+    >
+      <NavBar/>
       <Split
         cursor="ew-resize"
         // https://github.com/nathancahill/split/pull/728
@@ -91,6 +100,6 @@ export function App() {
 
       <NewFolderModal/>
       <DeleteModal/>
-    </>
+    </div>
   );
 }
