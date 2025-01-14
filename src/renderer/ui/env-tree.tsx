@@ -1,21 +1,16 @@
-import { Tree, useTree } from '@mantine/core';
-import { useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from 'renderer/redux/store';
-import { workspaceSlice } from 'renderer/redux/workspace-slice';
-import makeTree from 'renderer/utils/make-tree';
-import TreeNode from './tree-node';
+import { Tree, useTree } from "@mantine/core";
+import { useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "renderer/redux/store";
+import { workspaceSlice } from "renderer/redux/workspace-slice";
+import TreeNode from "./tree-node";
+import makeEnvTree from "renderer/utils/make-env-tree";
 
-/**
- * The project tree hierarchy component.
- *
- * @param project The project model object.
- */
-export default function ProjectTree() {
+export default function EnvTree() {
   const dispatch = useDispatch();
   const workspace = useSelector((state: RootState) => state.workspace);
   const project = useSelector((state: RootState) => state.project);
-  const data = useMemo(() => makeTree(project, project.tree), [project]);
+  const data = useMemo(() => makeEnvTree(project), [project]);
 
   const tree = useTree({
     initialExpandedState: workspace.treeExpandedState,

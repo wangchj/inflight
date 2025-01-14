@@ -1,5 +1,5 @@
 import { Group, RenderTreeNodePayload, TreeNodeData } from "@mantine/core";
-import { IconChevronRight, IconFolder, IconFolderOpen } from "@tabler/icons-react";
+import { IconBraces, IconBrackets, IconChevronRight, IconFolder, IconFolderOpen } from "@tabler/icons-react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "renderer/redux/store";
 import { workspaceSlice } from "renderer/redux/workspace-slice";
@@ -65,16 +65,17 @@ export default function TreeNode({payload}: {payload: RenderTreeNodePayload}) {
       pb="0.2em"
       fz="sm"
     >
-      {node.nodeProps.type === 'folder' && (
-        <IconChevronRight
-          size={16}
-          style={{ transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)' }}
-          visibility={hasChildren ? 'visible' : 'hidden'}
-        />
-      )}
+
+      <IconChevronRight
+        size={16}
+        style={{ transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)' }}
+        visibility={hasChildren ? 'visible' : 'hidden'}
+      />
 
       {node.nodeProps.type === 'folder' && <FolderIcon size="1em" opacity={0.8}/>}
       {node.nodeProps.type === 'request' && getRequestIcon(node.value)}
+      {node.nodeProps.type === 'envGroup' && <IconBrackets size="1em" opacity={0.8}/>}
+      {node.nodeProps.type === 'env' && <IconBraces size="1em" opacity={0.8}/>}
 
       <div style={{textWrap: 'nowrap', overflow: 'hidden'}}>{node.label}</div>
 

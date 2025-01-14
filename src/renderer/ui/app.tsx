@@ -1,7 +1,6 @@
 import './split-layout.css';
 import { useEffect, useState } from 'react';
 import PageLoading from './layout/page-loading';
-import ProjectTree from './project-tree';
 import { useDispatch, useSelector } from 'react-redux';
 import Split from 'react-split-grid';
 import { workspaceSlice } from 'renderer/redux/workspace-slice';
@@ -11,6 +10,7 @@ import OpenedRequests from './opened-requests';
 import { NewFolderModal } from './new-folder-modal';
 import { DeleteModal } from './delete-modal';
 import NavBar from './navbar';
+import LeftPane from './left-pane';
 
 /**
  * The app root component.
@@ -88,7 +88,7 @@ export function App() {
         // @ts-ignore
         render={({getGridProps, getGutterProps}) => (
           <div className='main-split-grid' {...getGridProps()}>
-            <ProjectTree/>
+            <LeftPane/>
             <div className="split-handle" {...getGutterProps('column', 1)}/>
             <OpenedRequests/>
           </div>

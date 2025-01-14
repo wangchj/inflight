@@ -2,7 +2,7 @@ import { TreeNodeData } from '@mantine/core';
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 
-type NavItem = 'requests' | 'environments';
+export type NavItem = 'requests' | 'environments';
 
 interface UiState {
   selectedNavItem: NavItem;
