@@ -25,10 +25,11 @@ export default function TreeNode({payload}: {payload: RenderTreeNodePayload}) {
    */
   function onSelect(node: TreeNodeData) {
     if (node.nodeProps.type === 'request') {
-      dispatch(workspaceSlice.actions.openRequest({
+      dispatch(workspaceSlice.actions.openResource({
         id: node.value,
-        folderId: node.value,
-        request: project.requests[node.value]
+        parentId: node.value,
+        type: 'request',
+        model: project.requests[node.value]
       }));
     }
   }

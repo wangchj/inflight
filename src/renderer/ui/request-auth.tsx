@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "renderer/redux/store";
 import { workspaceSlice } from "renderer/redux/workspace-slice";
 import { AwsSigv4Auth } from "types/auth";
+import { Request } from "types/request";
 
 const authTypeOptions = [
   {value: 'none',      label: 'None'},
@@ -17,9 +18,9 @@ const credentialSourceOptions = [
 export default function RequestAuth() {
   const dispatch = useDispatch();
   const workspace = useSelector((state: RootState) => state.workspace);
-  const openedRequests = workspace.openedRequests;
-  const openedRequest = openedRequests[workspace.selectedRequestIndex];
-  const request = openedRequest.request;
+  const openedResources = workspace.openedResources;
+  const openedRequest = openedResources[workspace.selectedResourceIndex];
+  const request = openedRequest.model as Request;
   const auth = request.auth;
 
   return (
@@ -71,7 +72,7 @@ function AwsAuthSigv4Form({auth}: {auth: AwsSigv4Auth}) {
           value={auth.profile}
           onChange={
             event => dispatch(
-              workspaceSlice.actions.updateRequest(
+              workspaceSlice.actions.updateResource(
                 {path: 'auth.profile', value: event.currentTarget.value}
               )
             )
@@ -86,7 +87,7 @@ function AwsAuthSigv4Form({auth}: {auth: AwsSigv4Auth}) {
         value={auth.region}
         onChange={
           event => dispatch(
-            workspaceSlice.actions.updateRequest(
+            workspaceSlice.actions.updateResource(
               {path: 'auth.region', value: event.currentTarget.value}
             )
           )
@@ -98,7 +99,7 @@ function AwsAuthSigv4Form({auth}: {auth: AwsSigv4Auth}) {
         value={auth.service || ''}
         onChange={
           event => dispatch(
-            workspaceSlice.actions.updateRequest(
+            workspaceSlice.actions.updateResource(
               {path: 'auth.service', value: event.currentTarget.value}
             )
           )

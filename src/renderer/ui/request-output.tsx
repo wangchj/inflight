@@ -12,7 +12,7 @@ import ServerCertificate from "./server-certificate";
 export default function RequestOutput() {
   const [selectedTab, setSelectedTab] = useState<string>('body');
   const workspace = useSelector((state: RootState) => state.workspace);
-  const openedRequest = workspace.openedRequests[workspace.selectedRequestIndex];
+  const openedRequest = workspace.openedResources[workspace.selectedResourceIndex];
   const result = useSelector((state: RootState) => state.results)[openedRequest.id];
 
   if (!result) {

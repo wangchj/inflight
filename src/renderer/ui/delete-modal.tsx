@@ -21,7 +21,7 @@ export function DeleteModal() {
     switch (node.nodeProps.type) {
       case 'folder':
         const requestIds = getDescendantRequestIds(project, node.value);
-        requestIds.forEach(i => dispatch(workspaceSlice.actions.closeRequest(i)));
+        requestIds.forEach(i => dispatch(workspaceSlice.actions.closeResource(i)));
         dispatch(projectSlice.actions.deleteFolder({
           id: node.value,
           parentId: node.nodeProps.parentId
@@ -29,7 +29,7 @@ export function DeleteModal() {
         break;
 
       case 'request':
-        dispatch(workspaceSlice.actions.closeRequest(node.value));
+        dispatch(workspaceSlice.actions.closeResource(node.value));
         dispatch(projectSlice.actions.deleteRequest({
           id: node.value,
           parentId: node.nodeProps.parentId

@@ -55,6 +55,10 @@ declare global {
     sendRequest: (request: Request) => Promise<RequestResult>;
     onFlushWorkspace: (callback: () => void) => void;
     monaco: any;
+    printWorkspace: () => void;
+    printProject: () => void;
+    printResults: () => void;
+    printUi: () => void;
   }
 }
 

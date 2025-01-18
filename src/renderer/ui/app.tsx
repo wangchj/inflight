@@ -1,16 +1,21 @@
 import './split-layout.css';
 import { useEffect, useState } from 'react';
 import PageLoading from './layout/page-loading';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import Split from 'react-split-grid';
 import { workspaceSlice } from 'renderer/redux/workspace-slice';
 import { projectSlice } from 'renderer/redux/project-slice';
-import { RootState } from 'renderer/redux/store';
-import OpenedRequests from './opened-requests';
+import { store } from 'renderer/redux/store';
+import OpenedResources from './opened-resources';
 import { NewFolderModal } from './new-folder-modal';
 import { DeleteModal } from './delete-modal';
 import NavBar from './navbar';
 import LeftPane from './left-pane';
+
+window.printWorkspace = () => console.log(JSON.stringify(store.getState().workspace, null, 2));
+window.printProject = () => console.log(JSON.stringify(store.getState().project, null, 2));
+window.printResults = () => console.log(JSON.stringify(store.getState().results, null, 2));
+window.printUi = () => console.log(JSON.stringify(store.getState().ui, null, 2));
 
 /**
  * The app root component.
@@ -30,11 +35,6 @@ export function App() {
    * React Redux dispatch function.
    */
   const dispatch = useDispatch();
-
-  /**
-   * The workspace object.
-   */
-  const workspace = useSelector((state: RootState) => state.workspace);
 
   /**
    * Loads workspace from disk.
@@ -90,7 +90,7 @@ export function App() {
           <div className='main-split-grid' {...getGridProps()}>
             <LeftPane/>
             <div className="split-handle" {...getGutterProps('column', 1)}/>
-            <OpenedRequests/>
+            <OpenedResources/>
           </div>
         )}
         gridTemplateColumns={gridTemplateColumns}

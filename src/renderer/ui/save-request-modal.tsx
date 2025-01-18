@@ -12,14 +12,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { projectSlice } from "renderer/redux/project-slice";
 import { RootState, store } from "renderer/redux/store";
 import { workspaceSlice } from "renderer/redux/workspace-slice";
-import { OpenedRequest } from "types/opened-request";
+import { OpenedResource } from "types/opened-resource";
 import { Project } from "types/project";
+import { Request } from "types/request";
 import { Workspace } from "types/workspace";
 
 let dispatch: Dispatch<UnknownAction>;
 let workspace: Workspace
 let project: Project;
-let openedRequest: OpenedRequest;
+let openedResource: OpenedResource;
 let opened: boolean, setOpened: React.Dispatch<React.SetStateAction<boolean>>;
 let name: string, setName: React.Dispatch<React.SetStateAction<string>>;
 let folder: string, setFolder: React.Dispatch<React.SetStateAction<string>>;
@@ -69,18 +70,22 @@ function makeFolderMap(project: Project, folderId: string, path: string): Record
 async function onSaveClick() {
   try {
     const folderId = folderMap[folder];
-    const updated = {...openedRequest, request: {...openedRequest.request}};
+    const updated = {...openedResource, model: {...openedResource.model}};
 
-    updated.folderId = folderId;
+    updated.parentId = folderId;
     updated.dirty = false;
 
     if (name) {
-      updated.request.name = name;
+      updated.model.name = name;
     }
 
-    dispatch(projectSlice.actions.addNewRequest({...updated, folderId}));
+    dispatch(projectSlice.actions.addNewRequest({
+      id: updated.id,
+      request: updated.model as Request,
+      folderId
+    }));
     await window.saveProject(workspace.projectRef.$ref, store.getState().project);
-    dispatch(workspaceSlice.actions.setRequest(updated));
+    dispatch(workspaceSlice.actions.setResource(updated));
     await window.saveWorkspace(store.getState().workspace);
     setOpened(false);
   }
@@ -92,11 +97,11 @@ async function onSaveClick() {
 /**
  * Opens the modal.
  *
- * @param _openedRequest The OpenedRequest object to save.
+ * @param _openedResource The OpenedResource object to save.
  */
-export function openSaveRequestModal(_openedRequest: OpenedRequest) {
-  openedRequest = _openedRequest;
-  setName(openedRequest?.request.name ?? '');
+export function openSaveRequestModal(_openedResource: OpenedResource) {
+  openedResource = _openedResource;
+  setName(openedResource?.model.name ?? '');
   setOpened(true);
 }
 
@@ -106,7 +111,7 @@ export function SaveRequestModal() {
   project = useSelector((state: RootState) => state.project);
 
   [opened, setOpened] = useState<boolean>(false);
-  [name, setName] = useState<string>(openedRequest?.request.name ?? '');
+  [name, setName] = useState<string>(openedResource?.model?.name ?? '');
   [folder, setFolder] = useState<string>('/');
 
   folderMap = useMemo(() => makeFolderMap(project, project.tree, ''), [project.tree]);

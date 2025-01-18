@@ -1,10 +1,10 @@
 import { Ref } from "types/ref";
-import { OpenedRequest } from "./opened-request";
+import { OpenedResource } from "./opened-resource";
 
 export interface Workspace {
   projectRef?: Ref;
-  openedRequests?: OpenedRequest[];
-  selectedRequestIndex?: number;
+  openedResources?: OpenedResource[];
+  selectedResourceIndex?: number;
 
   /** Tree expanded state */
   treeExpandedState?: Record<string, boolean>;

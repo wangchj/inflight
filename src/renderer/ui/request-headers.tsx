@@ -3,13 +3,14 @@ import { IconTrash } from '@tabler/icons-react';
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "renderer/redux/store";
 import { workspaceSlice } from "renderer/redux/workspace-slice";
+import { Request } from "types/request";
 
 export default function RequestHeaders() {
   const dispatch = useDispatch();
   const workspace = useSelector((state: RootState) => state.workspace);
-  const openedRequests = workspace.openedRequests;
-  const openedRequest = openedRequests[workspace.selectedRequestIndex];
-  const request = openedRequest.request;
+  const openedResources = workspace.openedResources;
+  const openedRequest = openedResources[workspace.selectedResourceIndex];
+  const request = openedRequest.model as Request;
   const headers = request.headers;
 
   return (

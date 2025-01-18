@@ -16,18 +16,18 @@ import { workspaceSlice } from "renderer/redux/workspace-slice";
 import { projectSlice } from "renderer/redux/project-slice";
 import { resultsSlice } from "renderer/redux/results-slice";
 import { openSaveRequestModal, SaveRequestModal } from "./save-request-modal";
+import { Request } from "types/request";
 
 export default function RequestForm() {
-  // const [selectedTab, setSelectedTab] = useState<string>('Config');
   const [error, setError] = useState<string>();
 
   const [gridTemplateColumns, setGridTemplateColumns] = useState('1fr');
 
   const dispatch = useDispatch();
   const workspace = useSelector((state: RootState) => state.workspace);
-  const openedRequest = workspace.openedRequests[workspace.selectedRequestIndex];
-  const request = openedRequest.request;
-  const result = useSelector((state: RootState) => state.results)[openedRequest.id];
+  const openedResource = workspace.openedResources[workspace.selectedResourceIndex];
+  const request = openedResource.model as Request;
+  const result = useSelector((state: RootState) => state.results)[openedResource.id];
 
   // Adjust split layout based on the result.
   useEffect(() => {
@@ -51,7 +51,7 @@ export default function RequestForm() {
 
     try {
       const resp = await window.sendRequest(request);
-      dispatch(resultsSlice.actions.setResult({id: openedRequest.id, result: resp}));
+      dispatch(resultsSlice.actions.setResult({id: openedResource.id, result: resp}));
     }
     catch (error) {
       setError(error.message.replace('Error invoking remote method \'sendRequest\': ', ''));
@@ -62,11 +62,9 @@ export default function RequestForm() {
    * Handles Save button click event.
    */
   async function onSaveClick() {
-    if (openedRequest.folderId) {
-      if (openedRequest.dirty) {
-        dispatch(projectSlice.actions.setRequest({
-          id: openedRequest.id, request: openedRequest.request
-        }));
+    if (openedResource.parentId) {
+      if (openedResource.dirty) {
+        dispatch(projectSlice.actions.setRequest({id: openedResource.id, request}));
 
         try {
           await window.saveProject(workspace.projectRef.$ref, store.getState().project);
@@ -79,7 +77,7 @@ export default function RequestForm() {
       }
     }
     else {
-      openSaveRequestModal(openedRequest);
+      openSaveRequestModal(openedResource);
     }
   }
 
@@ -98,7 +96,7 @@ export default function RequestForm() {
             value={request.method}
             onChange={
               value => value === null ? null : dispatch(
-                workspaceSlice.actions.updateRequest({path: 'method', value})
+                workspaceSlice.actions.updateResource({path: 'method', value})
               )
             }
           />
@@ -108,7 +106,7 @@ export default function RequestForm() {
             value={request.url}
             onChange={
               event => dispatch(
-                workspaceSlice.actions.updateRequest(
+                workspaceSlice.actions.updateResource(
                   {path: 'url', value: event.currentTarget.value}
                 )
               )

@@ -4,7 +4,9 @@ import { Workspace } from 'types/workspace';
 import { set } from 'lodash';
 import { AwsSigv4Auth } from 'types/auth';
 import { Request } from 'types/request';
-import { OpenedRequest } from 'types/opened-request';
+import { OpenedResource } from 'types/opened-resource';
+import { OpenedResourceModel } from 'types/opened-resource-model';
+import { OpenedResourceType } from 'types/opened-resource-type';
 
 const initialState: Workspace = {};
 
@@ -24,118 +26,127 @@ export const workspaceSlice = createSlice({
     },
 
     /**
-     * Add a request to opened requests.
+     * Adds a resource to opened resource list.
      *
      * @param state The workspace object.
-     * @param action The action.
+     * @param action The action object.
      */
-    openRequest(state, action: PayloadAction<{id: string, folderId: string, request: Request}>) {
-      // const node = action.payload;
-      const openedRequests = state.openedRequests;
-      const index = openedRequests ?
-        openedRequests.findIndex(openedRequest => openedRequest.id === action.payload.id) : -1;
+    openResource(
+      state,
+      action: PayloadAction<{
+        id: string,
+        parentId: string,
+        type: OpenedResourceType,
+        model: OpenedResourceModel
+      }>
+    ) {
+      const openedResources = state.openedResources;
+      const index = openedResources ?
+        openedResources.findIndex(openedResource => openedResource.id === action.payload.id) : -1;
 
       if (index === -1) {
-        if (!Array.isArray(openedRequests)) {
-          state.openedRequests = [];
+        if (!Array.isArray(openedResources)) {
+          state.openedResources = [];
         }
-        state.openedRequests.push({
+        state.openedResources.push({
           id: action.payload.id,
-          folderId: action.payload.folderId,
+          parentId: action.payload.parentId,
+          type: action.payload.type,
           // Deep copy
-          request: JSON.parse(JSON.stringify(action.payload.request))
+          model: JSON.parse(JSON.stringify(action.payload.model))
         });
 
-        state.selectedRequestIndex = state.openedRequests.length - 1;
+        state.selectedResourceIndex = state.openedResources.length - 1;
       }
       else {
-        state.selectedRequestIndex = index;
+        state.selectedResourceIndex = index;
       }
     },
 
     /**
-     * Add a new opened request.
+     * Adds a new request to open resources list.
      *
      * @param state The workspace object.
      */
     newRequest(state) {
-      if (!Array.isArray(state.openedRequests)) {
-        state.openedRequests = [];
+      if (!Array.isArray(state.openedResources)) {
+        state.openedResources = [];
       }
 
-      state.openedRequests.push({
+      state.openedResources.push({
         id: nanoid(),
-        request: {
+        type: 'request',
+        model: {
           method: 'GET',
           url: '',
         },
         dirty: true
       });
 
-      state.selectedRequestIndex = state.openedRequests.length - 1;
+      state.selectedResourceIndex = state.openedResources.length - 1;
     },
 
     /**
-     * Closes an opened request.
+     * Closes an opened resource.
      *
      * @param state The workspace state.
-     * @param action The action that contains the id of the request to close.
+     * @param action The action that contains the id of the resource to close.
      */
-    closeRequest(state, action: PayloadAction<number | string>) {
+    closeResource(state, action: PayloadAction<number | string>) {
       const index = typeof action.payload === 'number' ? action.payload :
-        state.openedRequests?.findIndex(r => r.id === action.payload);
+        state.openedResources?.findIndex(r => r.id === action.payload);
 
-      if (!Array.isArray(state.openedRequests) ||
+      if (!Array.isArray(state.openedResources) ||
           index < 0 ||
-          index > state.openedRequests.length - 1)
+          index > state.openedResources.length - 1)
       {
         return;
       }
 
-      state.openedRequests = state.openedRequests.filter((_, i) => i !== index);
+      state.openedResources = state.openedResources.filter((_, i) => i !== index);
 
-      if (state.openedRequests.length === 0) {
-        delete state.selectedRequestIndex;
+      if (state.openedResources.length === 0) {
+        delete state.selectedResourceIndex;
       }
-      else if (state.selectedRequestIndex === index) {
-        state.selectedRequestIndex = (index === 0 ? 0 : index - 1);
+      else if (state.selectedResourceIndex === index) {
+        state.selectedResourceIndex = (index === 0 ? 0 : index - 1);
       }
-      else if (state.selectedRequestIndex > index) {
-        state.selectedRequestIndex = state.selectedRequestIndex - 1;
+      else if (state.selectedResourceIndex > index) {
+        state.selectedResourceIndex = state.selectedResourceIndex - 1;
       }
     },
 
     /**
-     * Modifies the currently selected request object.
+     * Modifies the currently selected resource object.
      *
      * @param state The workspace object.
      * @param action The action with payload.
      */
-    updateRequest(state, action: PayloadAction<{path: string, value: any}>) {
-      const openedRequest = state.openedRequests?.[state.selectedRequestIndex];
-      if (openedRequest) {
-        set(openedRequest, `request.${action.payload.path}`, action.payload.value);
-        openedRequest.dirty = true;
+    updateResource(state, action: PayloadAction<{path: string, value: any}>) {
+      const openedResource = state.openedResources?.[state.selectedResourceIndex];
+      if (openedResource) {
+        set(openedResource, `model.${action.payload.path}`, action.payload.value);
+        openedResource.dirty = true;
       }
     },
 
     /**
-     * Sets the selected OpenedRequest object.
+     * Sets the selected opened resource object.
      *
      * @param state The workspace object.
      * @param action The payload is the object to use.
      */
-    setRequest(state, action: PayloadAction<OpenedRequest>) {
-      const index = state.selectedRequestIndex;
-      const requests = state.openedRequests;
+    setResource(state, action: PayloadAction<OpenedResource>) {
+      const index = state.selectedResourceIndex;
+      const openedResources = state.openedResources;
 
-      if (!Array.isArray(requests) || typeof index !== 'number' || index < 0 ||
-        index > requests.length - 1)
+      if (!Array.isArray(openedResources) || typeof index !== 'number' || index < 0 ||
+        index > openedResources.length - 1)
       {
         return;
       }
 
-      requests[index] = action.payload;
+      openedResources[index] = action.payload;
     },
 
     /**
@@ -145,13 +156,13 @@ export const workspaceSlice = createSlice({
      * @param action Payload of true or false meaning dirty or not dirty.
      */
     setDirty(state, action: PayloadAction<boolean>) {
-      const openedRequest = state.openedRequests?.[state.selectedRequestIndex];
-      if (openedRequest) {
+      const openedResource = state.openedResources?.[state.selectedResourceIndex];
+      if (openedResource) {
         if (action.payload) {
-          openedRequest.dirty = true;
+          openedResource.dirty = true;
         }
         else {
-          delete openedRequest.dirty;
+          delete openedResource.dirty;
         }
       }
     },
@@ -163,12 +174,13 @@ export const workspaceSlice = createSlice({
      * @param action The action that contains the updated auth type.
      */
     setAuthType(state, action: PayloadAction<string>) {
-      const openedRequest = state.openedRequests?.[state.selectedRequestIndex];
-      const request = openedRequest?.request;
+      const openedResource = state.openedResources?.[state.selectedResourceIndex];
 
-      if (!request) {
+      if (!openedResource || !openedResource.model || openedResource.type !== 'request') {
         return;
       }
+
+      const request = openedResource.model as Request;
 
       switch (action.payload) {
         case 'aws_sigv4':
@@ -183,18 +195,18 @@ export const workspaceSlice = createSlice({
           delete request.auth;
       }
 
-      openedRequest.dirty = true;
+      openedResource.dirty = true;
     },
 
     /**
-     * Sets the selected request.
+     * Sets the selected tab.
      *
      * @param state The workspace state
      * @param action The action that contains the selected request path (id).
      */
-    setSelectedRequest(state, action: PayloadAction<string>) {
-      state.selectedRequestIndex = state.openedRequests.findIndex(
-        openedRequest => openedRequest.id === action.payload
+    setSelectedTab(state, action: PayloadAction<string>) {
+      state.selectedResourceIndex = state.openedResources.findIndex(
+        openedTab => openedTab.id === action.payload
       );
     },
 
@@ -204,8 +216,13 @@ export const workspaceSlice = createSlice({
      * @param state The workspace object.
      */
     addEmptyHeader(state) {
-      const openedRequest = state.openedRequests?.[state.selectedRequestIndex];
-      const request = openedRequest.request;
+      const openedResource = state.openedResources?.[state.selectedResourceIndex];
+
+      if (!openedResource || !openedResource.model || openedResource.type !== 'request') {
+        return;
+      }
+
+      const request = openedResource.model as Request;
 
       if (!request.headers) {
         request.headers = [];
@@ -213,7 +230,7 @@ export const workspaceSlice = createSlice({
 
       request.headers.push({key: '', value: '', enabled: true});
 
-      openedRequest.dirty = true;
+      openedResource.dirty = true;
     },
 
     /**
@@ -223,10 +240,15 @@ export const workspaceSlice = createSlice({
      * @param action An action that contains the header index and the updated key.
      */
     updateHeaderKey(state, action: PayloadAction<{index: number, value: string}>) {
-      const openedRequest = state.openedRequests[state.selectedRequestIndex];
-      const request = openedRequest.request;
+      const openedResource = state.openedResources[state.selectedResourceIndex];
+
+      if (!openedResource || !openedResource.model || openedResource.type !== 'request') {
+        return;
+      }
+
+      const request = openedResource.model as Request;
       request.headers[action.payload.index].key = action.payload.value;
-      openedRequest.dirty = true;
+      openedResource.dirty = true;
     },
 
     /**
@@ -236,10 +258,15 @@ export const workspaceSlice = createSlice({
      * @param action An action that contains the header index and the updated value.
      */
     updateHeaderValue(state, action: PayloadAction<{index: number, value: string}>) {
-      const openedRequest = state.openedRequests[state.selectedRequestIndex];
-      const request = openedRequest.request;
+      const openedResource = state.openedResources[state.selectedResourceIndex];
+
+      if (!openedResource || !openedResource.model || openedResource.type !== 'request') {
+        return;
+      }
+
+      const request = openedResource.model as Request;
       request.headers[action.payload.index].value = action.payload.value;
-      openedRequest.dirty = true;
+      openedResource.dirty = true;
     },
 
     /**
@@ -249,10 +276,15 @@ export const workspaceSlice = createSlice({
      * @param action An action that contains the header.
      */
     toggleHeader(state, action: PayloadAction<number>) {
-      const openedRequest = state.openedRequests[state.selectedRequestIndex];
-      const request = openedRequest.request;
+      const openedResource = state.openedResources[state.selectedResourceIndex];
+
+      if (!openedResource || !openedResource.model || openedResource.type !== 'request') {
+        return;
+      }
+
+      const request = openedResource.model as Request;
       request.headers[action.payload].enabled = !request.headers[action.payload].enabled;
-      openedRequest.dirty = true;
+      openedResource.dirty = true;
     },
 
     /**
@@ -262,14 +294,19 @@ export const workspaceSlice = createSlice({
      * @param action Contains the index of the header.
      */
     deleteHeader(state, action: PayloadAction<number>) {
-      const openedRequest = state.openedRequests[state.selectedRequestIndex];
-      const request = openedRequest.request;
+      const openedResource = state.openedResources[state.selectedResourceIndex];
+
+      if (!openedResource || !openedResource.model || openedResource.type !== 'request') {
+        return;
+      }
+
+      const request = openedResource.model as Request;
       if (request.headers && request.headers[action.payload]) {
         request.headers.splice(action.payload, 1);
         if (request.headers.length === 0) {
           delete request.headers;
         }
-        openedRequest.dirty = true;
+        openedResource.dirty = true;
       }
     },
 
