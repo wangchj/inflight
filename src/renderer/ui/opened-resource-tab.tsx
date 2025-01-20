@@ -8,6 +8,8 @@ import { OpenedResource } from "types/opened-resource";
 import { Request } from "types/request";
 import MethodIcon from "./method-icon";
 import resultEditorPath from "renderer/utils/result-editor-path";
+import { Environment } from "types/environment";
+import { IconBraces } from "@tabler/icons-react";
 
 type OpenedResourceTabProps = {
   index: number;
@@ -22,6 +24,10 @@ function TabIcon({openedResource}: {openedResource: OpenedResource}) {
     case 'request':
       const request = openedResource.model as Request;
       return <MethodIcon method={request.method}/>
+
+    case 'env':
+      const env = openedResource.model as Environment;
+      return <IconBraces size="1em"/>
   }
 }
 
@@ -35,6 +41,11 @@ function TabLabel({openedResource}: {openedResource: OpenedResource}) {
     case 'request':
       const request = openedResource.model as Request;
       label = request.name || request.url || 'New Request';
+      break;
+
+    case 'env':
+      const env = openedResource.model as Environment;
+      label = env.name;
       break;
   }
 

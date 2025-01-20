@@ -40,20 +40,26 @@ export const workspaceSlice = createSlice({
         model: OpenedResourceModel
       }>
     ) {
+      const {id, parentId, type, model} = action.payload;
+
+      if (!id || !type || !model) {
+        return;
+      }
+
       const openedResources = state.openedResources;
       const index = openedResources ?
-        openedResources.findIndex(openedResource => openedResource.id === action.payload.id) : -1;
+        openedResources.findIndex(openedResource => openedResource.id === id) : -1;
 
       if (index === -1) {
         if (!Array.isArray(openedResources)) {
           state.openedResources = [];
         }
         state.openedResources.push({
-          id: action.payload.id,
-          parentId: action.payload.parentId,
-          type: action.payload.type,
+          id: id,
+          parentId: parentId,
+          type: type,
           // Deep copy
-          model: JSON.parse(JSON.stringify(action.payload.model))
+          model: JSON.parse(JSON.stringify(model))
         });
 
         state.selectedResourceIndex = state.openedResources.length - 1;

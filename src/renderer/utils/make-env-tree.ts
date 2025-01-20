@@ -1,4 +1,5 @@
 import { TreeNodeData } from "@mantine/core";
+import { OpenedResourceType } from "types/opened-resource-type";
 import { Project } from "types/project";
 
 /**
