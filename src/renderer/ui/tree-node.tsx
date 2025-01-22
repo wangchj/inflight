@@ -5,7 +5,6 @@ import { RootState } from "renderer/redux/store";
 import { workspaceSlice } from "renderer/redux/workspace-slice";
 import MethodIcon from "./method-icon";
 import NodeMenu from "./node-menu";
-import { OpenedResourceType } from "types/opened-resource-type";
 
 /**
  * Project tree node component.
@@ -27,20 +26,16 @@ export default function TreeNode({payload}: {payload: RenderTreeNodePayload}) {
   function onSelect(node: TreeNodeData) {
     switch (node.nodeProps.type) {
       case 'request':
-        dispatch(workspaceSlice.actions.openResource({
+        dispatch(workspaceSlice.actions.openRequest({
           id: node.value,
-          parentId: node.nodeProps.parentId,
-          type: 'request',
-          model: project.requests?.[node.value]
+          folderId: node.nodeProps.parentId,
+          request: project.requests?.[node.value]
         }));
         break;
 
       case 'env':
-        dispatch(workspaceSlice.actions.openResource({
-          id: node.value,
-          parentId: node.nodeProps.parentId,
-          type: 'env',
-          model: project.envs?.[node.value]
+        dispatch(workspaceSlice.actions.openEnv({
+          id: node.value
         }));
         break;
     }

@@ -3,7 +3,6 @@ import {
   Code,
   Stack,
   Table,
-  Text,
 } from "@mantine/core";
 import { RequestResult } from "types/request-result";
 

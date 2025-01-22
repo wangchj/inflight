@@ -1,9 +1,7 @@
 import { Select, Stack, TextInput } from "@mantine/core";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "renderer/redux/store";
+import { useDispatch } from "react-redux";
 import { workspaceSlice } from "renderer/redux/workspace-slice";
-import { AwsSigv4Auth } from "types/auth";
-import { Request } from "types/request";
+import { Auth, AwsSigv4Auth } from "types/auth";
 
 const authTypeOptions = [
   {value: 'none',      label: 'None'},
@@ -15,13 +13,8 @@ const credentialSourceOptions = [
   {value: 'inline',          label: 'Inline'},
 ];
 
-export default function RequestAuth() {
+export default function RequestAuth({auth}: {auth: Auth}) {
   const dispatch = useDispatch();
-  const workspace = useSelector((state: RootState) => state.workspace);
-  const openedResources = workspace.openedResources;
-  const openedRequest = openedResources[workspace.selectedResourceIndex];
-  const request = openedRequest.model as Request;
-  const auth = request.auth;
 
   return (
     <Stack>
@@ -72,7 +65,7 @@ function AwsAuthSigv4Form({auth}: {auth: AwsSigv4Auth}) {
           value={auth.profile}
           onChange={
             event => dispatch(
-              workspaceSlice.actions.updateResource(
+              workspaceSlice.actions.updateRequest(
                 {path: 'auth.profile', value: event.currentTarget.value}
               )
             )
@@ -87,7 +80,7 @@ function AwsAuthSigv4Form({auth}: {auth: AwsSigv4Auth}) {
         value={auth.region}
         onChange={
           event => dispatch(
-            workspaceSlice.actions.updateResource(
+            workspaceSlice.actions.updateRequest(
               {path: 'auth.region', value: event.currentTarget.value}
             )
           )
@@ -99,7 +92,7 @@ function AwsAuthSigv4Form({auth}: {auth: AwsSigv4Auth}) {
         value={auth.service || ''}
         onChange={
           event => dispatch(
-            workspaceSlice.actions.updateResource(
+            workspaceSlice.actions.updateRequest(
               {path: 'auth.service', value: event.currentTarget.value}
             )
           )

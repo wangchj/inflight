@@ -16,17 +16,14 @@ import { workspaceSlice } from "renderer/redux/workspace-slice";
 import { projectSlice } from "renderer/redux/project-slice";
 import { resultsSlice } from "renderer/redux/results-slice";
 import { openSaveRequestModal, SaveRequestModal } from "./save-request-modal";
-import { Request } from "types/request";
+import { OpenedResource } from "types/opened-resource";
 
-export default function RequestForm() {
+export default function RequestForm({openedResource} : {openedResource: OpenedResource}) {
   const [error, setError] = useState<string>();
-
   const [gridTemplateColumns, setGridTemplateColumns] = useState('1fr');
-
   const dispatch = useDispatch();
   const workspace = useSelector((state: RootState) => state.workspace);
-  const openedResource = workspace.openedResources[workspace.selectedResourceIndex];
-  const request = openedResource.model as Request;
+  const request = openedResource.props.request;
   const result = useSelector((state: RootState) => state.results)[openedResource.id];
 
   // Adjust split layout based on the result.
@@ -62,7 +59,7 @@ export default function RequestForm() {
    * Handles Save button click event.
    */
   async function onSaveClick() {
-    if (openedResource.parentId) {
+    if (openedResource.props.folderId) {
       if (openedResource.dirty) {
         dispatch(projectSlice.actions.setRequest({id: openedResource.id, request}));
 
@@ -96,7 +93,7 @@ export default function RequestForm() {
             value={request.method}
             onChange={
               value => value === null ? null : dispatch(
-                workspaceSlice.actions.updateResource({path: 'method', value})
+                workspaceSlice.actions.updateRequest({path: 'method', value})
               )
             }
           />
@@ -106,7 +103,7 @@ export default function RequestForm() {
             value={request.url}
             onChange={
               event => dispatch(
-                workspaceSlice.actions.updateResource(
+                workspaceSlice.actions.updateRequest(
                   {path: 'url', value: event.currentTarget.value}
                 )
               )

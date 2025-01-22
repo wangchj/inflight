@@ -14,7 +14,6 @@ import { RootState, store } from "renderer/redux/store";
 import { workspaceSlice } from "renderer/redux/workspace-slice";
 import { OpenedResource } from "types/opened-resource";
 import { Project } from "types/project";
-import { Request } from "types/request";
 import { Workspace } from "types/workspace";
 
 let dispatch: Dispatch<UnknownAction>;
@@ -70,22 +69,29 @@ function makeFolderMap(project: Project, folderId: string, path: string): Record
 async function onSaveClick() {
   try {
     const folderId = folderMap[folder];
-    const updated = {...openedResource, model: {...openedResource.model}};
-
-    updated.parentId = folderId;
-    updated.dirty = false;
+    const resource = {...openedResource};
+    const props = {...openedResource.props};
+    const request = {...openedResource.props.request};
 
     if (name) {
-      updated.model.name = name;
+      request.name = name;
     }
 
+    props.folderId = folderId;
+    resource.dirty = false;
+
+    props.request = request;
+    resource.props = props;
+
+
     dispatch(projectSlice.actions.addNewRequest({
-      id: updated.id,
-      request: updated.model as Request,
+      id: resource.id,
+      request: resource.props.request,
       folderId
     }));
+
     await window.saveProject(workspace.projectRef.$ref, store.getState().project);
-    dispatch(workspaceSlice.actions.setResource(updated));
+    dispatch(workspaceSlice.actions.setResource(resource));
     await window.saveWorkspace(store.getState().workspace);
     setOpened(false);
   }
@@ -101,7 +107,7 @@ async function onSaveClick() {
  */
 export function openSaveRequestModal(_openedResource: OpenedResource) {
   openedResource = _openedResource;
-  setName(openedResource?.model.name ?? '');
+  setName(openedResource?.props?.request?.name ?? '');
   setOpened(true);
 }
 
@@ -111,7 +117,7 @@ export function SaveRequestModal() {
   project = useSelector((state: RootState) => state.project);
 
   [opened, setOpened] = useState<boolean>(false);
-  [name, setName] = useState<string>(openedResource?.model?.name ?? '');
+  [name, setName] = useState<string>(openedResource?.props?.request?.name ?? '');
   [folder, setFolder] = useState<string>('/');
 
   folderMap = useMemo(() => makeFolderMap(project, project.tree, ''), [project.tree]);

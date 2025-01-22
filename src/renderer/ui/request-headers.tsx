@@ -1,17 +1,11 @@
 import { Box, Button, Checkbox, Stack, Table, TextInput } from "@mantine/core";
 import { IconTrash } from '@tabler/icons-react';
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "renderer/redux/store";
+import { useDispatch } from "react-redux";
 import { workspaceSlice } from "renderer/redux/workspace-slice";
-import { Request } from "types/request";
+import { Header } from "types/header";
 
-export default function RequestHeaders() {
+export default function RequestHeaders({headers}: {headers: Header[]}) {
   const dispatch = useDispatch();
-  const workspace = useSelector((state: RootState) => state.workspace);
-  const openedResources = workspace.openedResources;
-  const openedRequest = openedResources[workspace.selectedResourceIndex];
-  const request = openedRequest.model as Request;
-  const headers = request.headers;
 
   return (
     <Stack>

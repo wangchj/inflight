@@ -43,7 +43,7 @@ export default function RequestConfig({request}: RequestConfigProps) {
         style={{flexGrow: 1}}
       >
         <Box pt="md" style={{maxWidth: '500px'}}>
-          <RequestAuth/>
+          <RequestAuth auth={request.auth}/>
         </Box>
       </Tabs.Panel>
 
@@ -53,7 +53,7 @@ export default function RequestConfig({request}: RequestConfigProps) {
         style={{flexGrow: 1}}
       >
         <Box pt="md">
-          <RequestHeaders/>
+          <RequestHeaders headers={request.headers}/>
         </Box>
       </Tabs.Panel>
 
@@ -63,7 +63,7 @@ export default function RequestConfig({request}: RequestConfigProps) {
         style={{display:'flex', flexGrow: 1, flexShrink: 1}}
       >
         <Box pt="md" style={{display: 'flex', flexGrow: 1, flexShrink: 1}}>
-          <RequestBody/>
+          <RequestBody request={request}/>
         </Box>
       </Tabs.Panel>
     </Tabs>

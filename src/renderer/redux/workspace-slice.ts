@@ -5,8 +5,7 @@ import { set } from 'lodash';
 import { AwsSigv4Auth } from 'types/auth';
 import { Request } from 'types/request';
 import { OpenedResource } from 'types/opened-resource';
-import { OpenedResourceModel } from 'types/opened-resource-model';
-import { OpenedResourceType } from 'types/opened-resource-type';
+import { OpenedRequest } from 'types/opened-request';
 
 const initialState: Workspace = {};
 
@@ -26,46 +25,69 @@ export const workspaceSlice = createSlice({
     },
 
     /**
-     * Adds a resource to opened resource list.
+     * Adds a request to opened resources.
      *
      * @param state The workspace object.
      * @param action The action object.
      */
-    openResource(
-      state,
-      action: PayloadAction<{
-        id: string,
-        parentId: string,
-        type: OpenedResourceType,
-        model: OpenedResourceModel
-      }>
-    ) {
-      const {id, parentId, type, model} = action.payload;
+    openRequest(state, action: PayloadAction<{id: string, folderId: string, request: Request}>) {
+      const {id, folderId, request} = action.payload;
 
-      if (!id || !type || !model) {
+      if (!id || !request) {
         return;
       }
 
-      const openedResources = state.openedResources;
-      const index = openedResources ?
-        openedResources.findIndex(openedResource => openedResource.id === id) : -1;
+      const index = state.openedResources?.findIndex(openedResource => openedResource.id === id);
 
-      if (index === -1) {
-        if (!Array.isArray(openedResources)) {
+      if (index >= 0) {
+        state.selectedResourceIndex = index;
+      }
+      else {
+        if (!Array.isArray(state.openedResources)) {
           state.openedResources = [];
         }
         state.openedResources.push({
           id: id,
-          parentId: parentId,
-          type: type,
-          // Deep copy
-          model: JSON.parse(JSON.stringify(model))
+          type: 'request',
+          props: {
+            folderId,
+            request: JSON.parse(JSON.stringify(request)) // Deep copy
+          } as OpenedRequest
         });
 
         state.selectedResourceIndex = state.openedResources.length - 1;
       }
-      else {
+    },
+
+    /**
+     * Adds an environment to opened resource list.
+     *
+     * @param state The workspace object.
+     * @param action The action object.
+     */
+    openEnv(state, action: PayloadAction<{id: string}>) {
+      const {id} = action.payload;
+
+      if (!id) {
+        return;
+      }
+
+      const index = state.openedResources?.findIndex(openedResource => openedResource.id === id);
+
+      if (index >= 0) {
         state.selectedResourceIndex = index;
+      }
+      else {
+        if (!Array.isArray(state.openedResources)) {
+          state.openedResources = [];
+        }
+
+        state.openedResources.push({
+          id,
+          type: 'env'
+        });
+
+        state.selectedResourceIndex = state.openedResources.length - 1;
       }
     },
 
@@ -82,10 +104,12 @@ export const workspaceSlice = createSlice({
       state.openedResources.push({
         id: nanoid(),
         type: 'request',
-        model: {
-          method: 'GET',
-          url: '',
-        },
+        props: {
+          request: {
+            method: 'GET',
+            url: '',
+          }
+        } as OpenedRequest,
         dirty: true
       });
 
@@ -123,15 +147,17 @@ export const workspaceSlice = createSlice({
     },
 
     /**
-     * Modifies the currently selected resource object.
+     * Modifies the currently selected request object. If the currently selected resource is not
+     * a request, then no action is performed.
      *
      * @param state The workspace object.
      * @param action The action with payload.
      */
-    updateResource(state, action: PayloadAction<{path: string, value: any}>) {
+    updateRequest(state, action: PayloadAction<{path: string, value: any}>) {
       const openedResource = state.openedResources?.[state.selectedResourceIndex];
-      if (openedResource) {
-        set(openedResource, `model.${action.payload.path}`, action.payload.value);
+
+      if (openedResource && openedResource.type === 'request') {
+        set(openedResource, `props.request.${action.payload.path}`, action.payload.value);
         openedResource.dirty = true;
       }
     },
@@ -182,11 +208,11 @@ export const workspaceSlice = createSlice({
     setAuthType(state, action: PayloadAction<string>) {
       const openedResource = state.openedResources?.[state.selectedResourceIndex];
 
-      if (!openedResource || !openedResource.model || openedResource.type !== 'request') {
+      if (!openedResource?.props?.request || openedResource.type !== 'request') {
         return;
       }
 
-      const request = openedResource.model as Request;
+      const request = openedResource.props.request;
 
       switch (action.payload) {
         case 'aws_sigv4':
@@ -224,11 +250,11 @@ export const workspaceSlice = createSlice({
     addEmptyHeader(state) {
       const openedResource = state.openedResources?.[state.selectedResourceIndex];
 
-      if (!openedResource || !openedResource.model || openedResource.type !== 'request') {
+      if (!openedResource?.props?.request || openedResource.type !== 'request') {
         return;
       }
 
-      const request = openedResource.model as Request;
+      const request = openedResource.props.request;
 
       if (!request.headers) {
         request.headers = [];
@@ -248,11 +274,11 @@ export const workspaceSlice = createSlice({
     updateHeaderKey(state, action: PayloadAction<{index: number, value: string}>) {
       const openedResource = state.openedResources[state.selectedResourceIndex];
 
-      if (!openedResource || !openedResource.model || openedResource.type !== 'request') {
+      if (!openedResource?.props?.request || openedResource.type !== 'request') {
         return;
       }
 
-      const request = openedResource.model as Request;
+      const request = openedResource.props.request;
       request.headers[action.payload.index].key = action.payload.value;
       openedResource.dirty = true;
     },
@@ -266,11 +292,11 @@ export const workspaceSlice = createSlice({
     updateHeaderValue(state, action: PayloadAction<{index: number, value: string}>) {
       const openedResource = state.openedResources[state.selectedResourceIndex];
 
-      if (!openedResource || !openedResource.model || openedResource.type !== 'request') {
+      if (!openedResource?.props?.request || openedResource.type !== 'request') {
         return;
       }
 
-      const request = openedResource.model as Request;
+      const request = openedResource.props.request;
       request.headers[action.payload.index].value = action.payload.value;
       openedResource.dirty = true;
     },
@@ -284,11 +310,11 @@ export const workspaceSlice = createSlice({
     toggleHeader(state, action: PayloadAction<number>) {
       const openedResource = state.openedResources[state.selectedResourceIndex];
 
-      if (!openedResource || !openedResource.model || openedResource.type !== 'request') {
+      if (!openedResource?.props?.request || openedResource.type !== 'request') {
         return;
       }
 
-      const request = openedResource.model as Request;
+      const request = openedResource.props.request;
       request.headers[action.payload].enabled = !request.headers[action.payload].enabled;
       openedResource.dirty = true;
     },
@@ -302,11 +328,11 @@ export const workspaceSlice = createSlice({
     deleteHeader(state, action: PayloadAction<number>) {
       const openedResource = state.openedResources[state.selectedResourceIndex];
 
-      if (!openedResource || !openedResource.model || openedResource.type !== 'request') {
+      if (!openedResource?.props?.request || openedResource.type !== 'request') {
         return;
       }
 
-      const request = openedResource.model as Request;
+      const request = openedResource.props.request;
       if (request.headers && request.headers[action.payload]) {
         request.headers.splice(action.payload, 1);
         if (request.headers.length === 0) {

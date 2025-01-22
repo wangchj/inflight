@@ -3,17 +3,15 @@ import { MouseEvent } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { resultsSlice } from 'renderer/redux/results-slice';
 import { workspaceSlice } from 'renderer/redux/workspace-slice';
-import { RootState } from "renderer/redux/store";
 import { OpenedResource } from "types/opened-resource";
-import { Request } from "types/request";
 import MethodIcon from "./method-icon";
 import resultEditorPath from "renderer/utils/result-editor-path";
-import { Environment } from "types/environment";
 import { IconBraces } from "@tabler/icons-react";
+import { RootState } from "renderer/redux/store";
+import { Project } from "types/project";
 
 type OpenedResourceTabProps = {
   index: number;
-  openedResource: OpenedResource
 };
 
 /**
@@ -22,11 +20,9 @@ type OpenedResourceTabProps = {
 function TabIcon({openedResource}: {openedResource: OpenedResource}) {
   switch (openedResource.type) {
     case 'request':
-      const request = openedResource.model as Request;
-      return <MethodIcon method={request.method}/>
+      return <MethodIcon method={ openedResource?.props?.request.method}/>
 
     case 'env':
-      const env = openedResource.model as Environment;
       return <IconBraces size="1em"/>
   }
 }
@@ -34,18 +30,18 @@ function TabIcon({openedResource}: {openedResource: OpenedResource}) {
 /**
  * The opened resource tab label component.
  */
-function TabLabel({openedResource}: {openedResource: OpenedResource}) {
+function TabLabel({project, openedResource}: {project: Project, openedResource: OpenedResource}) {
   let label;
 
   switch (openedResource.type) {
     case 'request':
-      const request = openedResource.model as Request;
+      const request = openedResource.props.request;
       label = request.name || request.url || 'New Request';
       break;
 
     case 'env':
-      const env = openedResource.model as Environment;
-      label = env.name;
+      const env = project.envs[openedResource.id];
+      label = env.name || '';
       break;
   }
 
@@ -55,12 +51,11 @@ function TabLabel({openedResource}: {openedResource: OpenedResource}) {
 /**
  * Renders opened resource tab.
  */
-export default function OpenedResourceTab({index, openedResource} : OpenedResourceTabProps) {
-  if (!openedResource || index < 0) { // This should never happen
-    return;
-  }
-
+export default function OpenedResourceTab({index} : OpenedResourceTabProps) {
+  const project = useSelector((state: RootState) => state.project);
+  const workspace = useSelector((state: RootState) => state.workspace);
   const dispatch = useDispatch();
+  const openedResource = workspace.openedResources[index];
 
   return (
     <Tabs.Tab
@@ -78,7 +73,7 @@ export default function OpenedResourceTab({index, openedResource} : OpenedResour
           }}
         >
           <TabIcon openedResource={openedResource}/>
-          <TabLabel openedResource={openedResource}/>
+          <TabLabel project={project} openedResource={openedResource}/>
         </Group>
 
         <Group gap="sm">
@@ -90,7 +85,7 @@ export default function OpenedResourceTab({index, openedResource} : OpenedResour
               event.stopPropagation();
 
               // Look for Monaco model
-              const model = window.monaco.editor.getModels()?.find(
+              const model = window.monaco?.editor?.getModels()?.find(
                 (m: any) => m._associatedResource.path === resultEditorPath(openedResource.id)
               );
 

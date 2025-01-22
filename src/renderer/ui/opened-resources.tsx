@@ -6,6 +6,21 @@ import { workspaceSlice } from 'renderer/redux/workspace-slice';
 import RequestForm from './request-form';
 import OpenedResourceTab from './opened-resource-tab';
 import Environment from './environment';
+import { OpenedResource } from 'types/opened-resource';
+
+function OpenedResourceContent({openedResource}: {openedResource: OpenedResource}) {
+  if (!openedResource) {
+    return;
+  }
+
+  switch (openedResource.type) {
+    case 'request':
+      return openedResource.props.request && <RequestForm openedResource={openedResource}/>;
+
+    case 'env':
+      return <Environment/>;
+  }
+}
 
 export default function OpenedResources() {
   const dispatch = useDispatch();
@@ -32,7 +47,6 @@ export default function OpenedResources() {
               <OpenedResourceTab
                 key={openedResource.id}
                 index={index}
-                openedResource={openedResource}
               />
             ))
           }
@@ -60,10 +74,7 @@ export default function OpenedResources() {
             }}
           >
             <Box p="md" style={{height: '100%'}}>
-              {
-                openedResource.type === 'request' ? <RequestForm/> :
-                openedResource.type === 'env' ? <Environment/> : null
-              }
+              <OpenedResourceContent openedResource={openedResource}/>
             </Box>
           </Tabs.Panel>
         ))}
