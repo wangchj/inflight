@@ -8,7 +8,15 @@ import OpenedResourceTab from './opened-resource-tab';
 import Environment from './environment';
 import { OpenedResource } from 'types/opened-resource';
 
-function OpenedResourceContent({openedResource}: {openedResource: OpenedResource}) {
+/**
+ * Opened resource content component props.
+ */
+type OpenedResourceContentProps = {openedResource: OpenedResource};
+
+/**
+ * The opened resource content component.
+ */
+function OpenedResourceContent({openedResource}: OpenedResourceContentProps) {
   if (!openedResource) {
     return;
   }
@@ -18,10 +26,13 @@ function OpenedResourceContent({openedResource}: {openedResource: OpenedResource
       return openedResource.props.request && <RequestForm openedResource={openedResource}/>;
 
     case 'env':
-      return <Environment/>;
+      return <Environment openedResource={openedResource}/>;
   }
 }
 
+/**
+ * The opened resources component.
+ */
 export default function OpenedResources() {
   const dispatch = useDispatch();
   const workspace = useSelector((state: RootState) => state.workspace);
@@ -98,5 +109,4 @@ export default function OpenedResources() {
         </Button>
       </div>
     )
-
 }

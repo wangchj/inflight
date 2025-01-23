@@ -145,6 +145,74 @@ export const projectSlice = createSlice({
 
       parent.folders.push(newId);
     },
+
+    /**
+     * Updates an environment variable name.
+     *
+     * @param state The project object.
+     * @param action The payload contains the environment id, variable index, and the updated
+     * value.
+     */
+    updateVarName(state, action: PayloadAction<{id: string, index: number, value: string}>) {
+      const {id, index, value} = action.payload;
+      const v = state.envs?.[id]?.vars?.[index];
+      if (v) {
+        v.name = value;
+      }
+    },
+
+    /**
+     * Updates an environment variable value.
+     *
+     * @param state The project object.
+     * @param action The payload contains the environment id, variable index, and the updated
+     * value.
+     */
+    updateVarValue(state, action: PayloadAction<{id: string, index: number, value: string}>) {
+      const {id, index, value} = action.payload;
+      const v = state.envs?.[id]?.vars?.[index];
+      if (v) {
+        v.value = value;
+      }
+    },
+
+    /**
+     * Adds a new empty environment variable.
+     *
+     * @param state The project object.
+     * @param action The payload contains the environment id.
+     */
+    addEmptyVar(state, action: PayloadAction<string>) {
+      const id = action.payload;
+      const env = state.envs?.[id];
+
+      if (env) {
+        if (!Array.isArray(env.vars)) {
+          env.vars = [];
+        }
+
+        env.vars.push({name: '', value: ''});
+      }
+    },
+
+    /**
+     * Updates an environment variable.
+     *
+     * @param state The project object.
+     * @param action The payload contains the environment id, variable index.
+     */
+    deleteVar(state, action: PayloadAction<{id: string, index: number}>) {
+      const {id, index} = action.payload;
+      const env = state.envs?.[id];
+      const vars = env?.vars;
+
+      if (!Array.isArray(vars) || vars.length == 1) {
+        delete env.vars;
+      }
+      else if (index >= 0 && index < vars.length) {
+        vars.splice(index, 1);
+      }
+    },
   },
 });
 

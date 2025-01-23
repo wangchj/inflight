@@ -80,5 +80,8 @@ createRoot(document.querySelector('#root')).render(
  * The purpose is to flush the redux state to the main process to be saved on disk.
  */
 window.onFlushWorkspace(() => {
-  window.saveWorkspace(store.getState().workspace);
+  const workspace = store.getState().workspace;
+  const project = store.getState().project;
+  window.saveWorkspace(workspace);
+  window.saveProject(workspace.projectRef.$ref, project);
 });
