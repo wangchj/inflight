@@ -8,4 +8,7 @@ export interface Workspace {
 
   /** Tree expanded state */
   treeExpandedState?: Record<string, boolean>;
+
+  /** Maps env group id to its selected env id */
+  selectedEnvs?: Record<string, string>;
 }

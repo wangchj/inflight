@@ -369,6 +369,36 @@ export const workspaceSlice = createSlice({
 
       state.treeExpandedState[action.payload] = false;
     },
+
+    /**
+     * Sets selected environment of an environment group.
+     *
+     * @param state The workspace object.
+     * @param action The payload contains the group id and environment id.
+     */
+    selectEnv(state, action: PayloadAction<{groupId: string, envId?: string}>) {
+      const {groupId, envId} = action.payload;
+
+      if (!groupId) {
+        return;
+      }
+
+      if (envId) {
+        if (!state.selectedEnvs) {
+          state.selectedEnvs = {};
+        }
+        state.selectedEnvs[groupId] = envId;
+      }
+      else {
+        if (state.selectedEnvs) {
+          delete state.selectedEnvs[groupId];
+
+          if (Object.keys(state.selectedEnvs).length === 0) {
+            delete state.selectedEnvs;
+          }
+        }
+      }
+    },
   },
 });
 

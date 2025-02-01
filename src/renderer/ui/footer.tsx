@@ -1,0 +1,150 @@
+import { Box, Button, Menu } from "@mantine/core";
+import { IconCheck } from "@tabler/icons-react";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "renderer/redux/store";
+import { workspaceSlice } from "renderer/redux/workspace-slice";
+import { Project } from "types/project";
+import { Workspace } from "types/workspace";
+
+/**
+ * Selectable environment menu component.
+ *
+ * @param groupId The env group id.
+ * @returns The React UI element.
+ */
+function EnvMenu({groupId}: {groupId: string}) {
+  const dispatch = useDispatch();
+  const workspace = useSelector((state: RootState) => state.workspace);
+  const project = useSelector((state: RootState) => state.project);
+  const group = project.envGroups?.[groupId];
+  const selectedEnvId = workspace.selectedEnvs?.[groupId];
+  const selectedEnv = project.envs?.[selectedEnvId];
+
+  return group && (
+    <Menu
+      withArrow
+      offset={1}
+    >
+      <Menu.Target>
+        <Button
+          size="compact-sm"
+          variant="subtle"
+          color="dark"
+          radius="lg"
+        >
+          {group.name}: {selectedEnv ? selectedEnv.name : 'None'}
+        </Button>
+      </Menu.Target>
+
+      <Menu.Dropdown>
+        <Menu.Item
+          key=""
+          leftSection={
+            <IconCheck
+              size="1em"
+              style={{visibility: selectedEnvId ? 'hidden' : 'visible'}}
+            />
+          }
+          onClick={() => dispatch(workspaceSlice.actions.selectEnv({groupId}))}
+        >
+          None
+        </Menu.Item>
+
+        {group.envs?.map(envId => {
+          const env = project.envs?.[envId];
+          return env ? (
+            <Menu.Item
+              key={envId}
+              leftSection={
+                <IconCheck
+                  size="1em"
+                  style={{
+                    visibility: selectedEnvId === envId ? 'visible' : 'hidden'
+                  }}
+                />
+              }
+              onClick={() => dispatch(workspaceSlice.actions.selectEnv({groupId, envId}))}
+            >
+              {env.name}
+            </Menu.Item>
+          ) : null
+        }).filter(item => !!item)}
+      </Menu.Dropdown>
+    </Menu>
+  )
+}
+
+/**
+ * The UI component that shows a list of selectable environments.
+ */
+function Envs() {
+  const workspace = useSelector((state: RootState) => state.workspace);
+  const project = useSelector((state: RootState) => state.project);
+  const groupIds = getEnvGroupIds(workspace, project, project.envRoot);
+
+  return (
+    <>
+      {groupIds
+        .filter(groupId => !!project.envGroups?.[groupId])
+        .map(groupId => <EnvMenu groupId={groupId}/>)
+      }
+    </>
+  )
+}
+
+/**
+ * Gets the list of ids of environment groups to show on the UI.
+ *
+ * @param workspace The workspace model object.
+ * @param project The project model object.
+ * @param envId The root environment id.
+ * @returns The list of group ids.
+ */
+function getEnvGroupIds(workspace: Workspace, project: Project, envId: string): string[] {
+  const env = project.envs?.[envId];
+
+  if (!env) {
+    return [];
+  }
+
+  const res = [];
+  const groupIds = env.envGroups ?? [];
+
+  for (const groupId of groupIds) {
+    const group = project.envGroups?.[groupId];
+
+    if (group) {
+      res.push(groupId);
+      res.push(getEnvGroupIds(workspace, project, group?.envs.find(
+        id => id === workspace.selectedEnvs?.[groupId]
+      )));
+    }
+  }
+
+  return res.flat();
+}
+
+/**
+ * The footer UI component.
+ */
+export default function Footer() {
+  const workspace = useSelector((state: RootState) => state.workspace);
+  const project = useSelector((state: RootState) => state.project);
+
+  return (
+    <Box
+      px="md"
+      py="xs"
+      style={{
+        borderTop: '1px solid var(--mantine-color-default-border)',
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'flex-end',
+        justifyContent: 'flex-end',
+        gap: '1em'
+      }}
+    >
+      <Envs/>
+    </Box>
+  )
+}

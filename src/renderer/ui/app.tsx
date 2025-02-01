@@ -6,11 +6,12 @@ import Split from 'react-split-grid';
 import { workspaceSlice } from 'renderer/redux/workspace-slice';
 import { projectSlice } from 'renderer/redux/project-slice';
 import { store } from 'renderer/redux/store';
-import OpenedResources from './opened-resources';
 import { NewFolderModal } from './new-folder-modal';
 import { DeleteModal } from './delete-modal';
-import NavBar from './navbar';
 import LeftPane from './left-pane';
+import NavBar from './navbar';
+import OpenedResources from './opened-resources';
+import Footer from './footer';
 
 window.printWorkspace = () => console.log(JSON.stringify(store.getState().workspace, null, 2));
 window.printProject = () => console.log(JSON.stringify(store.getState().project, null, 2));
@@ -75,31 +76,42 @@ export function App() {
   return (
     <div
       style={{
-        height: '100%',
-        width: '100%',
         display: 'flex',
-        flexDirection: 'row'
+        flexDirection: 'column',
+        width: '100%',
+        height: '100%',
       }}
     >
-      <NavBar/>
-      <Split
-        cursor="ew-resize"
-        // https://github.com/nathancahill/split/pull/728
-        // @ts-ignore
-        render={({getGridProps, getGutterProps}) => (
-          <div className='main-split-grid' {...getGridProps()}>
-            <LeftPane/>
-            <div className="split-handle" {...getGutterProps('column', 1)}/>
-            <OpenedResources/>
-          </div>
-        )}
-        gridTemplateColumns={gridTemplateColumns}
-        onDrag={(d, t, s) => setGridTemplateColumns(s)}
-        onDragEnd={() => console.log('on drag end')}
-      />
+      <div
+        style={{
+          height: '100%',
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'row'
+        }}
+      >
+        <NavBar/>
+        <Split
+          cursor="ew-resize"
+          // https://github.com/nathancahill/split/pull/728
+          // @ts-ignore
+          render={({getGridProps, getGutterProps}) => (
+            <div className='main-split-grid' {...getGridProps()}>
+              <LeftPane/>
+              <div className="split-handle" {...getGutterProps('column', 1)}/>
+              <OpenedResources/>
+            </div>
+          )}
+          gridTemplateColumns={gridTemplateColumns}
+          onDrag={(d, t, s) => setGridTemplateColumns(s)}
+          onDragEnd={() => console.log('on drag end')}
+        />
 
-      <NewFolderModal/>
-      <DeleteModal/>
+        <NewFolderModal/>
+        <DeleteModal/>
+      </div>
+
+      <Footer/>
     </div>
   );
 }
