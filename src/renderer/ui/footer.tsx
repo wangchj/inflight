@@ -5,6 +5,7 @@ import { RootState } from "renderer/redux/store";
 import { workspaceSlice } from "renderer/redux/workspace-slice";
 import { Project } from "types/project";
 import { Workspace } from "types/workspace";
+import * as Env from "renderer/utils/env";
 
 /**
  * Selectable environment menu component.
@@ -20,6 +21,23 @@ function EnvMenu({groupId}: {groupId: string}) {
   const selectedEnvId = workspace.selectedEnvs?.[groupId];
   const selectedEnv = project.envs?.[selectedEnvId];
 
+  /**
+   * Handles environment select event.
+   *
+   * @param groupId The id of the environment group on which the event occurred.
+   * @param envId The id of the environment that's selected.
+   */
+  function onSelectEnv(groupId: string, envId?: string) {
+    if (!groupId) {
+      return;
+    }
+
+    const selectMap = {...workspace.selectedEnvs};
+    envId ? selectMap[groupId] = envId : delete selectMap[groupId];
+    Env.combine(project, selectMap);
+    dispatch(workspaceSlice.actions.selectEnv({groupId, envId}));
+  }
+
   return group && (
     <Menu
       withArrow
@@ -27,7 +45,7 @@ function EnvMenu({groupId}: {groupId: string}) {
     >
       <Menu.Target>
         <Button
-          size="compact-sm"
+          size="compact-xs"
           variant="subtle"
           color="dark"
           radius="lg"
@@ -45,7 +63,7 @@ function EnvMenu({groupId}: {groupId: string}) {
               style={{visibility: selectedEnvId ? 'hidden' : 'visible'}}
             />
           }
-          onClick={() => dispatch(workspaceSlice.actions.selectEnv({groupId}))}
+          onClick={() => onSelectEnv(groupId)}
         >
           None
         </Menu.Item>
@@ -63,7 +81,7 @@ function EnvMenu({groupId}: {groupId: string}) {
                   }}
                 />
               }
-              onClick={() => dispatch(workspaceSlice.actions.selectEnv({groupId, envId}))}
+              onClick={() => onSelectEnv(groupId, envId)}
             >
               {env.name}
             </Menu.Item>
