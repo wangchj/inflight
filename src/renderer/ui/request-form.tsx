@@ -15,6 +15,7 @@ import { RootState, store } from "renderer/redux/store";
 import { workspaceSlice } from "renderer/redux/workspace-slice";
 import { projectSlice } from "renderer/redux/project-slice";
 import { resultsSlice } from "renderer/redux/results-slice";
+import * as Env from "renderer/utils/env";
 import { openSaveRequestModal, SaveRequestModal } from "./save-request-modal";
 import { OpenedResource } from "types/opened-resource";
 
@@ -47,7 +48,7 @@ export default function RequestForm({openedResource} : {openedResource: OpenedRe
     setError('');
 
     try {
-      const resp = await window.sendRequest(request);
+      const resp = await window.sendRequest(Env.resolve(request));
       dispatch(resultsSlice.actions.setResult({id: openedResource.id, result: resp}));
     }
     catch (error) {

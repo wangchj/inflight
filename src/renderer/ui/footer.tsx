@@ -104,7 +104,7 @@ function Envs() {
     <>
       {groupIds
         .filter(groupId => !!project.envGroups?.[groupId])
-        .map(groupId => <EnvMenu groupId={groupId}/>)
+        .map(groupId => <EnvMenu key={groupId} groupId={groupId}/>)
       }
     </>
   )
@@ -146,9 +146,6 @@ function getEnvGroupIds(workspace: Workspace, project: Project, envId: string): 
  * The footer UI component.
  */
 export default function Footer() {
-  const workspace = useSelector((state: RootState) => state.workspace);
-  const project = useSelector((state: RootState) => state.project);
-
   return (
     <Box
       px="md"

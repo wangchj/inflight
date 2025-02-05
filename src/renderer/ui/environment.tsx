@@ -3,18 +3,74 @@ import { IconTrash } from "@tabler/icons-react";
 import { useDispatch, useSelector } from "react-redux";
 import { projectSlice } from "renderer/redux/project-slice";
 import { RootState } from "renderer/redux/store";
+import * as Env from "renderer/utils/env";
 import { Environment } from "types/environment"
 import { OpenedResource } from "types/opened-resource";
 
 type EnvironmentProps = {openedResource: OpenedResource};
 
 export default function Environment({openedResource}: EnvironmentProps) {
+  const workspace = useSelector((state: RootState) => state.workspace);
   const project = useSelector((state: RootState) => state.project);
   const env = project.envs?.[openedResource?.id];
   const dispatch = useDispatch();
 
   if (!env) {
     return;
+  }
+
+  /**
+   * Handles variable name change event.
+   *
+   * @param envId The id of the environment that contains the variable.
+   * @param index The index of the variable.
+   * @param value The updated name.
+   */
+  function onVarNameChange(envId: string, index: number, value: string) {
+    const proj = JSON.parse(JSON.stringify(project));
+    proj.envs[envId].vars[index].name = value;
+    Env.combine(proj, workspace.selectedEnvs);
+    dispatch(
+      projectSlice.actions.updateVarName({
+        id: openedResource.id,
+        index,
+        value
+      })
+    );
+  }
+
+  /**
+   * Handles variable value change event.
+   *
+   * @param envId The id of the environment that contains the variable.
+   * @param index The index of the variable.
+   * @param value The updated value.
+   */
+  function onVarValueChange(envId: string, index: number, value: string) {
+    const proj = JSON.parse(JSON.stringify(project));
+    proj.envs[envId].vars[index].value = value;
+    Env.combine(proj, workspace.selectedEnvs);
+    dispatch(
+      projectSlice.actions.updateVarValue({
+        id: openedResource.id,
+        index,
+        value
+      })
+    );
+  }
+
+  /**
+   * Handles variable delete event.
+   *
+   * @param envId The id of the environment that contains the variable.
+   * @param index The index of the variable.
+   * @param value The updated value.
+   */
+  function onDeleteVar(envId: string, index: number) {
+    const proj = JSON.parse(JSON.stringify(project));
+    proj.envs[envId].vars.splice(index, 1);
+    Env.combine(proj, workspace.selectedEnvs);
+    dispatch(projectSlice.actions.deleteVar({id: envId, index}));
   }
 
   return (
@@ -40,12 +96,8 @@ export default function Environment({openedResource}: EnvironmentProps) {
                       <TextInput
                         value={v.name}
                         onChange={
-                          event => dispatch(
-                            projectSlice.actions.updateVarName({
-                              id: openedResource.id,
-                              index,
-                              value: event.currentTarget.value
-                            })
+                          event => onVarNameChange(
+                            openedResource.id, index, event.currentTarget.value
                           )
                         }
                       />
@@ -54,12 +106,8 @@ export default function Environment({openedResource}: EnvironmentProps) {
                       <TextInput
                         value={v.value}
                         onChange={
-                          event => dispatch(
-                            projectSlice.actions.updateVarValue({
-                              id: openedResource.id,
-                              index,
-                              value: event.currentTarget.value
-                            })
+                          event => onVarValueChange(
+                            openedResource.id, index, event.currentTarget.value
                           )
                         }
                       />
@@ -70,12 +118,7 @@ export default function Environment({openedResource}: EnvironmentProps) {
                         color="dark"
                         variant="transparent"
                         p={0}
-                        onClick={() => dispatch(
-                          projectSlice.actions.deleteVar({
-                            id: openedResource.id,
-                            index
-                          })
-                        )}
+                        onClick={() => onDeleteVar(openedResource.id, index)}
                       >
                         <IconTrash/>
                       </Button>

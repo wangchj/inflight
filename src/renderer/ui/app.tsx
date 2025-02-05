@@ -6,6 +6,7 @@ import Split from 'react-split-grid';
 import { workspaceSlice } from 'renderer/redux/workspace-slice';
 import { projectSlice } from 'renderer/redux/project-slice';
 import { store } from 'renderer/redux/store';
+import * as Env from "renderer/utils/env";
 import { NewFolderModal } from './new-folder-modal';
 import { DeleteModal } from './delete-modal';
 import LeftPane from './left-pane';
@@ -46,6 +47,8 @@ export function App() {
     try {
       const workspace = await window.openWorkspace();
       const project = await window.openProject(workspace?.projectRef.$ref);
+
+      Env.combine(project, workspace?.selectedEnvs ?? {});
 
       if (workspace) {
         dispatch(workspaceSlice.actions.setWorkspace(workspace));

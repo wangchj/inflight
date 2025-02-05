@@ -4,7 +4,7 @@ import { Var } from 'types/var';
 /**
  * The resolved environment map.
  */
-let resolved;
+let resolved: Record<string, string>;
 
 /**
  * Converts an array of Var objects to an plain JavaScript object.
@@ -51,5 +51,54 @@ export function combine(project: Project, selectMap: Record<string, string>) {
         }
       }
     }
+  }
+}
+
+/**
+ * A string replacer function that replaces variable name with its value in the resolved
+ * environment.
+ *
+ * @param match The matched variable expression.
+ * @param name The variable name
+ * @returns The replacement value.
+ */
+export function replacer(match: string, name: string) {
+  const value = resolved?.[name];
+
+  if (!value) {
+    return match;
+  }
+
+  return value.replaceAll(/\{\{([^\}]+)\}\}/g, replacer);
+}
+
+/**
+ * Replaces variables within an object with values from the resolved environment. This function
+ * returns a new object and does not modify the object that's passed in.
+ *
+ * @param o The object to resolve.
+ * @return The resolved object.
+ */
+export function resolve(o: any): any {
+  if (!o) {
+    return o;
+  }
+
+  switch (typeof o) {
+    case 'object':
+      if (Array.isArray(o)) {
+        return o.map(i => resolve(i))
+      }
+      else {
+        return Object.fromEntries(
+          Object.entries(o).map(e => [e[0], resolve(e[1])])
+        );
+      }
+
+    case 'string':
+      return o.replaceAll(/\{\{([^\}]+)\}\}/g, replacer);
+
+    default:
+      return o;
   }
 }
