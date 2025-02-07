@@ -1,11 +1,11 @@
 import './split-layout.css';
 import { useEffect, useState } from 'react';
 import PageLoading from './layout/page-loading';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Split from 'react-split-grid';
 import { workspaceSlice } from 'renderer/redux/workspace-slice';
 import { projectSlice } from 'renderer/redux/project-slice';
-import { store } from 'renderer/redux/store';
+import { RootState, store } from 'renderer/redux/store';
 import * as Env from "renderer/utils/env";
 import { NewFolderModal } from './new-folder-modal';
 import { DeleteModal } from './delete-modal';
@@ -39,6 +39,11 @@ export function App() {
   const dispatch = useDispatch();
 
   /**
+   * The project model object.
+   */
+  const project = useSelector((state: RootState) => state.project);
+
+  /**
    * Loads workspace from disk.
    */
   async function openWorkspace() {
@@ -63,6 +68,15 @@ export function App() {
     }
 
     setLoading(false);
+  }
+
+  /**
+   * Determines if the project has any selectable environments.
+   */
+  function hasSelectableEnvs() {
+    const rootEnv = project?.envs?.[project?.envRoot];
+    const rootGroups = rootEnv?.envGroups;
+    return Array.isArray(rootGroups) && rootGroups.length > 0;
   }
 
   /**
@@ -114,7 +128,9 @@ export function App() {
         <DeleteModal/>
       </div>
 
-      <Footer/>
+      {
+        hasSelectableEnvs() && <Footer/>
+      }
     </div>
   );
 }
