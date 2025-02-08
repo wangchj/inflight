@@ -1,7 +1,8 @@
 import { createSlice, nanoid } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
-import { Workspace } from 'types/workspace';
 import { set } from 'lodash';
+import * as Persistence from 'renderer/utils/persistence';
+import { Workspace } from 'types/workspace';
 import { AwsSigv4Auth } from 'types/auth';
 import { Request } from 'types/request';
 import { OpenedResource } from 'types/opened-resource';
@@ -57,6 +58,8 @@ export const workspaceSlice = createSlice({
 
         state.selectedResourceIndex = state.openedResources.length - 1;
       }
+
+      Persistence.setWorkspaceDirty();
     },
 
     /**
@@ -89,6 +92,8 @@ export const workspaceSlice = createSlice({
 
         state.selectedResourceIndex = state.openedResources.length - 1;
       }
+
+      Persistence.setWorkspaceDirty();
     },
 
     /**
@@ -114,6 +119,8 @@ export const workspaceSlice = createSlice({
       });
 
       state.selectedResourceIndex = state.openedResources.length - 1;
+
+      Persistence.setWorkspaceDirty();
     },
 
     /**
@@ -144,6 +151,8 @@ export const workspaceSlice = createSlice({
       else if (state.selectedResourceIndex > index) {
         state.selectedResourceIndex = state.selectedResourceIndex - 1;
       }
+
+      Persistence.setWorkspaceDirty();
     },
 
     /**
@@ -160,6 +169,8 @@ export const workspaceSlice = createSlice({
         set(openedResource, `props.request.${action.payload.path}`, action.payload.value);
         openedResource.dirty = true;
       }
+
+      Persistence.setWorkspaceDirty();
     },
 
     /**
@@ -179,6 +190,8 @@ export const workspaceSlice = createSlice({
       }
 
       openedResources[index] = action.payload;
+
+      Persistence.setWorkspaceDirty();
     },
 
     /**
@@ -197,6 +210,8 @@ export const workspaceSlice = createSlice({
           delete openedResource.dirty;
         }
       }
+
+      Persistence.setWorkspaceDirty();
     },
 
     /**
@@ -228,6 +243,8 @@ export const workspaceSlice = createSlice({
       }
 
       openedResource.dirty = true;
+
+      Persistence.setWorkspaceDirty();
     },
 
     /**
@@ -240,6 +257,8 @@ export const workspaceSlice = createSlice({
       state.selectedResourceIndex = state.openedResources.findIndex(
         openedTab => openedTab.id === action.payload
       );
+
+      Persistence.setWorkspaceDirty();
     },
 
     /**
@@ -263,6 +282,8 @@ export const workspaceSlice = createSlice({
       request.headers.push({key: '', value: '', enabled: true});
 
       openedResource.dirty = true;
+
+      Persistence.setWorkspaceDirty();
     },
 
     /**
@@ -281,6 +302,8 @@ export const workspaceSlice = createSlice({
       const request = openedResource.props.request;
       request.headers[action.payload.index].key = action.payload.value;
       openedResource.dirty = true;
+
+      Persistence.setWorkspaceDirty();
     },
 
     /**
@@ -299,6 +322,8 @@ export const workspaceSlice = createSlice({
       const request = openedResource.props.request;
       request.headers[action.payload.index].value = action.payload.value;
       openedResource.dirty = true;
+
+      Persistence.setWorkspaceDirty();
     },
 
     /**
@@ -317,6 +342,8 @@ export const workspaceSlice = createSlice({
       const request = openedResource.props.request;
       request.headers[action.payload].enabled = !request.headers[action.payload].enabled;
       openedResource.dirty = true;
+
+      Persistence.setWorkspaceDirty();
     },
 
     /**
@@ -340,6 +367,8 @@ export const workspaceSlice = createSlice({
         }
         openedResource.dirty = true;
       }
+
+      Persistence.setWorkspaceDirty();
     },
 
     /**
@@ -354,6 +383,8 @@ export const workspaceSlice = createSlice({
       }
 
       state.treeExpandedState[action.payload] = true;
+
+      Persistence.setWorkspaceDirty();
     },
 
     /**
@@ -368,6 +399,8 @@ export const workspaceSlice = createSlice({
       }
 
       state.treeExpandedState[action.payload] = false;
+
+      Persistence.setWorkspaceDirty();
     },
 
     /**
@@ -398,6 +431,8 @@ export const workspaceSlice = createSlice({
           }
         }
       }
+
+      Persistence.setWorkspaceDirty();
     },
   },
 });

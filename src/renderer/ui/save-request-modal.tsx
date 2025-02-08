@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { projectSlice } from "renderer/redux/project-slice";
 import { RootState, store } from "renderer/redux/store";
 import { workspaceSlice } from "renderer/redux/workspace-slice";
+import * as Persistence from "renderer/utils/persistence";
 import { OpenedResource } from "types/opened-resource";
 import { Project } from "types/project";
 import { Workspace } from "types/workspace";
@@ -90,9 +91,9 @@ async function onSaveClick() {
       folderId
     }));
 
-    await window.saveProject(workspace.projectRef.$ref, store.getState().project);
+    await Persistence.saveProject(workspace.projectRef.$ref, store.getState().project);
     dispatch(workspaceSlice.actions.setResource(resource));
-    await window.saveWorkspace(store.getState().workspace);
+    await Persistence.saveWorkspace(store.getState().workspace);
     setOpened(false);
   }
   catch (error) {

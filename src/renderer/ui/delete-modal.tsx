@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { projectSlice } from "renderer/redux/project-slice";
 import { RootState, store } from "renderer/redux/store";
 import { uiSlice } from "renderer/redux/ui-slice";
+import * as Persistence from "renderer/utils/persistence";
 import { workspaceSlice } from "renderer/redux/workspace-slice";
 import getDescendantRequestIds from "renderer/utils/get-descendant-request-ids";
 
@@ -38,8 +39,8 @@ export function DeleteModal() {
     }
 
     try {
-      await window.saveProject(workspace.projectRef.$ref, store.getState().project);
-      await window.saveWorkspace(store.getState().workspace);
+      await Persistence.saveProject(workspace.projectRef.$ref, store.getState().project);
+      await Persistence.saveWorkspace(store.getState().workspace);
     }
     catch (error) {
       console.error("Error saving project", error);

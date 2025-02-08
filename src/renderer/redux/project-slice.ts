@@ -2,6 +2,7 @@ import { createSlice, nanoid } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import getDescendantFolderIds from 'renderer/utils/get-descendant-folder-ids';
 import getDescendantRequestIds from 'renderer/utils/get-descendant-request-ids';
+import * as Persistence from 'renderer/utils/persistence';
 import { Project } from 'types/project';
 import { Request } from 'types/request';
 
@@ -37,6 +38,8 @@ export const projectSlice = createSlice({
       }
 
       state.requests[action.payload.id] = action.payload.request;
+
+      Persistence.setProjectDirty();
     },
 
     /**
@@ -68,6 +71,8 @@ export const projectSlice = createSlice({
       if (!folder.requests.includes(id)) {
         folder.requests.push(id);
       }
+
+      Persistence.setProjectDirty();
     },
 
     /**
@@ -96,6 +101,8 @@ export const projectSlice = createSlice({
       if (parent && Array.isArray(parent.folders)) {
         parent.folders = parent.folders.filter(i => i !== id);
       }
+
+      Persistence.setProjectDirty();
     },
 
     /**
@@ -115,6 +122,8 @@ export const projectSlice = createSlice({
       if (Array.isArray(folder.requests)) {
         folder.requests = folder.requests.filter(requestId => requestId !== id);
       }
+
+      Persistence.setProjectDirty();
     },
 
     /**
@@ -144,6 +153,8 @@ export const projectSlice = createSlice({
       }
 
       parent.folders.push(newId);
+
+      Persistence.setProjectDirty();
     },
 
     /**
@@ -159,6 +170,8 @@ export const projectSlice = createSlice({
       if (v) {
         v.name = value;
       }
+
+      Persistence.setProjectDirty();
     },
 
     /**
@@ -174,6 +187,8 @@ export const projectSlice = createSlice({
       if (v) {
         v.value = value;
       }
+
+      Persistence.setProjectDirty();
     },
 
     /**
@@ -193,6 +208,8 @@ export const projectSlice = createSlice({
 
         env.vars.push({name: '', value: ''});
       }
+
+      Persistence.setProjectDirty();
     },
 
     /**
@@ -212,6 +229,8 @@ export const projectSlice = createSlice({
       else if (index >= 0 && index < vars.length) {
         vars.splice(index, 1);
       }
+
+      Persistence.setProjectDirty();
     },
   },
 });

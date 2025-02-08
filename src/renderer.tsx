@@ -33,6 +33,7 @@ import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { store } from 'renderer/redux/store';
 import { App } from 'renderer/ui/app';
+import * as Persistence from 'renderer/utils/persistence';
 import { Project } from 'types/project';
 import { Request } from 'types/request';
 import { Workspace } from 'types/workspace';
@@ -82,6 +83,6 @@ createRoot(document.querySelector('#root')).render(
 window.onFlushWorkspace(() => {
   const workspace = store.getState().workspace;
   const project = store.getState().project;
-  window.saveWorkspace(workspace);
-  window.saveProject(workspace.projectRef.$ref, project);
+  Persistence.saveWorkspace(workspace);
+  Persistence.saveProject(workspace.projectRef.$ref, project);
 });

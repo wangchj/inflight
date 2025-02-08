@@ -7,6 +7,7 @@ import { workspaceSlice } from 'renderer/redux/workspace-slice';
 import { projectSlice } from 'renderer/redux/project-slice';
 import { RootState, store } from 'renderer/redux/store';
 import * as Env from "renderer/utils/env";
+import * as Persistence from 'renderer/utils/persistence';
 import { NewFolderModal } from './new-folder-modal';
 import { DeleteModal } from './delete-modal';
 import LeftPane from './left-pane';
@@ -50,8 +51,8 @@ export function App() {
     setLoading(true);
 
     try {
-      const workspace = await window.openWorkspace();
-      const project = await window.openProject(workspace?.projectRef.$ref);
+      const workspace = await Persistence.openWorkspace();
+      const project = await Persistence.openProject(workspace?.projectRef.$ref);
 
       Env.combine(project, workspace?.selectedEnvs ?? {});
 

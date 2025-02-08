@@ -16,6 +16,7 @@ import { workspaceSlice } from "renderer/redux/workspace-slice";
 import { projectSlice } from "renderer/redux/project-slice";
 import { resultsSlice } from "renderer/redux/results-slice";
 import * as Env from "renderer/utils/env";
+import * as Persistence from "renderer/utils/persistence";
 import { openSaveRequestModal, SaveRequestModal } from "./save-request-modal";
 import { OpenedResource } from "types/opened-resource";
 
@@ -65,9 +66,9 @@ export default function RequestForm({openedResource} : {openedResource: OpenedRe
         dispatch(projectSlice.actions.setRequest({id: openedResource.id, request}));
 
         try {
-          await window.saveProject(workspace.projectRef.$ref, store.getState().project);
+          await Persistence.saveProject(workspace.projectRef.$ref, store.getState().project);
           dispatch(workspaceSlice.actions.setDirty(false));
-          await window.saveWorkspace(store.getState().workspace);
+          await Persistence.saveWorkspace(store.getState().workspace);
         }
         catch (error) {
           console.log("Error saving project", error);

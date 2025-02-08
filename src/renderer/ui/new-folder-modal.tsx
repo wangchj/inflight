@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { projectSlice } from "renderer/redux/project-slice";
 import { RootState, store } from "renderer/redux/store";
 import { uiSlice } from "renderer/redux/ui-slice";
+import * as Persistence from "renderer/utils/persistence";
 
 export function NewFolderModal() {
   const dispatch = useDispatch();
@@ -22,7 +23,7 @@ export function NewFolderModal() {
     dispatch(projectSlice.actions.newFolder({name, parentId: ui.newFolderParentId}));
 
     try {
-      await window.saveProject(workspace.projectRef.$ref, store.getState().project);
+      await Persistence.saveProject(workspace.projectRef.$ref, store.getState().project);
     }
     catch (error) {
       console.error("Error saving project", error);
