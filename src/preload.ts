@@ -34,3 +34,6 @@ contextBridge.exposeInMainWorld('onFlushWorkspace',
   (callback: () => void) => ipcRenderer.on('flush-workspace', () => callback())
 )
 
+contextBridge.exposeInMainWorld('onSave',
+  (callback: () => void) => ipcRenderer.on('save', () => callback())
+)

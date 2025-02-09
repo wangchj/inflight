@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, IpcMainInvokeEvent } from 'electron';
+import { app, BrowserWindow, ipcMain, IpcMainInvokeEvent, Menu, MenuItem } from 'electron';
 import fs from 'fs';
 import os from 'os';
 import { Project } from 'types/project';
@@ -39,6 +39,25 @@ const createWindow = (): void => {
   mainWindow.on('close', () => {
     mainWindow.webContents.send('flush-workspace');
   });
+
+  const menu = new Menu();
+
+  menu.append(new MenuItem({
+    label: 'Fetch',
+    submenu: [
+      {
+        label: 'Save',
+        accelerator: process.platform === 'darwin' ? 'Cmd+S' : 'Ctrl+S',
+        click: () => { mainWindow.webContents.send('save') }
+      },
+      {
+        role: 'quit',
+        accelerator: process.platform === 'darwin' ? 'Cmd+Q' : 'Ctrl+Q'
+      },
+    ]
+  }));
+
+  Menu.setApplicationMenu(menu);
 };
 
 // This method will be called when Electron has finished

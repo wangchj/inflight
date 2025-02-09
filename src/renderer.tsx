@@ -33,6 +33,7 @@ import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { store } from 'renderer/redux/store';
 import { App } from 'renderer/ui/app';
+import onSave from "renderer/utils/on-save";
 import * as Persistence from 'renderer/utils/persistence';
 import { Project } from 'types/project';
 import { Request } from 'types/request';
@@ -55,6 +56,7 @@ declare global {
     saveProject: (path: string, project: Project) => Promise<void>;
     sendRequest: (request: Request) => Promise<RequestResult>;
     onFlushWorkspace: (callback: () => void) => void;
+    onSave: (callback: () => void) => void;
     monaco: any;
     printWorkspace: () => void;
     printProject: () => void;
@@ -85,4 +87,11 @@ window.onFlushWorkspace(() => {
   const project = store.getState().project;
   Persistence.saveWorkspace(workspace);
   Persistence.saveProject(workspace.projectRef.$ref, project);
+});
+
+/**
+ * Handles the save event from app menu.
+ */
+window.onSave(() => {
+  onSave();
 });

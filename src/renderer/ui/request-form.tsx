@@ -11,13 +11,12 @@ import Split from 'react-split-grid';
 import RequestConfig from "./request-config";
 import RequestOutput from "./request-output";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState, store } from "renderer/redux/store";
+import { RootState } from "renderer/redux/store";
 import { workspaceSlice } from "renderer/redux/workspace-slice";
-import { projectSlice } from "renderer/redux/project-slice";
 import { resultsSlice } from "renderer/redux/results-slice";
 import * as Env from "renderer/utils/env";
-import * as Persistence from "renderer/utils/persistence";
-import { openSaveRequestModal, SaveRequestModal } from "./save-request-modal";
+import onSave from "renderer/utils/on-save";
+import { SaveRequestModal } from "./save-request-modal";
 import { OpenedResource } from "types/opened-resource";
 
 export default function RequestForm({openedResource} : {openedResource: OpenedResource}) {
@@ -54,29 +53,6 @@ export default function RequestForm({openedResource} : {openedResource: OpenedRe
     }
     catch (error) {
       setError(error.message.replace('Error invoking remote method \'sendRequest\': ', ''));
-    }
-  }
-
-  /**
-   * Handles Save button click event.
-   */
-  async function onSaveClick() {
-    if (openedResource.props.folderId) {
-      if (openedResource.dirty) {
-        dispatch(projectSlice.actions.setRequest({id: openedResource.id, request}));
-
-        try {
-          await Persistence.saveProject(workspace.projectRef.$ref, store.getState().project);
-          dispatch(workspaceSlice.actions.setDirty(false));
-          await Persistence.saveWorkspace(store.getState().workspace);
-        }
-        catch (error) {
-          console.log("Error saving project", error);
-        }
-      }
-    }
-    else {
-      openSaveRequestModal(openedResource);
     }
   }
 
@@ -125,7 +101,7 @@ export default function RequestForm({openedResource} : {openedResource: OpenedRe
           </Button>
 
           <Button
-            onClick={onSaveClick}
+            onClick={onSave}
           >
             Save
           </Button>

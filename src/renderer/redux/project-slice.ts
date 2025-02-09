@@ -33,11 +33,11 @@ export const projectSlice = createSlice({
      *   - request: The request object.
      */
     setRequest(state, action: PayloadAction<{id: string; request: Request}>) {
-      if (!state.requests) {
+      if (!state.requests || !action.payload.request) {
         state.requests = {};
       }
 
-      state.requests[action.payload.id] = action.payload.request;
+      state.requests[action.payload.id] = JSON.parse(JSON.stringify(action.payload.request));
 
       Persistence.setProjectDirty();
     },
