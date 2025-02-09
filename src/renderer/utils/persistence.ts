@@ -19,10 +19,28 @@ export function setWorkspaceDirty() {
 }
 
 /**
+ * Gets the workspace dirty flag.
+ *
+ * @returns True or false.
+ */
+export function getWorkspaceDirty() {
+  return workspaceDirty;
+}
+
+/**
  * Sets the project dirty flag to true.
  */
 export function setProjectDirty() {
   projectDirty = true;
+}
+
+/**
+ * Gets the project dirty flag.
+ *
+ * @returns True or false.
+ */
+export function getProjectDirty() {
+  return projectDirty;
 }
 
 /**
@@ -79,6 +97,6 @@ export async function saveProject(path: string, project: Project) {
 
   if (projectDirty) {
     await window.saveProject(path, project);
-    workspaceDirty = false;
+    projectDirty = false;
   }
 }
