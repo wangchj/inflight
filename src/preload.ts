@@ -31,7 +31,11 @@ contextBridge.exposeInMainWorld('sendRequest',
 );
 
 contextBridge.exposeInMainWorld('showOpenProjectDialog',
-  (request: Request) => ipcRenderer.invoke('showOpenProjectDialog', request)
+  () => ipcRenderer.invoke('showOpenProjectDialog')
+);
+
+contextBridge.exposeInMainWorld('showNewProjectDialog',
+  () => ipcRenderer.invoke('showNewProjectDialog')
 );
 
 contextBridge.exposeInMainWorld('onFlushWorkspace',

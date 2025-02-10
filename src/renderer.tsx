@@ -58,6 +58,7 @@ declare global {
     saveProject: (path: string, project: Project) => Promise<void>;
     sendRequest: (request: Request) => Promise<RequestResult>;
     showOpenProjectDialog: () => Promise<string>;
+    showNewProjectDialog: () => Promise<string>;
     onFlushWorkspace: (callback: () => void) => void;
     onSave: (callback: () => void) => void;
     monaco: any;

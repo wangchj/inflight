@@ -13,6 +13,32 @@ export default function NoProject() {
   const dispatch = useDispatch();
 
   /**
+   * Handles New Project button click event.
+   */
+  async function newProject() {
+    notifications.clean();
+
+    try {
+      const path = await window.showNewProjectDialog();
+      const project = await Persistence.openProject(path);
+
+      if (project) {
+        dispatch(projectSlice.actions.setProject(project));
+        dispatch(workspaceSlice.actions.openProject(path));
+      }
+    }
+    catch (error) {
+      notifications.show({
+        id: 'newProject',
+        color: 'red',
+        title: 'Unable to create new project',
+        message: (error instanceof Error ? error.message : String(error)),
+        withBorder: true,
+      });
+    }
+  }
+
+  /**
    * Handles Open Project button click event.
    */
   async function openProject() {
@@ -63,6 +89,7 @@ export default function NoProject() {
             variant="transparent"
             justify="left"
             leftSection={<IconFileSpark/>}
+            onClick={newProject}
           >
             New Project
           </Button>
