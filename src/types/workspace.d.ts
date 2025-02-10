@@ -1,8 +1,7 @@
-import { Ref } from "types/ref";
 import { OpenedResource } from "./opened-resource";
 
 export interface Workspace {
-  projectRef?: Ref;
+  projectPath?: string;
   openedResources?: OpenedResource[];
   selectedResourceIndex?: number;
 

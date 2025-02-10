@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, IpcMainInvokeEvent, Menu, MenuItem } from 'electron';
+import { app, BrowserWindow, dialog, ipcMain, IpcMainInvokeEvent, Menu, MenuItem } from 'electron';
 import fs from 'fs';
 import os from 'os';
 import { Project } from 'types/project';
@@ -20,9 +20,11 @@ if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
+let mainWindow: BrowserWindow;
+
 const createWindow = (): void => {
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     height: 1200,
     width: 1600,
     webPreferences: {
@@ -69,6 +71,7 @@ app.on('ready', () => {
   ipcMain.handle('saveProject', (event, path, project) => saveProject(event, path, project));
   ipcMain.handle('sendRequest', (event, request) => sendRequest(event, request));
   ipcMain.handle('saveWorkspace', (event, workspace) => saveWorkspace(event, workspace));
+  ipcMain.handle('showOpenProjectDialog', showOpenProjectDialog);
   createWindow();
 });
 
@@ -115,13 +118,8 @@ async function openWorkspace(): Promise<Workspace> {
  * @returns The project object or undefined if project can't be opened.
  */
 async function openProject(event: IpcMainInvokeEvent, path: string): Promise<Project> {
-  try {
-    const str = fs.readFileSync(path, 'utf-8');
-    return JSON.parse(str);
-  }
-  catch (error) {
-    return;
-  }
+  const str = fs.readFileSync(path, 'utf-8');
+  return JSON.parse(str);
 }
 
 /**
@@ -188,4 +186,18 @@ async function saveWorkspace(event: IpcMainInvokeEvent, workspace: Workspace) {
   catch (error) {
     console.warn('Fail to save workspace:', error.message);
   }
+}
+
+async function showOpenProjectDialog(): Promise<string> {
+  const res = await dialog.showOpenDialog(mainWindow, {
+    properties: ['openFile'],
+    filters: [
+      {
+        name: 'Custom File Type',
+        extensions: ['json'],
+      }
+    ],
+  });
+
+  return !res?.canceled && res.filePaths[0] ? res.filePaths[0] : undefined
 }

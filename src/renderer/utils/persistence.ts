@@ -74,7 +74,7 @@ export async function saveWorkspace(workspace: Workspace) {
  * @param path The project file path.
  */
 export async function openProject(path: string): Promise<Project> {
-  const project = await window.openProject(path);
+  const project = path ? await window.openProject(path) : undefined;
   projectDirty = false;
   return project;
 }

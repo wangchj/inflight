@@ -15,6 +15,21 @@ export const workspaceSlice = createSlice({
   initialState,
   reducers: {
     /**
+     * Resets the workspace to initial state.
+     *
+     * @param state The state model object.
+     * @param action The payload is the project path.
+     */
+    openProject(state, action: PayloadAction<string>) {
+      const projectPath = action.payload;
+      Persistence.setWorkspaceDirty();
+      return {
+        ...initialState,
+        projectPath
+      };
+    },
+
+    /**
      * Sets the workspace state object.
      *
      * @param state The current state

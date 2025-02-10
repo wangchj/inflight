@@ -27,7 +27,9 @@
  */
 
 import '@mantine/core/styles.css';
+import '@mantine/notifications/styles.css';
 import { createTheme, MantineProvider } from '@mantine/core';
+import { Notifications } from '@mantine/notifications';
 import { loader } from '@monaco-editor/react';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
@@ -55,6 +57,7 @@ declare global {
     openProject: (path: string) => Promise<Project>;
     saveProject: (path: string, project: Project) => Promise<void>;
     sendRequest: (request: Request) => Promise<RequestResult>;
+    showOpenProjectDialog: () => Promise<string>;
     onFlushWorkspace: (callback: () => void) => void;
     onSave: (callback: () => void) => void;
     monaco: any;
@@ -73,6 +76,7 @@ createRoot(document.querySelector('#root')).render(
   <Provider store={store}>
     <MantineProvider theme={theme}>
       <App/>
+      <Notifications autoClose={false}/>
     </MantineProvider>
   </Provider>
 );
@@ -86,7 +90,7 @@ window.onFlushWorkspace(() => {
   const workspace = store.getState().workspace;
   const project = store.getState().project;
   Persistence.saveWorkspace(workspace);
-  Persistence.saveProject(workspace.projectRef.$ref, project);
+  Persistence.saveProject(workspace.projectPath, project);
 });
 
 /**

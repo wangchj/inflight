@@ -30,6 +30,10 @@ contextBridge.exposeInMainWorld('sendRequest',
   (request: Request) => ipcRenderer.invoke('sendRequest', request)
 );
 
+contextBridge.exposeInMainWorld('showOpenProjectDialog',
+  (request: Request) => ipcRenderer.invoke('showOpenProjectDialog', request)
+);
+
 contextBridge.exposeInMainWorld('onFlushWorkspace',
   (callback: () => void) => ipcRenderer.on('flush-workspace', () => callback())
 )

@@ -6,9 +6,7 @@ import * as Persistence from 'renderer/utils/persistence';
 import { Project } from 'types/project';
 import { Request } from 'types/request';
 
-const initialState: Project = {
-  name: ''
-};
+const initialState: Project = null;
 
 export const projectSlice = createSlice({
   name: 'project',

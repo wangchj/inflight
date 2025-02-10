@@ -39,7 +39,7 @@ export function DeleteModal() {
     }
 
     try {
-      await Persistence.saveProject(workspace.projectRef.$ref, store.getState().project);
+      await Persistence.saveProject(workspace.projectPath, store.getState().project);
       await Persistence.saveWorkspace(store.getState().workspace);
     }
     catch (error) {

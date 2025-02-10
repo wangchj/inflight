@@ -23,7 +23,7 @@ export function NewFolderModal() {
     dispatch(projectSlice.actions.newFolder({name, parentId: ui.newFolderParentId}));
 
     try {
-      await Persistence.saveProject(workspace.projectRef.$ref, store.getState().project);
+      await Persistence.saveProject(workspace.projectPath, store.getState().project);
     }
     catch (error) {
       console.error("Error saving project", error);
