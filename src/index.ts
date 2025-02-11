@@ -22,7 +22,15 @@ if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
+/**
+ * The application window.
+ */
 let mainWindow: BrowserWindow;
+
+/**
+ * A project is open.
+ */
+let hasProject: boolean = false;
 
 const createWindow = (): void => {
   // Create the browser window.
@@ -44,24 +52,7 @@ const createWindow = (): void => {
     mainWindow.webContents.send('flush-workspace');
   });
 
-  const menu = new Menu();
-
-  menu.append(new MenuItem({
-    label: 'Fetch',
-    submenu: [
-      {
-        label: 'Save',
-        accelerator: process.platform === 'darwin' ? 'Cmd+S' : 'Ctrl+S',
-        click: () => { mainWindow.webContents.send('save') }
-      },
-      {
-        role: 'quit',
-        accelerator: process.platform === 'darwin' ? 'Cmd+Q' : 'Ctrl+Q'
-      },
-    ]
-  }));
-
-  Menu.setApplicationMenu(menu);
+  updateMenu();
 };
 
 // This method will be called when Electron has finished
@@ -98,6 +89,38 @@ app.on('activate', () => {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
 
+async function updateMenu() {
+  const menu = new Menu();
+
+  menu.append(new MenuItem({
+    label: 'Fetch',
+    submenu: [
+      {
+        label: 'Save',
+        accelerator: process.platform === 'darwin' ? 'Cmd+S' : 'Ctrl+S',
+        click: () => { mainWindow.webContents.send('save') }
+      },
+      hasProject ? {
+        label: 'Close Project',
+        click: () => {
+          hasProject = false;
+          updateMenu();
+          mainWindow.webContents.send('closeProject')
+        }
+      } : {
+        label: 'Open Project',
+        click: () => { mainWindow.webContents.send('openProject') }
+      },
+      {
+        role: 'quit',
+        accelerator: process.platform === 'darwin' ? 'Cmd+Q' : 'Ctrl+Q'
+      },
+    ]
+  }));
+
+  Menu.setApplicationMenu(menu);
+}
+
 /**
  * Opens workspace file from disk.
  *
@@ -122,6 +145,8 @@ async function openWorkspace(): Promise<Workspace> {
  */
 async function openProject(event: IpcMainInvokeEvent, path: string): Promise<Project> {
   const str = fs.readFileSync(path, 'utf-8');
+  hasProject = true;
+  updateMenu();
   return JSON.parse(str);
 }
 

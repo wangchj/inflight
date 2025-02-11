@@ -45,3 +45,7 @@ contextBridge.exposeInMainWorld('onFlushWorkspace',
 contextBridge.exposeInMainWorld('onSave',
   (callback: () => void) => ipcRenderer.on('save', () => callback())
 )
+
+contextBridge.exposeInMainWorld('onCloseProject',
+  (callback: () => void) => ipcRenderer.on('closeProject', () => callback())
+)

@@ -23,6 +23,13 @@ export const projectSlice = createSlice({
     },
 
     /**
+     * Close the currently opened project.
+     */
+    closeProject() {
+      return null;
+    },
+
+    /**
      * Set a request object inside the project.
      *
      * @param state The project object.

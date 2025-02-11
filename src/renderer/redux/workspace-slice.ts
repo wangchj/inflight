@@ -30,6 +30,16 @@ export const workspaceSlice = createSlice({
     },
 
     /**
+     * Close the currently opened project.
+     *
+     * @param state The state model object.
+     */
+    closeProject(state) {
+      delete state.projectPath;
+      Persistence.setWorkspaceDirty();
+    },
+
+    /**
      * Sets the workspace state object.
      *
      * @param state The current state

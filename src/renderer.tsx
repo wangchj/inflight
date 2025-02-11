@@ -33,7 +33,7 @@ import { Notifications } from '@mantine/notifications';
 import { loader } from '@monaco-editor/react';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
-import { store } from 'renderer/redux/store';
+import { dispatch, store } from 'renderer/redux/store';
 import { App } from 'renderer/ui/app';
 import onSave from "renderer/utils/on-save";
 import * as Persistence from 'renderer/utils/persistence';
@@ -41,6 +41,8 @@ import { Project } from 'types/project';
 import { Request } from 'types/request';
 import { Workspace } from 'types/workspace';
 import { RequestResult } from 'types/request-result';
+import { projectSlice } from 'renderer/redux/project-slice';
+import { workspaceSlice } from 'renderer/redux/workspace-slice';
 
 self.MonacoEnvironment = {
 	getWorkerUrl: function (moduleId, label) {
@@ -61,11 +63,13 @@ declare global {
     showNewProjectDialog: () => Promise<string>;
     onFlushWorkspace: (callback: () => void) => void;
     onSave: (callback: () => void) => void;
+    onCloseProject: (callback: () => void) => void;
     monaco: any;
     printWorkspace: () => void;
     printProject: () => void;
     printResults: () => void;
     printUi: () => void;
+    printPersistence: () => void;
   }
 }
 
@@ -99,4 +103,22 @@ window.onFlushWorkspace(() => {
  */
 window.onSave(() => {
   onSave();
+});
+
+/**
+ * Handles close project event from app menu.
+ */
+window.onCloseProject(() => {
+  const workspace = store.getState().workspace;
+  const project = store.getState().project;
+
+  if (!project || !workspace.projectPath) {
+    return;
+  }
+
+  Persistence.saveProject(workspace.projectPath, project);
+  dispatch(projectSlice.actions.closeProject());
+
+  dispatch(workspaceSlice.actions.closeProject());
+  Persistence.saveWorkspace(store.getState().workspace);
 });

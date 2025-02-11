@@ -14,6 +14,7 @@ window.printWorkspace = () => console.log(JSON.stringify(store.getState().worksp
 window.printProject = () => console.log(JSON.stringify(store.getState().project, null, 2));
 window.printResults = () => console.log(JSON.stringify(store.getState().results, null, 2));
 window.printUi = () => console.log(JSON.stringify(store.getState().ui, null, 2));
+window.printPersistence = () => console.log(JSON.stringify(Persistence, null, 2));
 
 /**
  * The app root component.
