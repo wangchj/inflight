@@ -109,7 +109,7 @@ async function updateMenu() {
         }
       } : {
         label: 'Open Project',
-        click: () => { mainWindow.webContents.send('openProject') }
+        click: onOpenProjectMenuClick
       },
       {
         role: 'quit',
@@ -252,4 +252,15 @@ async function showOpenProjectDialog(): Promise<string> {
   });
 
   return !res?.canceled && res.filePaths[0] ? res.filePaths[0] : undefined
+}
+
+/**
+ * Handles open project menu select event.
+ */
+async function onOpenProjectMenuClick() {
+  const filePath = await showOpenProjectDialog();
+
+  if (filePath) {
+    mainWindow.webContents.send('openProject', filePath);
+  }
 }

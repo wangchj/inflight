@@ -49,3 +49,9 @@ contextBridge.exposeInMainWorld('onSave',
 contextBridge.exposeInMainWorld('onCloseProject',
   (callback: () => void) => ipcRenderer.on('closeProject', () => callback())
 )
+
+contextBridge.exposeInMainWorld('onOpenProject',
+  (callback: (filePath: string) => void) => ipcRenderer.on('openProject',
+    (event, filePath) => callback(filePath)
+  )
+)

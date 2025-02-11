@@ -29,7 +29,7 @@
 import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
 import { createTheme, MantineProvider } from '@mantine/core';
-import { Notifications } from '@mantine/notifications';
+import { notifications, Notifications } from '@mantine/notifications';
 import { loader } from '@monaco-editor/react';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
@@ -63,6 +63,7 @@ declare global {
     showNewProjectDialog: () => Promise<string>;
     onFlushWorkspace: (callback: () => void) => void;
     onSave: (callback: () => void) => void;
+    onOpenProject: (callback: (filePath: string) => void) => void;
     onCloseProject: (callback: () => void) => void;
     monaco: any;
     printWorkspace: () => void;
@@ -103,6 +104,29 @@ window.onFlushWorkspace(() => {
  */
 window.onSave(() => {
   onSave();
+});
+
+/**
+ * Handles open project event from app menu.
+ */
+window.onOpenProject(async filePath => {
+  try {
+    const project = await Persistence.openProject(filePath);
+
+    if (project) {
+      dispatch(projectSlice.actions.setProject(project));
+      dispatch(workspaceSlice.actions.openProject(filePath));
+    }
+  }
+  catch (error) {
+    notifications.show({
+      id: 'openProject',
+      color: 'red',
+      title: 'Unable to open project',
+      message: (error instanceof Error ? error.message : String(error)),
+      withBorder: true,
+    });
+  }
 });
 
 /**
