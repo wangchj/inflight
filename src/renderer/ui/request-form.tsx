@@ -6,6 +6,7 @@ import {
   Stack,
   TextInput,
 } from "@mantine/core";
+import { IconSend } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import Split from 'react-split-grid';
 import RequestConfig from "./request-config";
@@ -15,7 +16,6 @@ import { RootState } from "renderer/redux/store";
 import { workspaceSlice } from "renderer/redux/workspace-slice";
 import { resultsSlice } from "renderer/redux/results-slice";
 import * as Env from "renderer/utils/env";
-import onSave from "renderer/utils/on-save";
 import { SaveRequestModal } from "./save-request-modal";
 import { OpenedResource } from "types/opened-resource";
 
@@ -23,7 +23,6 @@ export default function RequestForm({openedResource} : {openedResource: OpenedRe
   const [error, setError] = useState<string>();
   const [gridTemplateColumns, setGridTemplateColumns] = useState('1fr');
   const dispatch = useDispatch();
-  const workspace = useSelector((state: RootState) => state.workspace);
   const request = openedResource.props.request;
   const result = useSelector((state: RootState) => state.results)[openedResource.id];
 
@@ -59,8 +58,16 @@ export default function RequestForm({openedResource} : {openedResource: OpenedRe
   return (
     <Stack
       h="100%"
+      gap={0}
     >
-      <Group grow preventGrowOverflow={false}>
+      <Group
+        grow
+        preventGrowOverflow={false}
+        p="md"
+        style={{
+          borderBottom: '1px solid var(--mantine-color-gray-2)'
+        }}
+      >
         <Group
           gap="xs"
           style={{flexGrow: 1}}
@@ -90,22 +97,13 @@ export default function RequestForm({openedResource} : {openedResource: OpenedRe
           />
         </Group>
 
-        <Group
-          gap="xs"
+        <Button
+          onClick={onSendClick}
+          leftSection={<IconSend size="1.4em"/>}
           style={{flexGrow: 0, flexShrink: 1}}
         >
-          <Button
-            onClick={onSendClick}
-          >
-            Send
-          </Button>
-
-          <Button
-            onClick={onSave}
-          >
-            Save
-          </Button>
-        </Group>
+          Send
+        </Button>
       </Group>
 
       {error && <Notification color="red" onClose={() => setError('')}>{error}</Notification>}
@@ -117,7 +115,7 @@ export default function RequestForm({openedResource} : {openedResource: OpenedRe
         render={({getGridProps, getGutterProps}) => (
           <div className="request-split-grid" {...getGridProps()}>
             <RequestConfig request={request}/>
-            {result && <div className="split-handle" {...getGutterProps('column', 1)}></div>}
+            {result && <div className="split-handle-request" {...getGutterProps('column', 1)}></div>}
             {result && <RequestOutput/>}
           </div>
         )}

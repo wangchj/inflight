@@ -1,0 +1,13 @@
+.minor-tabs-list {
+  display: flex;
+  column-gap: 0.8em;
+}
+
+.minor-tabs-tab {
+  padding-block: 0.6em;
+  padding-inline: 0.4em;
+
+  &[data-active] {
+    border-bottom: 1px solid var(--mantine-color-blue-filled);
+  }
+}

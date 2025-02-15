@@ -84,9 +84,7 @@ export default function OpenedResources() {
               flexGrow: 1,
             }}
           >
-            <Box p="md" style={{height: '100%'}}>
-              <OpenedResourceContent openedResource={openedResource}/>
-            </Box>
+            <OpenedResourceContent openedResource={openedResource}/>
           </Tabs.Panel>
         ))}
       </Tabs>

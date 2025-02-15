@@ -1,5 +1,5 @@
 import './request-body.css';
-
+import './minor-tabs.css';
 import {
   Box,
   Tabs,
@@ -18,54 +18,57 @@ export default function RequestConfig({request}: RequestConfigProps) {
   const [selectedTab, setSelectedTab] = useState<string>('auth');
 
   return (
-    <Tabs
-      value={selectedTab}
-      onChange={value => value === null ? null : setSelectedTab(value)}
-      style={{
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-      }}
-    >
-      <Tabs.List
+    <Box p="md">
+      <Tabs
+        variant='unstyled'
+        classNames={{
+          'list': 'minor-tabs-list',
+          'tab': 'minor-tabs-tab'
+        }}
+        value={selectedTab}
+        onChange={value => value === null ? null : setSelectedTab(value)}
         style={{
-          flexGrow: 0,
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
         }}
       >
-        <Tabs.Tab value="auth">Auth</Tabs.Tab>
-        <Tabs.Tab value="headers">Headers</Tabs.Tab>
-        <Tabs.Tab value="body">Body</Tabs.Tab>
-      </Tabs.List>
+        <Tabs.List>
+          <Tabs.Tab value="auth">Auth</Tabs.Tab>
+          <Tabs.Tab value="headers">Headers</Tabs.Tab>
+          <Tabs.Tab value="body">Body</Tabs.Tab>
+        </Tabs.List>
 
-      <Tabs.Panel
-        key={`${request.name}_auth`}
-        value="auth"
-        style={{flexGrow: 1}}
-      >
-        <Box pt="md" style={{maxWidth: '500px'}}>
-          <RequestAuth auth={request.auth}/>
-        </Box>
-      </Tabs.Panel>
+        <Tabs.Panel
+          key={`${request.name}_auth`}
+          value="auth"
+          style={{flexGrow: 1}}
+        >
+          <Box pt="md" style={{maxWidth: '500px'}}>
+            <RequestAuth auth={request.auth}/>
+          </Box>
+        </Tabs.Panel>
 
-      <Tabs.Panel
-        key={`${request.name}_headers`}
-        value="headers"
-        style={{flexGrow: 1}}
-      >
-        <Box pt="md">
-          <RequestHeaders headers={request.headers}/>
-        </Box>
-      </Tabs.Panel>
+        <Tabs.Panel
+          key={`${request.name}_headers`}
+          value="headers"
+          style={{flexGrow: 1}}
+        >
+          <Box pt="md">
+            <RequestHeaders headers={request.headers}/>
+          </Box>
+        </Tabs.Panel>
 
-      <Tabs.Panel
-        key={`${request.name}_body`}
-        value="body"
-        style={{display:'flex', flexGrow: 1, flexShrink: 1}}
-      >
-        <Box pt="md" style={{display: 'flex', flexGrow: 1, flexShrink: 1}}>
-          <RequestBody request={request}/>
-        </Box>
-      </Tabs.Panel>
-    </Tabs>
+        <Tabs.Panel
+          key={`${request.name}_body`}
+          value="body"
+          style={{display:'flex', flexGrow: 1, flexShrink: 1}}
+        >
+          <Box pt="md" style={{display: 'flex', flexGrow: 1, flexShrink: 1}}>
+            <RequestBody request={request}/>
+          </Box>
+        </Tabs.Panel>
+      </Tabs>
+    </Box>
   )
 }

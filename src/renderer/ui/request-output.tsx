@@ -1,10 +1,13 @@
+import './minor-tabs.css';
 import {
   Box,
   Tabs,
+  Text,
 } from "@mantine/core";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "renderer/redux/store";
+import { Response } from "types/response";
 import ResultHeaders from "./result-headers";
 import ResultBody from "./result-body";
 import ServerCertificate from "./server-certificate";
@@ -20,58 +23,108 @@ export default function RequestOutput() {
   }
 
   return (
-    <Tabs
-      value={selectedTab}
-      onChange={value => value === null ? null : setSelectedTab(value)}
-      style={{
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-      }}
+    <Box
+      pt="md"
+      display="flex"
     >
-      <Tabs.List
+      <Tabs
+        variant='unstyled'
+        classNames={{
+          'list': 'minor-tabs-list',
+          'tab': 'minor-tabs-tab'
+        }}
+        value={selectedTab}
+        onChange={value => value === null ? null : setSelectedTab(value)}
         style={{
-          flexGrow: 0,
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
         }}
       >
-        <Tabs.Tab value="body">Body</Tabs.Tab>
-        <Tabs.Tab value="headers">Headers</Tabs.Tab>
-        <Tabs.Tab value="server_certificate">Server Certificate</Tabs.Tab>
-      </Tabs.List>
-
-      <Tabs.Panel
-        key={`${openedRequest.id}_response_body`}
-        value="body"
-        style={{display: 'flex', flexGrow: 1, flexShrink: 1}}
-      >
-        <Box pt="md" style={{display: 'flex', flexGrow: 1, flexShrink: 1}}>
-          <ResultBody id={openedRequest.id} requestResult={result}/>
-        </Box>
-      </Tabs.Panel>
-
-      <Tabs.Panel
-        key={`${openedRequest.id}_result_headers`}
-        value="headers"
-        style={{flexGrow: 1}}
-      >
-        <Box pt="md">
-          <ResultHeaders requestResult={result}/>
-        </Box>
-      </Tabs.Panel>
-
-      {
-        result.response.peerCertificate && (
-          <Tabs.Panel
-            key={`${openedRequest.id}_server_certificate`}
-            value="server_certificate"
-            style={{flexGrow: 1}}
+        <Box
+          pe="md"
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between'
+          }}
+        >
+          <Tabs.List
+            style={{
+              flexGrow: 0,
+            }}
           >
-            <Box pt="md">
-              <ServerCertificate requestResult={result}/>
-            </Box>
-          </Tabs.Panel>
-        )
-      }
-    </Tabs>
+
+            <Tabs.Tab value="body">Body</Tabs.Tab>
+            <Tabs.Tab value="headers">Headers</Tabs.Tab>
+            <Tabs.Tab value="server_certificate">Server Certificate</Tabs.Tab>
+          </Tabs.List>
+
+          <Text size="sm" py="0.4em">
+            Status: <Status response={result.response}/>
+          </Text>
+        </Box>
+
+        <Tabs.Panel
+          key={`${openedRequest.id}_response_body`}
+          value="body"
+          style={{display: 'flex', flexGrow: 1, flexShrink: 1}}
+        >
+          <Box pt="md" style={{display: 'flex', flexGrow: 1, flexShrink: 1}}>
+            <ResultBody id={openedRequest.id} requestResult={result}/>
+          </Box>
+        </Tabs.Panel>
+
+        <Tabs.Panel
+          key={`${openedRequest.id}_result_headers`}
+          value="headers"
+          style={{flexGrow: 1}}
+        >
+          <Box pt="md" pe="md">
+            <ResultHeaders requestResult={result}/>
+          </Box>
+        </Tabs.Panel>
+
+        {
+          result.response.peerCertificate && (
+            <Tabs.Panel
+              key={`${openedRequest.id}_server_certificate`}
+              value="server_certificate"
+              style={{flexGrow: 1}}
+            >
+              <Box pt="md" pe="md">
+                <ServerCertificate requestResult={result}/>
+              </Box>
+            </Tabs.Panel>
+          )
+        }
+      </Tabs>
+    </Box>
+  )
+}
+
+/**
+ * Component for color-coded response status.
+ */
+function Status({response}: {response: Response}) {
+  const {statusCode, statusMessage} = response;
+
+  let color = 'red';
+
+  if (statusCode >= 100 && statusCode < 200) {
+    color = 'blue';
+  }
+  if (statusCode >= 200 && statusCode < 300) {
+    color = 'green';
+  }
+  if (statusCode >= 300 && statusCode < 400) {
+    color = 'indigo';
+  }
+  if (statusCode >= 400 && statusCode < 500) {
+    color='orange'
+  }
+
+  return (
+    <span style={{color}}>{statusCode} {statusMessage}</span>
   )
 }

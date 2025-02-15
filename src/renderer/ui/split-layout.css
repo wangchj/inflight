@@ -16,7 +16,12 @@
   background-color: var(--mantine-color-default-border);
 }
 
-.split-handle:hover {
+.split-handle-request {
+  cursor: ew-resize;
+  background-color: var(--mantine-color-gray-3);
+}
+
+.split-handle:hover, .split-handle-request:hover {
   background-color: var(--mantine-primary-color-filled-hover);
   padding-left: 1px;
   padding-right: 1px;
