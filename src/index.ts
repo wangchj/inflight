@@ -90,11 +90,11 @@ app.on('activate', () => {
 // code. You can also put them in separate files and import them here.
 
 async function updateMenu() {
-  const menu = new Menu();
-
-  menu.append(new MenuItem({
-    label: 'Fetch',
-    submenu: [
+  const oldMenu = Menu.getApplicationMenu();
+  const newMenu = new Menu();
+  const newFileMenu = new MenuItem({
+    label: 'File',
+    submenu:[
       {
         label: 'Save',
         accelerator: process.platform === 'darwin' ? 'Cmd+S' : 'Ctrl+S',
@@ -111,14 +111,19 @@ async function updateMenu() {
         label: 'Open Project',
         click: onOpenProjectMenuClick
       },
-      {
-        role: 'quit',
-        accelerator: process.platform === 'darwin' ? 'Cmd+Q' : 'Ctrl+Q'
-      },
     ]
-  }));
+  });
 
-  Menu.setApplicationMenu(menu);
+  for (const item of oldMenu.items) {
+    if (item.label === 'File') {
+      newMenu.append(newFileMenu);
+    }
+    else {
+      newMenu.append(item);
+    }
+  }
+
+  Menu.setApplicationMenu(newMenu);
 }
 
 /**
