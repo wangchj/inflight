@@ -65,6 +65,7 @@ declare global {
     onSave: (callback: () => void) => void;
     onOpenProject: (callback: (filePath: string) => void) => void;
     onCloseProject: (callback: () => void) => void;
+    onCloseTab: (callback: () => void) => void;
     monaco: any;
     printWorkspace: () => void;
     printProject: () => void;
@@ -145,4 +146,8 @@ window.onCloseProject(() => {
 
   dispatch(workspaceSlice.actions.closeProject());
   Persistence.saveWorkspace(store.getState().workspace);
+});
+
+window.onCloseTab(() => {
+  dispatch(workspaceSlice.actions.closeResource());
 });

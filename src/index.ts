@@ -94,11 +94,17 @@ async function updateMenu() {
   const newMenu = new Menu();
   const newFileMenu = new MenuItem({
     label: 'File',
+    role: 'fileMenu',
     submenu:[
       {
         label: 'Save',
         accelerator: process.platform === 'darwin' ? 'Cmd+S' : 'Ctrl+S',
         click: () => { mainWindow.webContents.send('save') }
+      },
+      {
+        label: 'Close Tab',
+        accelerator: process.platform === 'darwin' ? 'Cmd+W' : 'Ctrl+W',
+        click: () => { mainWindow.webContents.send('closeTab') }
       },
       hasProject ? {
         label: 'Close Project',

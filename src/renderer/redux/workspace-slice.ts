@@ -155,8 +155,10 @@ export const workspaceSlice = createSlice({
      * @param action The action that contains the id of the resource to close.
      */
     closeResource(state, action: PayloadAction<number | string>) {
-      const index = typeof action.payload === 'number' ? action.payload :
-        state.openedResources?.findIndex(r => r.id === action.payload);
+      const payload = action.payload;
+      const index = payload === undefined ? state.selectedResourceIndex :
+        typeof payload === 'number' ? payload :
+        state.openedResources?.findIndex(r => r.id === payload);
 
       if (!Array.isArray(state.openedResources) ||
           index < 0 ||

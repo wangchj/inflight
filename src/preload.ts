@@ -55,3 +55,7 @@ contextBridge.exposeInMainWorld('onOpenProject',
     (event, filePath) => callback(filePath)
   )
 )
+
+contextBridge.exposeInMainWorld('onCloseTab',
+  (callback: () => void) => ipcRenderer.on('closeTab', () => callback())
+)
