@@ -36,8 +36,8 @@ export default function ResultHeaders({requestResult}: {requestResult: RequestRe
           <Table.Tbody>
             {
               (headers && Object.keys(headers).length > 0) ?
-                Object.entries(headers).map(entry => (
-                  <Table.Tr key={entry[0]}>
+                Object.entries(headers).map((entry, index) => (
+                  <Table.Tr key={`${index} ${entry[0]}`}>
                     <Table.Td w="20%"><Code color="none">{entry[0]}</Code></Table.Td>
                     <Table.Td style={{lineBreak: 'anywhere'}}><Code color="none">{entry[1]}</Code></Table.Td>
                   </Table.Tr>
@@ -62,8 +62,8 @@ export default function ResultHeaders({requestResult}: {requestResult: RequestRe
           <Table.Tbody>
             {
               (rawHeaders && rawHeaders.length > 0) ?
-                rawHeadersToEntries(rawHeaders).map(entry => (
-                  <Table.Tr key={entry[0]}>
+                rawHeadersToEntries(rawHeaders).map((entry, index) => (
+                  <Table.Tr key={`${index} ${entry[0]}`}>
                     <Table.Td w="20%"><Code color="none">{entry[0]}</Code></Table.Td>
                     <Table.Td style={{lineBreak: 'anywhere'}}><Code color="none">{entry[1]}</Code></Table.Td>
                   </Table.Tr>
