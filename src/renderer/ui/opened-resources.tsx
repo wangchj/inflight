@@ -1,5 +1,8 @@
-import { Box, Button, Divider, Tabs } from '@mantine/core';
+import { monitorForElements } from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
+import { extractClosestEdge } from '@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge';
+import { Button, Divider, Tabs } from '@mantine/core';
 import { IconPlus } from '@tabler/icons-react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from 'renderer/redux/store';
 import { workspaceSlice } from 'renderer/redux/workspace-slice';
@@ -38,6 +41,63 @@ export default function OpenedResources() {
   const workspace = useSelector((state: RootState) => state.workspace);
   const openedResources = workspace.openedResources;
   const selectedId = openedResources?.[workspace.selectedResourceIndex]?.id;
+
+  /**
+   * Support tab drag and drop.
+   *
+   * https://github.com/atlassian/pragmatic-drag-and-drop/blob/main/packages/documentation/examples/list.tsx
+   */
+  useEffect(() => {
+    return monitorForElements({
+      onDrop({ location, source}) {
+        if (!location?.current?.dropTargets?.[0]?.data || !source?.data) {
+          return;
+        }
+
+        const target = location.current.dropTargets[0];
+
+        if (target.data.index === source.data.index) {
+          return;
+        }
+
+        const edge = extractClosestEdge(target.data);
+        const fromIndex = source.data.index as number;
+        const targetIndex = target.data.index as number;
+        let toIndex: number;
+
+        if (fromIndex < targetIndex) {
+          switch (edge) {
+            case 'left':
+              toIndex = targetIndex - 1;
+              break;
+            case 'right':
+              toIndex = targetIndex;
+              break;
+            default:
+              toIndex = fromIndex;
+          }
+        }
+        else {
+          switch (edge) {
+            case 'left':
+              toIndex = targetIndex;
+              break;
+            case 'right':
+              toIndex = targetIndex + 1;
+              break;
+            default:
+              toIndex = fromIndex;
+          }
+        }
+
+        if (fromIndex === toIndex) {
+          return;
+        }
+
+        dispatch(workspaceSlice.actions.reorderResource({fromIndex, toIndex}));
+      }
+    });
+  }, [openedResources]);
 
   return openedResources?.length ?
     (

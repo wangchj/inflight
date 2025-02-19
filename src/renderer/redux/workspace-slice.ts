@@ -278,13 +278,20 @@ export const workspaceSlice = createSlice({
      * Sets the selected tab.
      *
      * @param state The workspace state
-     * @param action The action that contains the selected request path (id).
+     * @param action The payload is either the index or resource id.
      */
-    setSelectedTab(state, action: PayloadAction<string>) {
-      state.selectedResourceIndex = state.openedResources.findIndex(
-        openedTab => openedTab.id === action.payload
-      );
+    setSelectedTab(state, action: PayloadAction<number | string>) {
+      const payload = action.payload;
+      const openedResources = state.openedResources;
+      const index = typeof payload === 'number' ? payload : openedResources?.findIndex(
+        item => item.id === payload
+      ) ?? -1;
 
+      if (index < 0 || index > openedResources?.length || index === state.selectedResourceIndex) {
+        return;
+      }
+
+      state.selectedResourceIndex = index;
       Persistence.setWorkspaceDirty();
     },
 
@@ -458,6 +465,35 @@ export const workspaceSlice = createSlice({
           }
         }
       }
+
+      Persistence.setWorkspaceDirty();
+    },
+
+    /**
+     * Reorders/moves an opened resource tab.
+     *
+     * @param state
+     * @param action
+     */
+    reorderResource(state, action: PayloadAction<{fromIndex: number, toIndex: number}>) {
+      const {fromIndex, toIndex} = action.payload;
+      const openedResources = state.openedResources ?? [];
+
+      if (fromIndex === toIndex ||
+          fromIndex < 0 || fromIndex > openedResources.length - 1 ||
+          toIndex < 0 || toIndex > openedResources.length - 1)
+      {
+        return;
+      }
+
+      // Delete the item from the previous position
+      const res = state.openedResources.splice(fromIndex, 1);
+
+      // Insert the item into the new position
+      state.openedResources.splice(toIndex, 0, res[0]);
+
+      // Adjust selectedIndex
+      state.selectedResourceIndex = toIndex;
 
       Persistence.setWorkspaceDirty();
     },

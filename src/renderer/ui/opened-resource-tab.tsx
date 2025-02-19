@@ -1,5 +1,16 @@
+import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
+import {
+  draggable,
+  dropTargetForElements
+} from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import {
+  attachClosestEdge,
+  extractClosestEdge
+} from '@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge';
+import { useState } from "react";
+import { DropIndicator } from "@atlaskit/pragmatic-drag-and-drop-react-drop-indicator/box";
 import { CloseButton, Group, Tabs, Text } from "@mantine/core";
-import { MouseEvent } from "react";
+import { MouseEvent, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { resultsSlice } from 'renderer/redux/results-slice';
 import { workspaceSlice } from 'renderer/redux/workspace-slice';
@@ -56,11 +67,74 @@ export default function OpenedResourceTab({index} : OpenedResourceTabProps) {
   const workspace = useSelector((state: RootState) => state.workspace);
   const dispatch = useDispatch();
   const openedResource = workspace.openedResources[index];
+  const ref = useRef(null);
+  const [dragEdge, setDragEdge] = useState(null);
+
+  /**
+   * Support tab drag and drop.
+   *
+   * https://github.com/atlassian/pragmatic-drag-and-drop/blob/main/packages/documentation/examples/list.tsx
+   */
+  useEffect(() => {
+    const element = ref.current;
+
+    if (!element) {
+      return;
+    }
+
+    return combine(
+      draggable({
+        element,
+        getInitialData() {
+          return {index};
+        },
+        onDragStart({source}) {
+          if (source?.data) {
+            dispatch(workspaceSlice.actions.setSelectedTab(index))
+          }
+        },
+      }),
+      dropTargetForElements({
+        element,
+        getData({input, element}) {
+          const data = {index};
+          return attachClosestEdge(data, {input, element, allowedEdges: ['left', 'right']})
+        },
+        onDrag({source, self}) {
+          if (source.data.index === self.data.index) {
+            setDragEdge(null);
+            return;
+          }
+
+          const closestEdge = extractClosestEdge(self.data);
+
+          if (closestEdge === 'left' && source.data.index as number + 1 === self.data.index) {
+            setDragEdge(null);
+            return;
+          }
+
+          if (closestEdge === 'right' && source.data.index as number - 1 === self.data.index) {
+            setDragEdge(null);
+            return;
+          }
+
+          setDragEdge(closestEdge);
+        },
+        onDragLeave() {
+					setDragEdge(null);
+				},
+        onDrop() {
+          setDragEdge(null);
+        },
+      })
+    );
+  }, [index]);
 
   return (
     <Tabs.Tab
       key={openedResource.id}
       value={openedResource.id}
+      ref={ref}
     >
       <Group gap="lg">
 
@@ -100,6 +174,7 @@ export default function OpenedResourceTab({index} : OpenedResourceTabProps) {
           />
         </Group>
       </Group>
+      {dragEdge && <DropIndicator edge={dragEdge} gap="1px" />}
     </Tabs.Tab>
   )
 
