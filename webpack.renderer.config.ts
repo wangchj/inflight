@@ -36,7 +36,7 @@ export const rendererConfig: Configuration = {
       patterns: [
         {
           from: path.resolve(__dirname, 'node_modules/monaco-editor/min/vs'),
-          to: 'vs', // Output directory in the build folder
+          to: 'main_window/vs', // Output directory in the build folder
         },
       ],
     }),

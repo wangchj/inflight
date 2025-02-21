@@ -43,7 +43,8 @@ const createWindow = (): void => {
   });
 
   // and load the index.html of the app.
-  mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
+  mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY.endsWith('/index.html') ? MAIN_WINDOW_WEBPACK_ENTRY :
+    `${MAIN_WINDOW_WEBPACK_ENTRY}/index.html`);
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
