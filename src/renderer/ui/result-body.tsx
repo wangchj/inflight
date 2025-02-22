@@ -85,7 +85,7 @@ function ResultBody({id, requestResult}: {id: string, requestResult: RequestResu
 
   return (
     <Stack style={{width: '100%', height: '100%'}}>
-      <Box>
+      <Box px="md">
         <SegmentedControl
           data={['Pretty', 'Raw']}
           value={pretty ? 'Pretty' : 'Raw'}

@@ -19,7 +19,7 @@ export default function RequestConfig({request}: RequestConfigProps) {
 
   return (
     <Box
-      p="md"
+      pt="md"
       display="flex"
     >
       <Tabs
@@ -36,7 +36,7 @@ export default function RequestConfig({request}: RequestConfigProps) {
           flexDirection: 'column',
         }}
       >
-        <Tabs.List>
+        <Tabs.List px="md">
           <Tabs.Tab value="auth">Auth</Tabs.Tab>
           <Tabs.Tab value="headers">Headers</Tabs.Tab>
           <Tabs.Tab value="body">Body</Tabs.Tab>
@@ -47,7 +47,7 @@ export default function RequestConfig({request}: RequestConfigProps) {
           value="auth"
           style={{flexGrow: 1}}
         >
-          <Box pt="md" style={{maxWidth: '500px'}}>
+          <Box pt="md" px="md" style={{maxWidth: '500px'}}>
             <RequestAuth auth={request.auth}/>
           </Box>
         </Tabs.Panel>
@@ -57,7 +57,7 @@ export default function RequestConfig({request}: RequestConfigProps) {
           value="headers"
           style={{flexGrow: 1}}
         >
-          <Box pt="md">
+          <Box pt="md" px="md">
             <RequestHeaders headers={request.headers}/>
           </Box>
         </Tabs.Panel>

@@ -42,7 +42,7 @@ export default function RequestOutput() {
         }}
       >
         <Box
-          pe="md"
+          px="md"
           style={{
             display: 'flex',
             flexDirection: 'row',
@@ -80,7 +80,7 @@ export default function RequestOutput() {
           value="headers"
           style={{flexGrow: 1}}
         >
-          <Box pt="md" pe="md">
+          <Box pt="md" px="md">
             <ResultHeaders requestResult={result}/>
           </Box>
         </Tabs.Panel>
@@ -92,7 +92,7 @@ export default function RequestOutput() {
               value="server_certificate"
               style={{flexGrow: 1}}
             >
-              <Box pt="md" pe="md">
+              <Box pt="md" px="md">
                 <ServerCertificate requestResult={result}/>
               </Box>
             </Tabs.Panel>

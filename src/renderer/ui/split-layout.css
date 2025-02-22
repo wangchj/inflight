@@ -8,7 +8,7 @@
   height: 100%;
   width: 100%;
   display: grid;
-  column-gap: 1em;
+  column-gap: 0;
 }
 
 .split-handle {
