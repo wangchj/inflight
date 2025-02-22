@@ -18,7 +18,10 @@ export default function RequestConfig({request}: RequestConfigProps) {
   const [selectedTab, setSelectedTab] = useState<string>('auth');
 
   return (
-    <Box p="md">
+    <Box
+      p="md"
+      display="flex"
+    >
       <Tabs
         variant='unstyled'
         classNames={{
