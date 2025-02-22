@@ -54,6 +54,7 @@ export default function RequestForm({openedResource} : {openedResource: OpenedRe
       dispatch(resultsSlice.actions.setResult({id: openedResource.id, result: resp}));
     }
     catch (error) {
+      dispatch(resultsSlice.actions.deleteResult(openedResource.id));
       setError(error.message.replace('Error invoking remote method \'sendRequest\': ', ''));
     }
 
