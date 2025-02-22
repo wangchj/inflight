@@ -47,7 +47,7 @@ const createWindow = (): void => {
     `${MAIN_WINDOW_WEBPACK_ENTRY}/index.html`);
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
 
   mainWindow.on('close', () => {
     mainWindow.webContents.send('flush-workspace');
