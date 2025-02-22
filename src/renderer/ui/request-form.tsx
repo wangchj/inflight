@@ -1,6 +1,7 @@
 import {
   Button,
   Group,
+  Loader,
   Notification,
   Select,
   Stack,
@@ -20,6 +21,7 @@ import { SaveRequestModal } from "./save-request-modal";
 import { OpenedResource } from "types/opened-resource";
 
 export default function RequestForm({openedResource} : {openedResource: OpenedResource}) {
+  const [sending, setSending] = useState<boolean>(false);
   const [error, setError] = useState<string>();
   const [gridTemplateColumns, setGridTemplateColumns] = useState('1fr');
   const dispatch = useDispatch();
@@ -45,6 +47,7 @@ export default function RequestForm({openedResource} : {openedResource: OpenedRe
    */
   async function onSendClick() {
     setError('');
+    setSending(true);
 
     try {
       const resp = await window.sendRequest(Env.resolve(request));
@@ -53,6 +56,8 @@ export default function RequestForm({openedResource} : {openedResource: OpenedRe
     catch (error) {
       setError(error.message.replace('Error invoking remote method \'sendRequest\': ', ''));
     }
+
+    setSending(false);
   }
 
   return (
@@ -99,8 +104,9 @@ export default function RequestForm({openedResource} : {openedResource: OpenedRe
 
         <Button
           onClick={onSendClick}
-          leftSection={<IconSend size="1.4em"/>}
+          leftSection={sending ? <Loader size="xs" color="gray"/> : <IconSend size="1.4em"/>}
           style={{flexGrow: 0, flexShrink: 1}}
+          disabled={sending}
         >
           Send
         </Button>
