@@ -61,7 +61,7 @@ export default function RequestOutput() {
           </Tabs.List>
 
           <Text size="sm" py="0.4em">
-            Status: <Status response={result.response}/>
+            <Status response={result.response}/>
           </Text>
         </Box>
 
