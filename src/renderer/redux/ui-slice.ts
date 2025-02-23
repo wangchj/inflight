@@ -12,12 +12,16 @@ interface UiState {
 
   deleteModalOpen: boolean;
   nodeToDelete: TreeNodeData;
+
+  newEnvGroupOpen: boolean;
+  newEnvGroupParentId: string;
 }
 
 const initialState = {
   newFolderModalOpen: false,
   deleteModalOpen: false,
-  selectedNavItem: 'requests',
+  // selectedNavItem: 'requests',
+  selectedNavItem: 'environments',
 } as UiState;
 
 export const uiSlice = createSlice({
@@ -72,6 +76,25 @@ export const uiSlice = createSlice({
      */
     closeDeleteModal(state) {
       state.deleteModalOpen = false;
+    },
+
+    /**
+     * Opens the new environment group modal.
+     *
+     * @param state The UI state.
+     */
+    openNewEnvGroupModal(state, action: PayloadAction<string>) {
+      state.newEnvGroupOpen = true;
+      state.newEnvGroupParentId = action.payload;
+    },
+
+    /**
+     * Closes the new environment group modal.
+     *
+     * @param state The UI state.
+     */
+    closeNewEnvGroupModal(state) {
+      state.newEnvGroupOpen = false;
     },
   },
 });

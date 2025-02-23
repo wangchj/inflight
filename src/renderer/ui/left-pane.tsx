@@ -44,9 +44,9 @@ export default function LeftPane() {
         <NodeMenu
           node={
             project.folders && project.tree ? {
-              value: project.tree,
+              value: ui.selectedNavItem === 'requests' ? project.tree : project.envRoot,
               label: '',
-              nodeProps: {type: 'folder'}
+              nodeProps: {type: ui.selectedNavItem === 'requests' ? 'folder' : 'env'}
             } : null
           }
           deletable={false}

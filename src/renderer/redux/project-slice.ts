@@ -163,6 +163,55 @@ export const projectSlice = createSlice({
     },
 
     /**
+     * Adds a new environment group to the project.
+     *
+     * @param state The project object.
+     * @param action Contains new group name and parent id.
+     */
+    newEnvGroup(state, action: PayloadAction<{name: string, parentId?: string}>) {
+      let {name, parentId} = action.payload;
+
+      // Create the root environment if not exist.
+      if (!state.envs) {
+        const envRoot = nanoid();
+        state.envs = {};
+        state.envs[envRoot] = {name: ''}
+        state.envRoot = envRoot;
+      }
+
+      // If parent id is undefined, then use the id of the root environment.
+      if (!parentId) {
+        parentId = state.envRoot;
+      }
+
+      // Get the parent environment.
+      let env = state.envs[parentId];
+
+      // Make sure the parent environment exists.
+      if (!env) {
+        return;
+      }
+
+      // Create env group structure if not exist.
+      if (!state.envGroups) {
+        state.envGroups = {};
+      }
+
+      // Create the new env group.
+      const groupId = nanoid();
+      state.envGroups[groupId] = {name: name};
+
+      // Add the new group the the parent env.
+      if (!Array.isArray(env.envGroups)) {
+        env.envGroups = [];
+      }
+
+      env.envGroups.push(groupId);
+
+      Persistence.setProjectDirty();
+    },
+
+    /**
      * Updates an environment variable name.
      *
      * @param state The project object.

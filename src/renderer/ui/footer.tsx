@@ -131,9 +131,9 @@ function getEnvGroupIds(workspace: Workspace, project: Project, envId: string): 
   for (const groupId of groupIds) {
     const group = project.envGroups?.[groupId];
 
-    if (group) {
+    if (group?.envs?.length > 0) {
       res.push(groupId);
-      res.push(getEnvGroupIds(workspace, project, group?.envs.find(
+      res.push(getEnvGroupIds(workspace, project, group.envs.find(
         id => id === workspace.selectedEnvs?.[groupId]
       )));
     }

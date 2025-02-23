@@ -1,5 +1,5 @@
 import { Menu, TreeNodeData } from "@mantine/core";
-import { IconDots, IconFolderPlus, IconTrash } from "@tabler/icons-react";
+import { IconBrackets, IconDots, IconFolderPlus, IconTrash } from "@tabler/icons-react";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { uiSlice } from "renderer/redux/ui-slice";
@@ -34,6 +34,15 @@ export default function NodeMenu({node, deletable, hovered, backgroundColor, top
     if (node.nodeProps.type === 'folder') {
       dispatch(uiSlice.actions.openNewFolderModal(node.value));
     }
+  }
+
+  /**
+   * Handles new environment group menu item click event.
+   *
+   * @param node The node on which it's clicked.
+   */
+  async function onEnvGroupClick(node: TreeNodeData) {
+    dispatch(uiSlice.actions.openNewEnvGroupModal(node.value));
   }
 
   return (
@@ -72,6 +81,19 @@ export default function NodeMenu({node, deletable, hovered, backgroundColor, top
                 }}
               >
                 New Folder
+              </Menu.Item>
+            )}
+
+            {node.nodeProps.type === 'env' && (
+              <Menu.Item
+                leftSection={<IconBrackets size="1em"/>}
+                fz="xs"
+                onClick={(e: any) => {
+                  e.stopPropagation();
+                  onEnvGroupClick(node);
+                }}
+              >
+                New Group
               </Menu.Item>
             )}
 
