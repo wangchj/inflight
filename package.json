@@ -1,6 +1,6 @@
 {
   "name": "fetch",
-  "productName": "fetch",
+  "productName": "Fetch",
   "version": "1.0.0",
   "description": "Fetch REST API test client.",
   "main": ".webpack/main",
