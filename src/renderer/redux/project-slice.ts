@@ -1,5 +1,6 @@
 import { createSlice, nanoid } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
+import getDescendantEnvIds from 'renderer/utils/get-descendant-env-ids';
 import getDescendantFolderIds from 'renderer/utils/get-descendant-folder-ids';
 import getDescendantRequestIds from 'renderer/utils/get-descendant-request-ids';
 import * as Persistence from 'renderer/utils/persistence';
@@ -282,6 +283,31 @@ export const projectSlice = createSlice({
       }
       else if (index >= 0 && index < vars.length) {
         vars.splice(index, 1);
+      }
+
+      Persistence.setProjectDirty();
+    },
+
+    /**
+     * Deletes an environment group.
+     *
+     * @param state The project object.
+     * @param action The payload contains the group id and parent env id.
+     */
+    deleteEnvGroup(state, action: PayloadAction<{id: string, parentId: string}>) {
+      const {id, parentId} = action.payload;
+      const ids = getDescendantEnvIds(state, id, 'envGroup');
+
+      for (const id of ids) {
+        delete state.envs?.[id];
+        delete state.envGroups?.[id];
+      }
+
+      const parent = state.envs?.[parentId];
+      const index = parent?.envGroups?.findIndex(gid => gid === id);
+
+      if (parent && index !== -1) {
+        state.envs[parentId].envGroups.splice(index, 1);
       }
 
       Persistence.setProjectDirty();

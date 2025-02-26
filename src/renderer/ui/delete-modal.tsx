@@ -1,4 +1,4 @@
-import { Button, Code, Modal, Stack, Title } from "@mantine/core";
+import { Button, Code, Modal, Stack, Title, TreeNodeData } from "@mantine/core";
 import { useDispatch, useSelector } from "react-redux";
 import { projectSlice } from "renderer/redux/project-slice";
 import { RootState, store } from "renderer/redux/store";
@@ -6,6 +6,26 @@ import { uiSlice } from "renderer/redux/ui-slice";
 import * as Persistence from "renderer/utils/persistence";
 import { workspaceSlice } from "renderer/redux/workspace-slice";
 import getDescendantRequestIds from "renderer/utils/get-descendant-request-ids";
+import getDescendantEnvIds from "renderer/utils/get-descendant-env-ids";
+
+/**
+ * Gets the resource name based on the resource node type.
+ */
+function resourceName(node: TreeNodeData, isTitle: boolean = false) {
+  switch (node?.nodeProps?.type) {
+    case 'folder':
+      return isTitle ? 'Folder' : 'folder';
+
+    case 'request':
+      return isTitle ? 'Request' : 'request';
+
+    case 'envGroup':
+      return isTitle ? 'Environment Group' : 'environment group';
+
+    default:
+      return isTitle ? 'Resource' : 'resource';
+  }
+}
 
 export function DeleteModal() {
   const dispatch = useDispatch();
@@ -13,7 +33,7 @@ export function DeleteModal() {
   const project = useSelector((state: RootState) => state.project);
   const ui = useSelector((state: RootState) => state.ui);
   const node = ui.nodeToDelete;
-  const title = `Delete ${node?.nodeProps.type === 'folder' ? 'Folder' : 'Request'}`
+  const title = `Delete ${resourceName(node, true)}`;
 
   /**
    * Handles create button click event.
@@ -32,6 +52,15 @@ export function DeleteModal() {
       case 'request':
         dispatch(workspaceSlice.actions.closeResource(node.value));
         dispatch(projectSlice.actions.deleteRequest({
+          id: node.value,
+          parentId: node.nodeProps.parentId
+        }));
+        break;
+
+      case 'envGroup':
+        const resIds = getDescendantEnvIds(project, node.value, 'envGroup');
+        resIds.forEach(i => dispatch(workspaceSlice.actions.closeResource(i)));
+        dispatch(projectSlice.actions.deleteEnvGroup({
           id: node.value,
           parentId: node.nodeProps.parentId
         }));
@@ -57,7 +86,7 @@ export function DeleteModal() {
       centered
     >
       <Stack>
-        <div>Delete {node?.nodeProps.type} <Code>{node?.label}</Code>?</div>
+        <div>Delete {resourceName(node)} <Code>{node?.label}</Code>?</div>
         <div style={{display: 'flex', justifyContent: 'right'}}>
           <Button color="red" onClick={onDeleteClick}>Delete</Button>
         </div>
