@@ -23,8 +23,7 @@ interface UiState {
 const initialState = {
   newFolderModalOpen: false,
   deleteModalOpen: false,
-  // selectedNavItem: 'requests',
-  selectedNavItem: 'environments',
+  selectedNavItem: 'requests',
 } as UiState;
 
 export const uiSlice = createSlice({
