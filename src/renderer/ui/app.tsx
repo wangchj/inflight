@@ -1,3 +1,4 @@
+import './app-drag.css';
 import './split-layout.css';
 import { useEffect, useState } from 'react';
 import PageLoading from './layout/page-loading';

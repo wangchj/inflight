@@ -134,6 +134,7 @@ export default function OpenedResources() {
             </Button>
           </div>
 
+          <div className="app-drag" style={{flexGrow: 1, flexShrink: 1}}/>
         </Tabs.List>
 
         {openedResources.map(openedResource => (

@@ -18,6 +18,10 @@ export default function NavBar() {
       }}
     >
       <div
+        className="app-drag"
+        style={{width: '100%', height: '1.8em', flexGrow: 0, flexShrink: 0}}
+      />
+      <div
         style={{
           display: 'flex',
           flexDirection: 'column',
