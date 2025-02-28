@@ -74,7 +74,7 @@ export default function Environment({openedResource}: EnvironmentProps) {
   }
 
   return (
-    <Stack>
+    <Stack p="md">
       <Title order={4}>Environment Variables</Title>
 
       {
