@@ -152,6 +152,7 @@ export default function OpenedResources() {
     ):
     (
       <div
+        className="app-drag"
         style={{
           width: '100%',
           height: '100%',
@@ -161,6 +162,7 @@ export default function OpenedResources() {
         }
       }>
         <Button
+          className="no-app-drag"
           leftSection={<IconPlus/>}
           onClick={() => dispatch(workspaceSlice.actions.newRequest())}
         >

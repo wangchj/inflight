@@ -66,6 +66,7 @@ export default function NoProject() {
 
   return (
     <div
+      className="app-drag"
       style={{
         width: '100%',
         height: '100%',
@@ -84,7 +85,7 @@ export default function NoProject() {
           </Group>
         </Title>
 
-        <Stack>
+        <Stack className="no-app-drag">
           <Button
             variant="transparent"
             justify="left"
