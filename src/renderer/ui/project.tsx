@@ -6,6 +6,7 @@ import NavBar from './navbar';
 import LeftPane from "./left-pane";
 import OpenedResources from "./opened-resources";
 import { NewEnvGroupModal } from "./new-env-group-modal";
+import { NewEnvModal } from "./new-env-modal";
 import { NewFolderModal } from "./new-folder-modal";
 import { DeleteModal } from "./delete-modal";
 import Footer from "./footer";
@@ -70,6 +71,7 @@ export default function Project() {
         <NewFolderModal/>
         <DeleteModal/>
         <NewEnvGroupModal/>
+        <NewEnvModal/>
       </div>
 
       {

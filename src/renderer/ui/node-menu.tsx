@@ -45,6 +45,15 @@ export default function NodeMenu({node, deletable, hovered, backgroundColor, top
     dispatch(uiSlice.actions.openNewEnvGroupModal(node.value));
   }
 
+  /**
+   * Handles new environment menu item click event.
+   *
+   * @param node The group node on which it's clicked.
+   */
+  async function onNewEnvClick(node: TreeNodeData) {
+    dispatch(uiSlice.actions.openNewEnvModal(node.value));
+  }
+
   return (
     <div style=
       {{
@@ -94,6 +103,19 @@ export default function NodeMenu({node, deletable, hovered, backgroundColor, top
                 }}
               >
                 New Group
+              </Menu.Item>
+            )}
+
+            {node.nodeProps.type === 'envGroup' && (
+              <Menu.Item
+                leftSection={<IconBrackets size="1em"/>}
+                fz="xs"
+                onClick={(e: any) => {
+                  e.stopPropagation();
+                  onNewEnvClick(node);
+                }}
+              >
+                New Environment
               </Menu.Item>
             )}
 

@@ -22,6 +22,9 @@ function resourceName(node: TreeNodeData, isTitle: boolean = false) {
     case 'envGroup':
       return isTitle ? 'Environment Group' : 'environment group';
 
+    case 'env':
+      return isTitle ? 'Environment Group' : 'environment group';
+
     default:
       return isTitle ? 'Resource' : 'resource';
   }
@@ -58,9 +61,18 @@ export function DeleteModal() {
         break;
 
       case 'envGroup':
-        const resIds = getDescendantEnvIds(project, node.value, 'envGroup');
+        var resIds = getDescendantEnvIds(project, node.value, 'envGroup');
         resIds.forEach(i => dispatch(workspaceSlice.actions.closeResource(i)));
         dispatch(projectSlice.actions.deleteEnvGroup({
+          id: node.value,
+          parentId: node.nodeProps.parentId
+        }));
+        break;
+
+      case 'env':
+        var resIds = getDescendantEnvIds(project, node.value, 'env');
+        resIds.forEach(i => dispatch(workspaceSlice.actions.closeResource(i)));
+        dispatch(projectSlice.actions.deleteEnv({
           id: node.value,
           parentId: node.nodeProps.parentId
         }));

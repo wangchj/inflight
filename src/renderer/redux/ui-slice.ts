@@ -15,6 +15,9 @@ interface UiState {
 
   newEnvGroupOpen: boolean;
   newEnvGroupParentId: string;
+
+  newEnvOpen: boolean;
+  newEnvParentId: string;
 }
 
 const initialState = {
@@ -95,6 +98,25 @@ export const uiSlice = createSlice({
      */
     closeNewEnvGroupModal(state) {
       state.newEnvGroupOpen = false;
+    },
+
+    /**
+     * Opens the new environment modal.
+     *
+     * @param state The UI state.
+     */
+    openNewEnvModal(state, action: PayloadAction<string>) {
+      state.newEnvOpen = true;
+      state.newEnvParentId = action.payload;
+    },
+
+    /**
+     * Closes the new environment modal.
+     *
+     * @param state The UI state.
+     */
+    closeNewEnvModal(state) {
+      state.newEnvOpen = false;
     },
   },
 });

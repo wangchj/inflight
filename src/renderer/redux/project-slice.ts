@@ -213,6 +213,31 @@ export const projectSlice = createSlice({
     },
 
     /**
+     * Adds a new environment to the project.
+     *
+     * @param state The project object.
+     * @param action The payload contains parameters for the new environment.
+     */
+    newEnv(state, action: PayloadAction<{id: string, name: string, parentId?: string}>) {
+      const {id, name, parentId} = action.payload;
+      const parent = state.envGroups?.[parentId];
+
+      if (!parent || !name || !state.envs) {
+        return;
+      }
+
+      state.envs[id] = {name}
+
+      if (!parent.envs) {
+        parent.envs = [];
+      }
+
+      parent.envs.push(id);
+
+      Persistence.setProjectDirty();
+    },
+
+    /**
      * Updates an environment variable name.
      *
      * @param state The project object.
@@ -308,6 +333,31 @@ export const projectSlice = createSlice({
 
       if (parent && index !== -1) {
         state.envs[parentId].envGroups.splice(index, 1);
+      }
+
+      Persistence.setProjectDirty();
+    },
+
+    /**
+     * Deletes an environment.
+     *
+     * @param state The project object.
+     * @param action The payload contains the group id and parent env id.
+     */
+    deleteEnv(state, action: PayloadAction<{id: string, parentId: string}>) {
+      const {id, parentId} = action.payload;
+      const ids = getDescendantEnvIds(state, id, 'env');
+
+      for (const id of ids) {
+        delete state.envs?.[id];
+        delete state.envGroups?.[id];
+      }
+
+      const parent = state.envGroups?.[parentId];
+      const index = parent?.envs?.findIndex(eid => eid === id);
+
+      if (parent && index !== -1) {
+        parent.envs.splice(index, 1);
       }
 
       Persistence.setProjectDirty();
