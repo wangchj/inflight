@@ -65,7 +65,6 @@ export default function Project() {
           )}
           gridTemplateColumns={gridTemplateColumns}
           onDrag={(d, t, s) => setGridTemplateColumns(s)}
-          onDragEnd={() => console.log('on drag end')}
         />
 
         <NewFolderModal/>
