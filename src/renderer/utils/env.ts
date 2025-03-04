@@ -66,7 +66,9 @@ export function replacer(match: string, name: string) {
   const value = resolved?.[name];
 
   if (!value) {
-    return match;
+    throw new Error(
+      `The variable '${name}' cannot be resolved. Make sure the correct environment is selected.`
+    );
   }
 
   return value.replaceAll(/\{\{([^\}]+)\}\}/g, replacer);

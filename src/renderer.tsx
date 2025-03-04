@@ -83,7 +83,7 @@ createRoot(document.querySelector('#root')).render(
   <Provider store={store}>
     <MantineProvider theme={theme}>
       <App/>
-      <Notifications autoClose={false}/>
+      <Notifications autoClose={false} position="bottom-left"/>
     </MantineProvider>
   </Provider>
 );

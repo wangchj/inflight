@@ -2,11 +2,11 @@ import {
   Button,
   Group,
   Loader,
-  Notification,
   Select,
   Stack,
   TextInput,
 } from "@mantine/core";
+import { notifications } from '@mantine/notifications';
 import { IconSend } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import Split from 'react-split-grid';
@@ -22,7 +22,6 @@ import { OpenedResource } from "types/opened-resource";
 
 export default function RequestForm({openedResource} : {openedResource: OpenedResource}) {
   const [sending, setSending] = useState<boolean>(false);
-  const [error, setError] = useState<string>();
   const [gridTemplateColumns, setGridTemplateColumns] = useState('1fr');
   const dispatch = useDispatch();
   const request = openedResource.props.request;
@@ -46,7 +45,7 @@ export default function RequestForm({openedResource} : {openedResource: OpenedRe
    * Handles Send button click event.
    */
   async function onSendClick() {
-    setError('');
+    notifications.clean();
     setSending(true);
 
     try {
@@ -55,7 +54,13 @@ export default function RequestForm({openedResource} : {openedResource: OpenedRe
     }
     catch (error) {
       dispatch(resultsSlice.actions.deleteResult(openedResource.id));
-      setError(error.message.replace('Error invoking remote method \'sendRequest\': ', ''));
+      notifications.show({
+        id: 'sendRequest',
+        color: 'orange',
+        title: 'Unable to send request',
+        message: (error instanceof Error ? error.message : String(error)),
+        withBorder: true,
+      });
     }
 
     setSending(false);
@@ -112,8 +117,6 @@ export default function RequestForm({openedResource} : {openedResource: OpenedRe
           Send
         </Button>
       </Group>
-
-      {error && <Notification color="red" onClose={() => setError('')}>{error}</Notification>}
 
       <Split
         cursor="ew-resize"
