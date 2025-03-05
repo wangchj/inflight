@@ -20,6 +20,10 @@ export function NewEnvGroupModal() {
    * Handles create button click event.
    */
   async function onCreateClick() {
+    if (!name) {
+      return;
+    }
+
     dispatch(projectSlice.actions.newEnvGroup({name, parentId: ui.newEnvGroupParentId}));
 
     try {
@@ -44,6 +48,8 @@ export function NewEnvGroupModal() {
           label="Name"
           value={name}
           onChange={event => setName(event.currentTarget.value)}
+          onKeyDown={event => event.key === 'Enter' ? onCreateClick() : null}
+          data-autofocus
         />
 
         <div style={{display: 'flex', justifyContent: 'right'}}>

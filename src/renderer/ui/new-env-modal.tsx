@@ -22,6 +22,10 @@ export function NewEnvModal() {
    * Handles create button click event.
    */
   async function onCreateClick() {
+    if (!name) {
+      return;
+    }
+
     const id = nanoid();
     const parentId = ui.newEnvParentId;
     dispatch(projectSlice.actions.newEnv({id, name, parentId}));
@@ -50,6 +54,8 @@ export function NewEnvModal() {
           label="Name"
           value={name}
           onChange={event => setName(event.currentTarget.value)}
+          onKeyDown={event => event.key === 'Enter' ? onCreateClick() : null}
+          data-autofocus
         />
 
         <div style={{display: 'flex', justifyContent: 'right'}}>

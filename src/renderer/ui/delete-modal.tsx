@@ -95,6 +95,7 @@ export function DeleteModal() {
       opened={ui.deleteModalOpen}
       title={<Title order={3}>{title}</Title>}
       onClose={() => dispatch(uiSlice.actions.closeDeleteModal())}
+      onKeyDown={event => event.key === 'Enter' ? onDeleteClick() : null}
       centered
     >
       <Stack>

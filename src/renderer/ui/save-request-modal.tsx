@@ -130,12 +130,14 @@ export function SaveRequestModal() {
       title={<Title order={3}>Save Request</Title>}
       onClose={() => setOpened(false)}
       centered
+      onKeyDown={event => event.key === 'Enter' ? onSaveClick() : null}
     >
       <Stack>
         <TextInput
           label="Name (optional)"
           value={name}
           onChange={event => setName(event.currentTarget.value)}
+          data-autofocus
         />
 
         <Select
