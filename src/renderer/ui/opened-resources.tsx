@@ -152,7 +152,6 @@ export default function OpenedResources() {
     ):
     (
       <div
-        className="app-drag"
         style={{
           width: '100%',
           height: '100%',
@@ -161,6 +160,15 @@ export default function OpenedResources() {
           alignItems: 'center'
         }
       }>
+        <div
+          className="app-drag"
+          style={{
+          position: 'fixed',
+          width: '65%',
+          height: '80px',
+          top: 0,
+        }}/>
+
         <Button
           className="no-app-drag"
           leftSection={<IconPlus/>}
