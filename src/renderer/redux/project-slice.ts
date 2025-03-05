@@ -133,6 +133,28 @@ export const projectSlice = createSlice({
     },
 
     /**
+     * Duplicates a request.
+     *
+     * @param state The project object.
+     * @param action The the payload contains the id of the request and the id of its parent folder.
+     */
+    duplicateRequest(state, action: PayloadAction<{id: string, parentId: string}>) {
+      const {id, parentId} = action.payload;
+      const folder = state.folders?.[parentId];
+      const request = state.requests?.[id];
+
+      if (!folder || !request || !folder.requests) {
+        return;
+      }
+
+      const newId = nanoid();
+      state.requests[newId] = JSON.parse(JSON.stringify(request));
+      folder.requests.push(newId);
+
+      Persistence.setProjectDirty();
+    },
+
+    /**
      * Adds a new folder to the project.
      *
      * @param state The project object.
@@ -359,6 +381,29 @@ export const projectSlice = createSlice({
       if (parent && index !== -1) {
         parent.envs.splice(index, 1);
       }
+
+      Persistence.setProjectDirty();
+    },
+
+    /**
+     * Duplicates an environment.
+     *
+     * @param state The project object.
+     * @param action The the payload contains the id of the env and the id of its parent folder.
+     */
+    duplicateEnv(state, action: PayloadAction<{id: string, parentId: string}>) {
+      const {id, parentId} = action.payload;
+      const group = state.envGroups?.[parentId];
+      const env = state.envs?.[id];
+
+      if (!group || !env || !group.envs) {
+        return;
+      }
+
+      const newId = nanoid();
+
+      state.envs[newId] = JSON.parse(JSON.stringify(env));
+      group.envs.push(newId);
 
       Persistence.setProjectDirty();
     },

@@ -1,7 +1,15 @@
 import { Menu, TreeNodeData } from "@mantine/core";
-import { IconBrackets, IconDots, IconFolderPlus, IconTrash } from "@tabler/icons-react";
+import {
+  IconCopy,
+  IconBraces,
+  IconBrackets,
+  IconDots,
+  IconFolderPlus,
+  IconTrash
+} from "@tabler/icons-react";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
+import { projectSlice } from "renderer/redux/project-slice";
 import { uiSlice } from "renderer/redux/ui-slice";
 
 interface NodeMenuProps {
@@ -15,6 +23,7 @@ interface NodeMenuProps {
 export default function NodeMenu({node, deletable, hovered, backgroundColor, top}: NodeMenuProps) {
   const dispatch = useDispatch();
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
+  const isRoot = !node?.nodeProps?.parentId;
 
   /**
    * Handles delete menu item click.
@@ -52,6 +61,33 @@ export default function NodeMenu({node, deletable, hovered, backgroundColor, top
    */
   async function onNewEnvClick(node: TreeNodeData) {
     dispatch(uiSlice.actions.openNewEnvModal(node.value));
+  }
+
+  /**
+   * Handles duplicate menu item click event.
+   *
+   * @param node The node on which duplicate is clicked.
+   */
+  function onDuplicateClick(node: TreeNodeData) {
+    if (!node?.value || !node?.nodeProps?.type) {
+      return;
+    }
+
+    switch (node.nodeProps.type) {
+      case 'request':
+        dispatch(projectSlice.actions.duplicateRequest({
+          id: node.value,
+          parentId: node.nodeProps.parentId
+        }));
+        break;
+
+      case 'env':
+        dispatch(projectSlice.actions.duplicateEnv({
+          id: node.value,
+          parentId: node.nodeProps.parentId
+        }));
+        break;
+    }
   }
 
   return (
@@ -93,6 +129,19 @@ export default function NodeMenu({node, deletable, hovered, backgroundColor, top
               </Menu.Item>
             )}
 
+            {(!isRoot && (node.nodeProps.type === 'request' || node.nodeProps.type === 'env')) && (
+              <Menu.Item
+                leftSection={<IconCopy size="1em"/>}
+                fz="xs"
+                onClick={(e: any) => {
+                  e.stopPropagation();
+                  onDuplicateClick(node);
+                }}
+              >
+                Duplicate
+              </Menu.Item>
+            )}
+
             {node.nodeProps.type === 'env' && (
               <Menu.Item
                 leftSection={<IconBrackets size="1em"/>}
@@ -108,7 +157,7 @@ export default function NodeMenu({node, deletable, hovered, backgroundColor, top
 
             {node.nodeProps.type === 'envGroup' && (
               <Menu.Item
-                leftSection={<IconBrackets size="1em"/>}
+                leftSection={<IconBraces size="1em"/>}
                 fz="xs"
                 onClick={(e: any) => {
                   e.stopPropagation();
