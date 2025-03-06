@@ -3,6 +3,7 @@ import {
   IconCopy,
   IconBraces,
   IconBrackets,
+  IconCursorText,
   IconDots,
   IconFolderPlus,
   IconTrash
@@ -90,6 +91,15 @@ export default function NodeMenu({node, deletable, hovered, backgroundColor, top
     }
   }
 
+  /**
+   * Handles rename menu item click event.
+   *
+   * @param node The node to rename.
+   */
+  function onRenameClick(node: TreeNodeData) {
+    dispatch(uiSlice.actions.openRenameModal(node));
+  }
+
   return (
     <div style=
       {{
@@ -168,7 +178,20 @@ export default function NodeMenu({node, deletable, hovered, backgroundColor, top
               </Menu.Item>
             )}
 
-            {(node && deletable) && (
+            {(node && !isRoot) && (
+              <Menu.Item
+                leftSection={<IconCursorText size="1em"/>}
+                fz="xs"
+                onClick={(e: any) => {
+                  e.stopPropagation();
+                  onRenameClick(node);
+                }}
+              >
+                Rename
+              </Menu.Item>
+            )}
+
+            {(node && !isRoot) && (
               <Menu.Item
                 color="red"
                 leftSection={<IconTrash size="1em"/>}

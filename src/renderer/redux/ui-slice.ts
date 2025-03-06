@@ -18,12 +18,16 @@ interface UiState {
 
   newEnvOpen: boolean;
   newEnvParentId: string;
+
+  renameModalOpen: boolean;
+  renameNode: TreeNodeData;
 }
 
 const initialState = {
   newFolderModalOpen: false,
   deleteModalOpen: false,
   selectedNavItem: 'requests',
+  renameModalOpen: false,
 } as UiState;
 
 export const uiSlice = createSlice({
@@ -116,6 +120,25 @@ export const uiSlice = createSlice({
      */
     closeNewEnvModal(state) {
       state.newEnvOpen = false;
+    },
+
+    /**
+     * Opens rename modal.
+     *
+     * @param state The UI state.
+     */
+    openRenameModal(state, action: PayloadAction<TreeNodeData>) {
+      state.renameModalOpen = true;
+      state.renameNode = action.payload;
+    },
+
+    /**
+     * Closes rename modal.
+     *
+     * @param state The UI state.
+     */
+    closeRenameModal(state) {
+      state.renameModalOpen = false;
     },
   },
 });

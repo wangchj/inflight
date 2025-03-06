@@ -407,6 +407,30 @@ export const projectSlice = createSlice({
 
       Persistence.setProjectDirty();
     },
+
+    /**
+     * Renames a resource.
+     *
+     * @param state The project model draft.
+     * @param action The payload contains the type and id of the resource and the new name.
+     */
+    renameResource(state, action: PayloadAction<{id: string, type: string, name: string}>) {
+      const {id, type, name} = action.payload;
+      const res = {
+        folder:   state.folders?.[id],
+        request:  state.requests?.[id],
+        envGroup: state.envGroups?.[id],
+        env:      state.envs?.[id],
+      }[type];
+
+      if (!res || !name) {
+        return;
+      }
+
+      res.name = name;
+
+      Persistence.setProjectDirty();
+    },
   },
 });
 

@@ -7,28 +7,7 @@ import * as Persistence from "renderer/utils/persistence";
 import { workspaceSlice } from "renderer/redux/workspace-slice";
 import getDescendantRequestIds from "renderer/utils/get-descendant-request-ids";
 import getDescendantEnvIds from "renderer/utils/get-descendant-env-ids";
-
-/**
- * Gets the resource name based on the resource node type.
- */
-function resourceName(node: TreeNodeData, isTitle: boolean = false) {
-  switch (node?.nodeProps?.type) {
-    case 'folder':
-      return isTitle ? 'Folder' : 'folder';
-
-    case 'request':
-      return isTitle ? 'Request' : 'request';
-
-    case 'envGroup':
-      return isTitle ? 'Environment Group' : 'environment group';
-
-    case 'env':
-      return isTitle ? 'Environment Group' : 'environment group';
-
-    default:
-      return isTitle ? 'Resource' : 'resource';
-  }
-}
+import resourceName from "renderer/utils/resource-name";
 
 export function DeleteModal() {
   const dispatch = useDispatch();

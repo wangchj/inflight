@@ -497,6 +497,25 @@ export const workspaceSlice = createSlice({
 
       Persistence.setWorkspaceDirty();
     },
+
+    /**
+     * Rename an opened resource.
+     *
+     * @param state The workspace model draft.
+     * @param action The payload contains the id and new name of the resource.
+     */
+    renameResource(state, action: PayloadAction<{id: string, name: string}>) {
+      const {id, name} = action.payload;
+      const res = state.openedResources?.find(r => r.id === id);
+
+      if (!res || !name || res.type !== 'request') {
+        return;
+      }
+
+      res.props.request.name = name;
+
+      Persistence.setWorkspaceDirty();
+    },
   },
 });
 

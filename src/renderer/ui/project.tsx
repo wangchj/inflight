@@ -10,6 +10,7 @@ import { NewEnvModal } from "./new-env-modal";
 import { NewFolderModal } from "./new-folder-modal";
 import { DeleteModal } from "./delete-modal";
 import Footer from "./footer";
+import { RenameModal } from "./rename-modal";
 
 /**
  * The project root component.
@@ -71,6 +72,7 @@ export default function Project() {
         <DeleteModal/>
         <NewEnvGroupModal/>
         <NewEnvModal/>
+        <RenameModal/>
       </div>
 
       {
