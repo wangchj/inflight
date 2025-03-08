@@ -15,6 +15,14 @@ const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
     icon: 'icon',
+    osxSign: { // object must exist even if empty
+      identity: process.env.APPLE_CERT_ID,
+    },
+    osxNotarize: {
+      appleId: process.env.APPLE_ID ?? '',
+      appleIdPassword: process.env.APPLE_PASSWORD ?? '',
+      teamId: process.env.APPLE_TEAM_ID ?? '',
+    },
   },
   rebuildConfig: {},
   makers: [new MakerSquirrel({}), new MakerZIP({}, ['darwin']), new MakerRpm({}), new MakerDeb({})],
