@@ -93,11 +93,11 @@ createRoot(document.querySelector('#root')).render(
  *
  * The purpose is to flush the redux state to the main process to be saved on disk.
  */
-window.onFlushWorkspace(() => {
+window.onFlushWorkspace(async () => {
   const workspace = store.getState().workspace;
   const project = store.getState().project;
-  Persistence.saveWorkspace(workspace);
-  Persistence.saveProject(workspace.projectPath, project);
+  await Persistence.saveWorkspace(workspace);
+  await Persistence.saveProject(workspace.projectPath, project);
 });
 
 /**
@@ -133,7 +133,7 @@ window.onOpenProject(async filePath => {
 /**
  * Handles close project event from app menu.
  */
-window.onCloseProject(() => {
+window.onCloseProject(async () => {
   const workspace = store.getState().workspace;
   const project = store.getState().project;
 
@@ -141,11 +141,11 @@ window.onCloseProject(() => {
     return;
   }
 
-  Persistence.saveProject(workspace.projectPath, project);
+  await Persistence.saveProject(workspace.projectPath, project);
   dispatch(projectSlice.actions.closeProject());
 
   dispatch(workspaceSlice.actions.closeProject());
-  Persistence.saveWorkspace(store.getState().workspace);
+  await Persistence.saveWorkspace(store.getState().workspace);
 });
 
 window.onCloseTab(() => {
