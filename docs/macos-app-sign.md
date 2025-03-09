@@ -17,6 +17,9 @@ set -x APPLE_TEAM_ID <team id>
 # The developer ID application certificate identity from running `security find-identity` above.
 # The value should look like 'Developer ID Application: xxx (xxx)
 set -x APPLE_CERT_ID '<cert id>'
+
+# Make the distribution bundle
+npm run make
 ```
 
 ## Troubleshooting
