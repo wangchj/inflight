@@ -60,10 +60,6 @@ const createWindow = (): void => {
   // Open the DevTools.
   // mainWindow.webContents.openDevTools();
 
-  mainWindow.on('close', () => {
-    mainWindow.webContents.send('flush-workspace');
-  });
-
   updateMenu();
 };
 

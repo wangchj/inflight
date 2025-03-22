@@ -91,9 +91,9 @@ async function onSaveClick() {
       folderId
     }));
 
-    await Persistence.saveProject(workspace.projectPath, store.getState().project);
+    await Persistence.saveProject();
     dispatch(workspaceSlice.actions.setResource(resource));
-    await Persistence.saveWorkspace(store.getState().workspace);
+    await Persistence.saveWorkspace();
     setOpened(false);
   }
   catch (error) {

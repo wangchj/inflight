@@ -45,7 +45,7 @@ export const projectSlice = createSlice({
 
       state.requests[action.payload.id] = JSON.parse(JSON.stringify(action.payload.request));
 
-      Persistence.setProjectDirty();
+      Persistence.saveProjectDelay();
     },
 
     /**
@@ -78,7 +78,7 @@ export const projectSlice = createSlice({
         folder.requests.push(id);
       }
 
-      Persistence.setProjectDirty();
+      Persistence.saveProjectDelay();
     },
 
     /**
@@ -108,7 +108,7 @@ export const projectSlice = createSlice({
         parent.folders = parent.folders.filter(i => i !== id);
       }
 
-      Persistence.setProjectDirty();
+      Persistence.saveProjectDelay();
     },
 
     /**
@@ -129,7 +129,7 @@ export const projectSlice = createSlice({
         folder.requests = folder.requests.filter(requestId => requestId !== id);
       }
 
-      Persistence.setProjectDirty();
+      Persistence.saveProjectDelay();
     },
 
     /**
@@ -151,7 +151,7 @@ export const projectSlice = createSlice({
       state.requests[newId] = JSON.parse(JSON.stringify(request));
       folder.requests.push(newId);
 
-      Persistence.setProjectDirty();
+      Persistence.saveProjectDelay();
     },
 
     /**
@@ -182,7 +182,7 @@ export const projectSlice = createSlice({
 
       parent.folders.push(newId);
 
-      Persistence.setProjectDirty();
+      Persistence.saveProjectDelay();
     },
 
     /**
@@ -231,7 +231,7 @@ export const projectSlice = createSlice({
 
       env.envGroups.push(groupId);
 
-      Persistence.setProjectDirty();
+      Persistence.saveProjectDelay();
     },
 
     /**
@@ -256,7 +256,7 @@ export const projectSlice = createSlice({
 
       parent.envs.push(id);
 
-      Persistence.setProjectDirty();
+      Persistence.saveProjectDelay();
     },
 
     /**
@@ -273,7 +273,7 @@ export const projectSlice = createSlice({
         v.name = value;
       }
 
-      Persistence.setProjectDirty();
+      Persistence.saveProjectDelay();
     },
 
     /**
@@ -290,7 +290,7 @@ export const projectSlice = createSlice({
         v.value = value;
       }
 
-      Persistence.setProjectDirty();
+      Persistence.saveProjectDelay();
     },
 
     /**
@@ -311,7 +311,7 @@ export const projectSlice = createSlice({
         env.vars.push({name: '', value: ''});
       }
 
-      Persistence.setProjectDirty();
+      Persistence.saveProjectDelay();
     },
 
     /**
@@ -332,7 +332,7 @@ export const projectSlice = createSlice({
         vars.splice(index, 1);
       }
 
-      Persistence.setProjectDirty();
+      Persistence.saveProjectDelay();
     },
 
     /**
@@ -357,7 +357,7 @@ export const projectSlice = createSlice({
         state.envs[parentId].envGroups.splice(index, 1);
       }
 
-      Persistence.setProjectDirty();
+      Persistence.saveProjectDelay();
     },
 
     /**
@@ -382,7 +382,7 @@ export const projectSlice = createSlice({
         parent.envs.splice(index, 1);
       }
 
-      Persistence.setProjectDirty();
+      Persistence.saveProjectDelay();
     },
 
     /**
@@ -405,7 +405,7 @@ export const projectSlice = createSlice({
       state.envs[newId] = JSON.parse(JSON.stringify(env));
       group.envs.push(newId);
 
-      Persistence.setProjectDirty();
+      Persistence.saveProjectDelay();
     },
 
     /**
@@ -429,7 +429,7 @@ export const projectSlice = createSlice({
 
       res.name = name;
 
-      Persistence.setProjectDirty();
+      Persistence.saveProjectDelay();
     },
   },
 });

@@ -1,54 +1,23 @@
+import { store } from "renderer/redux/store";
 import { Project } from "types/project";
 import { Workspace } from "types/workspace";
 
 /**
- * Determines if the workspace model has been updated and not flushed to storage (disk).
+ * Save workspace timeout id.
  */
-export let workspaceDirty = false;
+let saveWorkspaceTimeout: number;
 
 /**
- * Determines if the project model has been updated and not flushed to storage (disk).
+ * Save project timeout id.
  */
-export let projectDirty = false;
-
-/**
- * Sets the workspace dirty flag to true.
- */
-export function setWorkspaceDirty() {
-  workspaceDirty = true;
-}
-
-/**
- * Gets the workspace dirty flag.
- *
- * @returns True or false.
- */
-export function getWorkspaceDirty() {
-  return workspaceDirty;
-}
-
-/**
- * Sets the project dirty flag to true.
- */
-export function setProjectDirty() {
-  projectDirty = true;
-}
-
-/**
- * Gets the project dirty flag.
- *
- * @returns True or false.
- */
-export function getProjectDirty() {
-  return projectDirty;
-}
+let saveProjectTimeout: number;
 
 /**
  * Loads workspace from storage.
  */
 export async function openWorkspace(): Promise<Workspace> {
   const workspace = await window.openWorkspace();
-  workspaceDirty = false;
+  clearTimeout(saveWorkspaceTimeout);
   return workspace;
 }
 
@@ -57,15 +26,33 @@ export async function openWorkspace(): Promise<Workspace> {
  *
  * @param workspace The workspace model object to save.
  */
-export async function saveWorkspace(workspace: Workspace) {
+export async function saveWorkspace() {
+  clearTimeout(saveWorkspaceTimeout);
+
+  const workspace = store.getState().workspace;
+
   if (!workspace) {
     throw new Error('Workspace is not saved because it is undefined.');
   }
 
-  if (workspaceDirty) {
-    await window.saveWorkspace(workspace);
-    workspaceDirty = false;
-  }
+  await window.saveWorkspace(workspace);
+}
+
+/**
+ * Saves the workspace to storage (disk) with a short delay so that multiple saves are batched.
+ */
+export function saveWorkspaceDelay() {
+  clearTimeout(saveWorkspaceTimeout);
+
+  saveWorkspaceTimeout = window.setTimeout(() => {
+    const workspace = store.getState().workspace;
+
+    if (!workspace) {
+      throw new Error('Workspace is not saved because it is undefined.');
+    }
+
+    window.saveWorkspace(workspace);
+  }, 500);
 }
 
 /**
@@ -75,7 +62,7 @@ export async function saveWorkspace(workspace: Workspace) {
  */
 export async function openProject(path: string): Promise<Project> {
   const project = path ? await window.openProject(path) : undefined;
-  projectDirty = false;
+  clearTimeout(saveProjectTimeout);
   return project;
 }
 
@@ -85,8 +72,13 @@ export async function openProject(path: string): Promise<Project> {
  * @param path The project file path.
  * @param project The project model object to save.
  */
-export async function saveProject(path: string, project: Project) {
-  if (!path) {
+export async function saveProject() {
+  clearTimeout(saveProjectTimeout);
+
+  const workspace = store.getState().workspace;
+  const project = store.getState().project;
+
+  if (!workspace?.projectPath) {
     throw new Error('Project is not saved because path is not specified.');
   }
 
@@ -94,9 +86,13 @@ export async function saveProject(path: string, project: Project) {
     throw new Error('Project is not saved because it is undefined.');
   }
 
+  await window.saveProject(workspace.projectPath, project);
+}
 
-  if (projectDirty) {
-    await window.saveProject(path, project);
-    projectDirty = false;
-  }
+/**
+ * Saves the project to storage (disk) with a short delay so that multiple saves are batched.
+ */
+export function saveProjectDelay() {
+  clearTimeout(saveWorkspaceTimeout);
+  saveWorkspaceTimeout = window.setTimeout(() => saveProject(), 500);
 }

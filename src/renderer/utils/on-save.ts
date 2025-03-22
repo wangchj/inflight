@@ -19,9 +19,9 @@ export default async function onSave() {
       dispatch(projectSlice.actions.setRequest({id: openedResource.id, request}));
 
       try {
-        await Persistence.saveProject(workspace.projectPath, store.getState().project);
+        await Persistence.saveProject();
         dispatch(workspaceSlice.actions.setDirty(false));
-        await Persistence.saveWorkspace(store.getState().workspace);
+        await Persistence.saveWorkspace();
       }
       catch (error) {
         throw new Error(`Error saving request: ${error}`);

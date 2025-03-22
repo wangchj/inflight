@@ -38,10 +38,6 @@ contextBridge.exposeInMainWorld('showNewProjectDialog',
   () => ipcRenderer.invoke('showNewProjectDialog')
 );
 
-contextBridge.exposeInMainWorld('onFlushWorkspace',
-  (callback: () => void) => ipcRenderer.on('flush-workspace', () => callback())
-)
-
 contextBridge.exposeInMainWorld('onSave',
   (callback: () => void) => ipcRenderer.on('save', () => callback())
 )

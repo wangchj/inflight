@@ -61,7 +61,6 @@ declare global {
     sendRequest: (request: Request) => Promise<RequestResult>;
     showOpenProjectDialog: () => Promise<string>;
     showNewProjectDialog: () => Promise<string>;
-    onFlushWorkspace: (callback: () => void) => void;
     onSave: (callback: () => void) => void;
     onOpenProject: (callback: (filePath: string) => void) => void;
     onCloseProject: (callback: () => void) => void;
@@ -87,18 +86,6 @@ createRoot(document.querySelector('#root')).render(
     </MantineProvider>
   </Provider>
 );
-
-/**
- * Handles flush workspace event from the main process.
- *
- * The purpose is to flush the redux state to the main process to be saved on disk.
- */
-window.onFlushWorkspace(async () => {
-  const workspace = store.getState().workspace;
-  const project = store.getState().project;
-  await Persistence.saveWorkspace(workspace);
-  await Persistence.saveProject(workspace.projectPath, project);
-});
 
 /**
  * Handles the save event from app menu.
@@ -141,11 +128,8 @@ window.onCloseProject(async () => {
     return;
   }
 
-  await Persistence.saveProject(workspace.projectPath, project);
   dispatch(projectSlice.actions.closeProject());
-
   dispatch(workspaceSlice.actions.closeProject());
-  await Persistence.saveWorkspace(store.getState().workspace);
 });
 
 window.onCloseTab(() => {

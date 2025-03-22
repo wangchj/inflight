@@ -59,8 +59,8 @@ export function DeleteModal() {
     }
 
     try {
-      await Persistence.saveProject(workspace.projectPath, store.getState().project);
-      await Persistence.saveWorkspace(store.getState().workspace);
+      await Persistence.saveProject();
+      await Persistence.saveWorkspace();
     }
     catch (error) {
       console.error("Error saving project", error);

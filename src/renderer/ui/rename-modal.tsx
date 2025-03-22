@@ -41,7 +41,7 @@ export function RenameModal() {
     }));
 
     try {
-      await Persistence.saveProject(workspace.projectPath, store.getState().project);
+      await Persistence.saveProject();
     }
     catch (error) {
       console.error("Error saving project", error);
