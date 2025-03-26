@@ -15,6 +15,6 @@ export default function makeRequestOptions(request: Request): RequestOptions {
     protocol: url.protocol,
     hostname: url.hostname,
     port: url.port ? parseInt(url.port) : undefined,
-    path: url.pathname,
+    path: `${url.pathname}${url.search ?? ''}`,
   };
 }

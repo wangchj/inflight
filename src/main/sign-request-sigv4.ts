@@ -29,7 +29,7 @@ export default async function signRequestSigv4(
     protocol: requestOptions.protocol,
     hostname: requestOptions.hostname,
     port: requestOptions.port as number,
-    path: requestOptions.path,
+    path: url.pathname,
     query: (url.searchParams && url.searchParams.size > 0) ?
       Object.fromEntries(url.searchParams.entries()) : undefined,
     fragment: url.hash ? url.hash : undefined,
