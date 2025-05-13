@@ -1,7 +1,7 @@
 import { app, BrowserWindow, dialog, ipcMain, IpcMainInvokeEvent, Menu, MenuItem } from 'electron';
 import path from 'path';
+import fixPath from 'fix-path';
 import fs from 'fs';
-import os from 'os';
 import { Project } from 'types/project';
 import { Request } from 'types/request';
 import { Workspace } from 'types/workspace';
@@ -41,6 +41,9 @@ const dataDirPath = app.getPath('userData');
  * Workspace file path
  */
 const workspaceFilePath = `${dataDirPath}/workspace.json`;
+
+// Add shell paths to the path of this process.
+fixPath();
 
 const createWindow = (): void => {
   // Create the browser window.
