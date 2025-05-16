@@ -249,7 +249,7 @@ async function showNewProjectDialog(): Promise<string> {
   });
 
   if (!res.canceled && res.filePath) {
-    const ext = '.fetch.json';
+    const ext = '.inflight.json';
     const name = path.parse(res.filePath).name;
     const filePath = res.filePath.endsWith(ext) ? res.filePath : `${res.filePath}${ext}`;
     fs.writeFileSync(filePath, JSON.stringify(new CProject(name), null, 2), 'utf-8');

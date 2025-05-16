@@ -81,7 +81,7 @@ export default function NoProject() {
       >
         <Title>
           <Group>
-            <IconSend size="1em"/> Welcome to Fetch
+            <IconSend size="1em"/> Welcome to Inflight
           </Group>
         </Title>
 

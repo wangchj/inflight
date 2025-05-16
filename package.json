@@ -1,8 +1,8 @@
 {
-  "name": "fetch",
-  "productName": "Fetch",
+  "name": "inflight",
+  "productName": "Inflight",
   "version": "1.0.0",
-  "description": "Fetch REST API test client.",
+  "description": "Inflight REST API test client.",
   "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",
