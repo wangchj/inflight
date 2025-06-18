@@ -11,6 +11,6 @@ export default function getEditorLanguage(contentType: string) {
     return;
   if (contentType.includes('application/json'))
     return 'json';
-  if (contentType.includes('text/html'))
+  if (contentType.includes('text/html') || contentType.includes('application/xml'))
     return 'html';
 }
