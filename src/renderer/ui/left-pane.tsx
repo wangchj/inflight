@@ -56,7 +56,7 @@ export default function LeftPane() {
         />
       </div>
 
-      <Box mb="sm">
+      <Box mb="sm" flex="1 1">
         {getTree(ui.selectedNavItem)}
       </Box>
     </Stack>

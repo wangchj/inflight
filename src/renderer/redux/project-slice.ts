@@ -1,9 +1,12 @@
+import { Edge } from '@atlaskit/pragmatic-drag-and-drop-hitbox/dist/types/types';
+import { TreeNodeData } from '@mantine/core/lib';
 import { createSlice, nanoid } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import getDescendantEnvIds from 'renderer/utils/get-descendant-env-ids';
 import getDescendantFolderIds from 'renderer/utils/get-descendant-folder-ids';
 import getDescendantRequestIds from 'renderer/utils/get-descendant-request-ids';
 import * as Persistence from 'renderer/utils/persistence';
+import validTreeMove from 'renderer/utils/valid-tree-move';
 import { Project } from 'types/project';
 import { Request } from 'types/request';
 
@@ -431,6 +434,70 @@ export const projectSlice = createSlice({
 
       Persistence.saveProjectDelay();
     },
+
+    /**
+     * Moves a request or folder node in the project tree.
+     *
+     * @param state The project object.
+     * @param action The payload contains:
+     *   - `drag`: the node that is being dragged (moved).
+     *   - `drop`: the node on which the dragged node is dropped.
+     *   - `edge`: the drop edge.
+     */
+    moveTreeNode(state,
+      action: PayloadAction<{drag: TreeNodeData, drop: TreeNodeData, edge: Edge}>
+    ) {
+      const {drag, drop, edge} = action.payload;
+
+      if (!validTreeMove(state, drag, drop)) {
+        return;
+      }
+
+      const dragPid = drag.nodeProps.parentId;
+      const dropPid = drop.nodeProps.parentId;
+      const dragType = drag.nodeProps.type;
+      const dropType = drop.nodeProps.type;
+
+      // Take the node out of the original location
+      const dragParent = state.folders[dragPid];
+      const index = dragType === 'folder' ? dragParent?.folders?.indexOf(drag.value) :
+        dragParent?.requests?.indexOf(drag.value);
+
+      if (index === undefined || index < 0) {
+        return;
+      }
+
+      const item = dragType === 'folder' ? dragParent.folders.splice(index, 1)[0] :
+        dragParent.requests.splice(index, 1)[0];
+
+      // Insert the node into the new location in the tree
+      const dropParent = state.folders[dropPid];
+
+      if (dragType === 'folder' && !Array.isArray(dropParent.folders)) {
+        dropParent.folders = [];
+      }
+
+      if (dragType === 'request' && !Array.isArray(dropParent.requests)) {
+        dropParent.requests = [];
+      }
+
+      if (dragType === 'request' && dropType === 'request') {
+        const index = dropParent.requests.indexOf(drop.value);
+        index < 0 ? dropParent.requests.push(item) :
+          dropParent.requests.splice(edge === 'top' ? index : index + 1, 0, item);
+      }
+      else if (dragType === 'request' && dropType === 'folder') {
+        dropParent.requests.unshift(item);
+      }
+      else if (dragType === 'folder' && dropType == 'request') {
+        dropParent.folders.push(item);
+      }
+      else {
+        const index = dropParent.folders.indexOf(drop.value);
+        index < 0 ? dropParent.folders.push(item) :
+          dropParent.folders.splice(edge === 'top' ? index : index + 1, 0, item);
+      }
+    }
   },
 });
 
