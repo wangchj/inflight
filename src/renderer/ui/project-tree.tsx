@@ -29,6 +29,10 @@ export default function ProjectTree() {
 
   return (
     <Tree
+      style={{
+        height: '100%',
+        overflow: 'hidden'
+      }}
       data={data}
       tree={tree}
       levelOffset={23}

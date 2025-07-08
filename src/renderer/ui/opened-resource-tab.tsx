@@ -123,8 +123,52 @@ export default function OpenedResourceTab({index} : OpenedResourceTabProps) {
         onDragLeave() {
 					setDragEdge(null);
 				},
-        onDrop() {
+        onDrop({source, self}) {
           setDragEdge(null);
+
+          if (!self.data || !source?.data) {
+            return;
+          }
+
+          if (self.data.index === source.data.index) {
+            return;
+          }
+
+          const edge = extractClosestEdge(self.data);
+          const fromIndex = source.data.index as number;
+          const targetIndex = self.data.index as number;
+          let toIndex: number;
+
+          if (fromIndex < targetIndex) {
+            switch (edge) {
+              case 'left':
+                toIndex = targetIndex - 1;
+                break;
+              case 'right':
+                toIndex = targetIndex;
+                break;
+              default:
+                toIndex = fromIndex;
+            }
+          }
+          else {
+            switch (edge) {
+              case 'left':
+                toIndex = targetIndex;
+                break;
+              case 'right':
+                toIndex = targetIndex + 1;
+                break;
+              default:
+                toIndex = fromIndex;
+            }
+          }
+
+          if (fromIndex === toIndex) {
+            return;
+          }
+
+          dispatch(workspaceSlice.actions.reorderResource({fromIndex, toIndex}));
         },
       })
     );
@@ -135,6 +179,7 @@ export default function OpenedResourceTab({index} : OpenedResourceTabProps) {
       key={openedResource.id}
       value={openedResource.id}
       ref={ref}
+      component="div"
     >
       <Group gap="lg">
 
@@ -174,7 +219,7 @@ export default function OpenedResourceTab({index} : OpenedResourceTabProps) {
           />
         </Group>
       </Group>
-      {dragEdge && <DropIndicator edge={dragEdge} gap="1px" />}
+      {dragEdge && <DropIndicator edge={dragEdge} gap="1px" type="terminal-no-bleed"/>}
     </Tabs.Tab>
   )
 
