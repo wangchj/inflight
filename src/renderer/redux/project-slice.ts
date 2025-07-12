@@ -1,3 +1,4 @@
+import { Operation } from '@atlaskit/pragmatic-drag-and-drop-hitbox/dist/types/list-item';
 import { Edge } from '@atlaskit/pragmatic-drag-and-drop-hitbox/dist/types/types';
 import { TreeNodeData } from '@mantine/core/lib';
 import { createSlice, nanoid } from '@reduxjs/toolkit'
@@ -442,17 +443,19 @@ export const projectSlice = createSlice({
      * @param action The payload contains:
      *   - `drag`: the node that is being dragged (moved).
      *   - `drop`: the node on which the dragged node is dropped.
-     *   - `edge`: the drop edge.
+     *   - `op`: the drop operation.
      */
     moveTreeNode(state,
-      action: PayloadAction<{drag: TreeNodeData, drop: TreeNodeData, edge: Edge}>
+      action: PayloadAction<{drag: TreeNodeData, drop: TreeNodeData, op: Operation}>
     ) {
-      const {drag, drop, edge} = action.payload;
+      const {drag, drop, op} = action.payload;
 
       if (!validTreeMove(state, drag, drop)) {
         return;
       }
 
+      const dragId = drag.value;
+      const dropId = drop.value;
       const dragPid = drag.nodeProps.parentId;
       const dropPid = drop.nodeProps.parentId;
       const dragType = drag.nodeProps.type;
@@ -460,14 +463,14 @@ export const projectSlice = createSlice({
 
       // Take the node out of the original location
       const dragParent = state.folders[dragPid];
-      const index = dragType === 'folder' ? dragParent?.folders?.indexOf(drag.value) :
-        dragParent?.requests?.indexOf(drag.value);
+      const index = dragType === 'folder' ? dragParent?.folders?.indexOf(dragId) :
+        dragParent?.requests?.indexOf(dragId);
 
       if (index === undefined || index < 0) {
         return;
       }
 
-      const item = dragType === 'folder' ? dragParent.folders.splice(index, 1)[0] :
+      dragType === 'folder' ? dragParent.folders.splice(index, 1)[0] :
         dragParent.requests.splice(index, 1)[0];
 
       // Insert the node into the new location in the tree
@@ -482,21 +485,35 @@ export const projectSlice = createSlice({
       }
 
       if (dragType === 'request' && dropType === 'request') {
-        const index = dropParent.requests.indexOf(drop.value);
-        index < 0 ? dropParent.requests.push(item) :
-          dropParent.requests.splice(edge === 'top' ? index : index + 1, 0, item);
+        const index = dropParent.requests.indexOf(dropId);
+        index < 0 ? dropParent.requests.push(dragId) :
+          dropParent.requests.splice(op === 'reorder-before'  ? index : index + 1, 0, dragId);
       }
       else if (dragType === 'request' && dropType === 'folder') {
-        dropParent.requests.unshift(item);
+        if (op === 'combine') {
+          const dropFolder = state.folders[dropId];
+          dropFolder.requests = [...dropFolder.requests ?? [], dragId];
+        }
+        else {
+          dropParent.requests.unshift(dragId);
+        }
       }
       else if (dragType === 'folder' && dropType == 'request') {
-        dropParent.folders.push(item);
+        dropParent.folders.push(dragId);
       }
       else {
-        const index = dropParent.folders.indexOf(drop.value);
-        index < 0 ? dropParent.folders.push(item) :
-          dropParent.folders.splice(edge === 'top' ? index : index + 1, 0, item);
+        if (op === 'combine') {
+          const dropFolder = state.folders[dropId];
+          dropFolder.folders = [...dropFolder.folders ?? [], dragId];
+        }
+        else {
+          const index = dropParent.folders.indexOf(dropId);
+          index < 0 ? dropParent.folders.push(dragId) :
+            dropParent.folders.splice(op === 'reorder-before' ? index : index + 1, 0, dragId);
+        }
       }
+
+      Persistence.saveProjectDelay();
     }
   },
 });

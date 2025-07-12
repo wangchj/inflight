@@ -4,11 +4,12 @@ import {
   dropTargetForElements
 } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import {
-  attachClosestEdge,
-  extractClosestEdge
-} from '@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge';
-import { DropIndicator } from "@atlaskit/pragmatic-drag-and-drop-react-drop-indicator/box";
-// import { DropIndicator } from '@atlaskit/pragmatic-drag-and-drop-react-drop-indicator/list-item';
+    attachInstruction,
+    extractInstruction,
+    Operation,
+} from '@atlaskit/pragmatic-drag-and-drop-hitbox/list-item';
+import { DropIndicator as DropBox } from '@atlaskit/pragmatic-drag-and-drop-react-drop-indicator/border';
+import { DropIndicator as DropLine } from "@atlaskit/pragmatic-drag-and-drop-react-drop-indicator/box";
 import { Group, RenderTreeNodePayload, TreeNodeData } from "@mantine/core";
 import { IconBraces, IconBrackets, IconChevronRight, IconFolder, IconFolderOpen } from "@tabler/icons-react";
 import { useEffect, useRef, useState } from "react";
@@ -74,9 +75,9 @@ export default function TreeNode({payload}: {payload: RenderTreeNodePayload}) {
   const innerRef = useRef(null);
 
   /**
-   * Drop target closest edge.
+   * Drop target operation.
    */
-  const [edge, setEdge] = useState(null);
+  const [dropOp, setDropOp] = useState<Operation>(null);
 
   /**
    * Support node drag and drop.
@@ -103,29 +104,40 @@ export default function TreeNode({payload}: {payload: RenderTreeNodePayload}) {
           element: droppableElement,
           getData({input, element}) {
             const data = {node};
-            return attachClosestEdge(data, {input, element, allowedEdges: ['top', 'bottom']});
+            return attachInstruction(
+              data,
+              {
+                input,
+                element,
+                operations: {
+                  'reorder-before': 'available',
+                  'reorder-after': 'available',
+                  'combine': node.nodeProps.type === 'folder' ? 'available' : 'not-available',
+                }
+              }
+            );
           },
           onDrag({source, self}) {
             const sourceNode = source.data?.node as TreeNodeData;
             const selfNode = self.data?.node as TreeNodeData;
 
             if (!validTreeMove(project, sourceNode, selfNode)) {
-              setEdge(null);
+              setDropOp(null);
               return;
             }
 
-            setEdge(extractClosestEdge(self.data));
+            setDropOp(extractInstruction(self.data).operation);
           },
           onDragLeave() {
-            setEdge(null);
+            setDropOp(null);
           },
           onDrop({source, self}) {
-            setEdge(null);
+            setDropOp(null);
 
             dispatch(projectSlice.actions.moveTreeNode({
               drag: source.data.node as TreeNodeData,
               drop: self.data.node as TreeNodeData,
-              edge: extractClosestEdge(self.data)
+              op: dropOp
             }));
           },
         }
@@ -232,7 +244,15 @@ export default function TreeNode({payload}: {payload: RenderTreeNodePayload}) {
         backgroundColor={selected ? 'var(--mantine-color-gray-1)' : 'white'}
       />
 
-      {edge && <DropIndicator edge={edge} indent={indent} type="terminal"/>}
+      {dropOp && (dropOp === 'combine' ?
+        <DropBox/> :
+        <DropLine
+          edge={dropOp === 'reorder-before' ? 'top' : 'bottom'}
+          indent={indent}
+          type="terminal"
+        />
+      )}
+
     </Group>
   )
 }
