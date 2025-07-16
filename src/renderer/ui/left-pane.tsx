@@ -32,7 +32,7 @@ export default function LeftPane() {
   const ui = useSelector((state: RootState) => state.ui);
 
   return (
-    <Stack gap="xs">
+    <Stack gap="xs" bg="gray.0">
       <div style={{
         backgroundColor: 'var(--mantine-color-gray-0)',
         paddingInline: '1em',

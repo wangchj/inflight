@@ -13,17 +13,20 @@
 
 .split-handle {
   cursor: ew-resize;
-  background-color: var(--mantine-color-default-border);
+  /* width: 4px; */
+  background-color: var(--mantine-color-gray-0);
 }
 
 .split-handle-request {
   cursor: ew-resize;
-  background-color: var(--mantine-color-gray-3);
+  background-color: var(--mantine-color-gray-1);
+  /* width: 4px; */
+  height: 100%;
 }
 
 .split-handle:hover, .split-handle-request:hover {
   background-color: var(--mantine-primary-color-filled-hover);
-  padding-left: 1px;
-  padding-right: 1px;
+  /* padding-left: 1px; */
+  /* padding-right: 10px; */
   z-index: 10;
 }

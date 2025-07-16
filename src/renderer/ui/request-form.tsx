@@ -31,7 +31,7 @@ export default function RequestForm({openedResource} : {openedResource: OpenedRe
   useEffect(() => {
     if (result) {
       if (gridTemplateColumns === '1fr') {
-        setGridTemplateColumns('1fr 1px 2fr');
+        setGridTemplateColumns('1fr 4px 2fr');
       }
     }
     else {
@@ -76,7 +76,7 @@ export default function RequestForm({openedResource} : {openedResource: OpenedRe
         preventGrowOverflow={false}
         p="md"
         style={{
-          borderBottom: '1px solid var(--mantine-color-gray-2)'
+          borderBottom: '1px solid var(--mantine-color-gray-1)'
         }}
       >
         <Group

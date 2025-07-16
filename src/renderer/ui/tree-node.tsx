@@ -241,7 +241,7 @@ export default function TreeNode({payload}: {payload: RenderTreeNodePayload}) {
         node={node}
         deletable
         hovered={hovered}
-        backgroundColor={selected ? 'var(--mantine-color-gray-1)' : 'white'}
+        backgroundColor={selected ? 'var(--mantine-color-gray-1)' : 'var(--mantine-color-gray-0)'}
       />
 
       {dropOp && (dropOp === 'combine' ?

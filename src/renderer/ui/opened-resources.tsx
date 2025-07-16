@@ -7,6 +7,7 @@ import RequestForm from './request-form';
 import OpenedResourceTab from './opened-resource-tab';
 import Environment from './environment';
 import { OpenedResource } from 'types/opened-resource';
+import './major-tabs.css';
 
 /**
  * Opened resource content component props.
@@ -42,6 +43,13 @@ export default function OpenedResources() {
   return openedResources?.length ?
     (
       <Tabs
+        variant="none"
+        classNames={
+          {
+          'list': 'major-tabs-list',
+          'tab': 'major-tabs-tab'
+        }
+        }
         value={selectedId}
         onChange={id => dispatch(workspaceSlice.actions.setSelectedTab(id))}
         style={{
@@ -62,7 +70,7 @@ export default function OpenedResources() {
             ))
           }
 
-          <Divider orientation="vertical" ml="md" mt="sm" mb="sm"/>
+          {/* <Divider orientation="vertical" ml="md" mt="sm" mb="sm"/> */}
 
           <div style={{display: 'flex', alignItems: 'center'}}>
             <Button
@@ -74,7 +82,7 @@ export default function OpenedResources() {
             </Button>
           </div>
 
-          <div className="app-drag" style={{flexGrow: 1, flexShrink: 1}}/>
+          {/* <div className="app-drag" style={{flexGrow: 1, flexShrink: 1}}/> */}
         </Tabs.List>
 
         {openedResources.map(openedResource => (

@@ -12,15 +12,12 @@ export default function NavBar() {
   return (
     <div
       style={{
+        backgroundColor: 'var(--mantine-color-gray-1)',
         flexGrow: 0,
-        borderInlineEnd: '1px solid var(--mantine-color-default-border)',
+        borderInlineEnd: '1p/x solid var(--mantine-color-default-border)',
         padding: '0.6em'
       }}
     >
-      <div
-        className="app-drag"
-        style={{width: '100%', height: '1.8em', flexGrow: 0, flexShrink: 0}}
-      />
       <div
         style={{
           display: 'flex',
@@ -37,7 +34,7 @@ export default function NavBar() {
           }}
         >
           <ActionIcon
-            variant={selectedNavItem === 'requests' ? 'light' : 'subtle'}
+            variant={selectedNavItem === 'requests' ? 'filled' : 'subtle'}
             color={selectedNavItem === 'requests' ? 'blue' : 'gray'}
             size="xl"
             onClick={() => dispatch(uiSlice.actions.setSelectedNavItem('requests'))}
@@ -61,7 +58,7 @@ export default function NavBar() {
           }}
         >
           <ActionIcon
-            variant={selectedNavItem === 'environments' ? 'light' : 'subtle'}
+            variant={selectedNavItem === 'environments' ? 'filled' : 'subtle'}
             color={selectedNavItem === 'environments' ? 'blue' : 'gray'}
             size="xl"
             onClick={() => dispatch(uiSlice.actions.setSelectedNavItem('environments'))}

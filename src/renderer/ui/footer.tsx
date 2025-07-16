@@ -150,8 +150,9 @@ export default function Footer() {
     <Box
       px="md"
       py="xs"
+      bg="gray.1"
       style={{
-        borderTop: '1px solid var(--mantine-color-default-border)',
+        // borderTop: '1px solid var(--mantine-color-default-border)',
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'flex-end',

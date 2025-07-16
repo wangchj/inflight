@@ -11,6 +11,7 @@ import { NewFolderModal } from "./new-folder-modal";
 import { DeleteModal } from "./delete-modal";
 import Footer from "./footer";
 import { RenameModal } from "./rename-modal";
+import TitleBar from "./title-bar";
 
 /**
  * The project root component.
@@ -24,7 +25,7 @@ export default function Project() {
   /**
    * Split pane widths.
    */
-  const [gridTemplateColumns, setGridTemplateColumns] = useState('300px 1px 1fr');
+  const [gridTemplateColumns, setGridTemplateColumns] = useState('300px 4px 1fr');
 
   /**
    * Determines if the project has any selectable environments.
@@ -44,6 +45,8 @@ export default function Project() {
         height: '100%',
       }}
     >
+      <TitleBar/>
+
       <div
         style={{
           height: '100%',
