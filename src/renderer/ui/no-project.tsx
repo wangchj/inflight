@@ -1,6 +1,7 @@
 import { Button, Group, Stack, Title } from "@mantine/core";
 import { notifications } from '@mantine/notifications';
 import { IconFileSpark, IconFolderOpen, IconSend } from "@tabler/icons-react";
+import { DragEvent } from "react";
 import { useDispatch } from "react-redux";
 import { projectSlice } from "renderer/redux/project-slice";
 import { workspaceSlice } from "renderer/redux/workspace-slice";
@@ -41,17 +42,56 @@ export default function NoProject() {
   /**
    * Handles Open Project button click event.
    */
-  async function openProject() {
+  async function openProject(path: string) {
     notifications.clean();
 
     try {
-      const path = await window.showOpenProjectDialog();
       const project = await Persistence.openProject(path);
 
       if (project) {
         dispatch(projectSlice.actions.setProject(project));
         dispatch(workspaceSlice.actions.openProject(path));
       }
+    }
+    catch (error) {
+      notifications.show({
+        id: 'openProject',
+        color: 'red',
+        title: 'Unable to open project',
+        message: (error instanceof Error ? error.message : String(error)),
+        withBorder: true,
+      });
+    }
+  }
+
+  /**
+   * Handles the event when the open project button is clicked.
+   */
+  async function onOpenProjectButtonClick() {
+    const path = await window.showOpenProjectDialog();
+    openProject(path);
+  }
+
+  /**
+   * Handles the event while a file is dragged over the UI from the OS.
+   * @param event
+   */
+  function onDragOver(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  /**
+   * Handles the event when a file is dropped from the OS onto the UI.
+   */
+  function onDrop(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    try {
+      const file = event.dataTransfer.files[0];
+      const path = window.getFilePath(file);
+      openProject(path);
     }
     catch (error) {
       notifications.show({
@@ -74,6 +114,8 @@ export default function NoProject() {
         justifyContent: 'center',
         alignItems: 'center'
       }}
+      onDragOver={onDragOver}
+      onDrop={onDrop}
     >
       <Stack
         align="center"
@@ -99,7 +141,7 @@ export default function NoProject() {
             variant="transparent"
             justify="left"
             leftSection={<IconFolderOpen/>}
-            onClick={openProject}
+            onClick={onOpenProjectButtonClick}
           >
             Open Project
           </Button>

@@ -1,7 +1,7 @@
 // See the Electron documentation for details on how to use preload scripts:
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 
-import { contextBridge, ipcRenderer } from 'electron'
+import { contextBridge, ipcRenderer, webUtils } from 'electron'
 import { Project } from 'types/project';
 import { Request } from 'types/request';
 import { Workspace } from 'types/workspace';
@@ -40,18 +40,25 @@ contextBridge.exposeInMainWorld('showNewProjectDialog',
 
 contextBridge.exposeInMainWorld('onSave',
   (callback: () => void) => ipcRenderer.on('save', () => callback())
-)
+);
 
 contextBridge.exposeInMainWorld('onCloseProject',
   (callback: () => void) => ipcRenderer.on('closeProject', () => callback())
-)
+);
 
 contextBridge.exposeInMainWorld('onOpenProject',
   (callback: (filePath: string) => void) => ipcRenderer.on('openProject',
     (event, filePath) => callback(filePath)
   )
-)
+);
 
 contextBridge.exposeInMainWorld('onCloseTab',
   (callback: () => void) => ipcRenderer.on('closeTab', () => callback())
-)
+);
+
+contextBridge.exposeInMainWorld('getFilePath',
+  (file: any) => {
+    const path = webUtils.getPathForFile(file);
+    return path;
+  }
+);

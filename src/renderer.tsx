@@ -71,6 +71,7 @@ declare global {
     printResults: () => void;
     printUi: () => void;
     printPersistence: () => void;
+    getFilePath: (file: any) => string;
   }
 }
 
