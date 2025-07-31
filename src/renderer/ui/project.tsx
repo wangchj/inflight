@@ -12,6 +12,7 @@ import { DeleteModal } from "./delete-modal";
 import Footer from "./footer";
 import { RenameModal } from "./rename-modal";
 import TitleBar from "./title-bar";
+import VarTooltip from "./var-tooltip";
 
 /**
  * The project root component.
@@ -76,6 +77,8 @@ export default function Project() {
         <NewEnvGroupModal/>
         <NewEnvModal/>
         <RenameModal/>
+
+        <VarTooltip/>
       </div>
 
       {

@@ -48,8 +48,8 @@ fixPath();
 const createWindow = (): void => {
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    height: 1200,
-    width: 1600,
+    height: 1000,
+    width: 1800,
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
     },
@@ -77,6 +77,8 @@ app.on('ready', () => {
   ipcMain.handle('saveWorkspace', (event, workspace) => saveWorkspace(event, workspace));
   ipcMain.handle('showOpenProjectDialog', showOpenProjectDialog);
   ipcMain.handle('showNewProjectDialog', showNewProjectDialog);
+  // ipcMain.on('ondragstart', (a, b) => console.log('--------ondragstart',a,b));
+  // ipcMain.on('ondrop', (a, b) => console.log('--------',a,b));
   createWindow();
 });
 
