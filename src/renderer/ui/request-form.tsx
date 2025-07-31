@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Group,
   Loader,
@@ -19,6 +20,7 @@ import { resultsSlice } from "renderer/redux/results-slice";
 import * as Env from "renderer/utils/env";
 import { SaveRequestModal } from "./save-request-modal";
 import { OpenedResource } from "types/opened-resource";
+import LexInput from "./lexical/LexInput";
 
 export default function RequestForm({openedResource} : {openedResource: OpenedResource}) {
   const [sending, setSending] = useState<boolean>(false);
@@ -118,6 +120,9 @@ export default function RequestForm({openedResource} : {openedResource: OpenedRe
         </Button>
       </Group>
 
+      <Box p="md">
+      <LexInput id="request-url" value="https://{{endpoint}}/{{version}}/scans"/>
+            </Box>
       <Split
         cursor="ew-resize"
         // https://github.com/nathancahill/split/pull/728
