@@ -1,0 +1,45 @@
+.input-container {
+  flex-grow: 1;
+  flex-shrink: 1;
+  border: 1px solid #ccc;
+  border-radius: var(--mantine-radius-default);
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  white-space: nowrap;
+  outline: none;
+  padding-inline: var(--mantine-spacing-sm);
+  padding-block: calc(var(--mantine-spacing-sm) / 2);
+  overflow-x: hidden;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  font-family: var(--mantine-font-family);
+  font-size: var(--mantine-font-size-sm);
+}
+
+.input-container:focus-within {
+  border-color: var(--mantine-primary-color-filled);
+}
+
+.input-editor {
+  flex-grow: 1;
+  flex-shrink: 1;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  white-space: nowrap;
+  outline: none;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  scrollbar-width: none;
+}
+
+.input-variable {
+  background-color: var(--mantine-color-blue-1);
+  padding: 0px 2px 2px 2px;
+  border-radius: 2px;
+}
+
+.input-variable:hover {
+  background-color: var(--mantine-color-blue-2);
+}

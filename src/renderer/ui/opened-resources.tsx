@@ -56,6 +56,7 @@ export default function OpenedResources() {
           display: 'flex',
           flexDirection: 'column',
           height: '100%',
+          width: '100%'
         }}
       >
         <Tabs.List
@@ -81,8 +82,6 @@ export default function OpenedResources() {
               <IconPlus size="18"/>
             </Button>
           </div>
-
-          {/* <div className="app-drag" style={{flexGrow: 1, flexShrink: 1}}/> */}
         </Tabs.List>
 
         {openedResources.map(openedResource => (
@@ -91,6 +90,7 @@ export default function OpenedResources() {
             value={openedResource.id}
             style={{
               flexGrow: 1,
+              width: '100%'
             }}
           >
             <OpenedResourceContent openedResource={openedResource}/>

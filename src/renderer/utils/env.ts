@@ -104,3 +104,13 @@ export function resolve(o: any): any {
       return o;
   }
 }
+
+/**
+ * Gets the value of a variable.
+ *
+ * @param name The variable name.
+ * @return The value of the variable or undefined.
+ */
+export function get(name: string) {
+  return resolved[name];
+}

@@ -1,10 +1,8 @@
 import {
   Button,
-  Group,
   Loader,
   Select,
   Stack,
-  TextInput,
 } from "@mantine/core";
 import { notifications } from '@mantine/notifications';
 import { IconSend } from "@tabler/icons-react";
@@ -19,6 +17,7 @@ import { resultsSlice } from "renderer/redux/results-slice";
 import * as Env from "renderer/utils/env";
 import { SaveRequestModal } from "./save-request-modal";
 import { OpenedResource } from "types/opened-resource";
+import Input from "./input";
 
 export default function RequestForm({openedResource} : {openedResource: OpenedResource}) {
   const [sending, setSending] = useState<boolean>(false);
@@ -71,17 +70,26 @@ export default function RequestForm({openedResource} : {openedResource: OpenedRe
       h="100%"
       gap={0}
     >
-      <Group
-        grow
-        preventGrowOverflow={false}
-        p="md"
+      <div
         style={{
+          display: 'flex',
+          width: '100%',
+          alignItems: 'center',
+          gap: 'var(--mantine-spacing-md)',
+          padding: 'var(--mantine-spacing-md)',
           borderBottom: '1px solid var(--mantine-color-gray-1)'
         }}
       >
-        <Group
-          gap="xs"
-          style={{flexGrow: 1}}
+        <div
+          style={{
+            display: 'flex',
+            flexGrow: 1,
+            flexShrink: 1,
+            minWidth: 0,
+            width: '100%',
+            alignItems: 'center',
+            gap: 'var(--mantine-spacing-xs)',
+          }}
         >
           <Select
             style={{flexGrow: 0, width: '120px'}}
@@ -94,29 +102,23 @@ export default function RequestForm({openedResource} : {openedResource: OpenedRe
             }
           />
 
-          <TextInput
-            style={{flexGrow: 1}}
+          <Input
             value={request.url}
-            onChange={
-              event => dispatch(
-                workspaceSlice.actions.updateRequest(
-                  {path: 'url', value: event.currentTarget.value}
-                )
-              )
-            }
+            onChange={value => dispatch(workspaceSlice.actions.updateRequest({path: 'url', value}))}
             placeholder="Request URL"
           />
-        </Group>
+        </div>
 
         <Button
           onClick={onSendClick}
           leftSection={sending ? <Loader size="xs" color="gray"/> : <IconSend size="1.4em"/>}
-          style={{flexGrow: 0, flexShrink: 1}}
+          style={{flexGrow: 0, flexShrink: 0}}
           disabled={sending}
         >
           Send
         </Button>
-      </Group>
+
+      </div>
 
       <Split
         cursor="ew-resize"
