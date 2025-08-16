@@ -2,18 +2,19 @@ import { Select, Stack, TextInput } from "@mantine/core";
 import { useDispatch } from "react-redux";
 import { workspaceSlice } from "renderer/redux/workspace-slice";
 import { Auth, AwsSigv4Auth } from "types/auth";
+import Input from "./input";
 
 const authTypeOptions = [
-  {value: 'none',      label: 'None'},
-  {value: 'aws_sigv4', label: 'AWS Signature Version 4'},
+  { value: 'none', label: 'None' },
+  { value: 'aws_sigv4', label: 'AWS Signature Version 4' },
 ];
 
 const credentialSourceOptions = [
-  {value: 'aws_cli_profile', label: 'AWS CLI profile'},
-  {value: 'inline',          label: 'Inline'},
+  { value: 'aws_cli_profile', label: 'AWS CLI profile' },
+  { value: 'inline', label: 'Inline' },
 ];
 
-export default function RequestAuth({auth}: {auth: Auth}) {
+export default function RequestAuth({ auth }: { auth: Auth }) {
   const dispatch = useDispatch();
 
   return (
@@ -30,7 +31,7 @@ export default function RequestAuth({auth}: {auth: Auth}) {
       />
 
       {
-        auth?.type === 'aws_sigv4' && <AwsAuthSigv4Form auth={auth as AwsSigv4Auth}/>
+        auth?.type === 'aws_sigv4' && <AwsAuthSigv4Form auth={auth as AwsSigv4Auth} />
       }
     </Stack>
   )
@@ -42,7 +43,7 @@ export default function RequestAuth({auth}: {auth: Auth}) {
  * @param auth The auth object.
  * @return React elements.
  */
-function AwsAuthSigv4Form({auth}: {auth: AwsSigv4Auth}) {
+function AwsAuthSigv4Form({ auth }: { auth: AwsSigv4Auth }) {
   const dispatch = useDispatch();
 
   return (
@@ -59,41 +60,43 @@ function AwsAuthSigv4Form({auth}: {auth: AwsSigv4Auth}) {
       /> */}
 
       {auth.source === 'aws_cli_profile' && (
-        <TextInput
+        <Input
           label="Profile"
-          description="The AWS CLI profile. If not specified, the default profile is used."
+          descr="The AWS CLI profile. If not specified, the default profile is used."
           value={auth.profile}
           onChange={
-            event => dispatch(
+            value => dispatch(
               workspaceSlice.actions.updateRequest(
-                {path: 'auth.profile', value: event.currentTarget.value}
+                { path: 'auth.profile', value }
               )
             )
           }
         />
       )}
 
+
+
       {/* TODO: auth.source === 'inline' */}
 
-      <TextInput
+      <Input
         label="Region"
         value={auth.region}
         onChange={
-          event => dispatch(
+          value => dispatch(
             workspaceSlice.actions.updateRequest(
-              {path: 'auth.region', value: event.currentTarget.value}
+              { path: 'auth.region', value }
             )
           )
         }
       />
 
-      <TextInput
+      <Input
         label="Service name"
         value={auth.service || ''}
         onChange={
-          event => dispatch(
+          value => dispatch(
             workspaceSlice.actions.updateRequest(
-              {path: 'auth.service', value: event.currentTarget.value}
+              { path: 'auth.service', value }
             )
           )
         }

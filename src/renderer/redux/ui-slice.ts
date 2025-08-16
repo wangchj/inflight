@@ -21,6 +21,16 @@ interface UiState {
 
   renameModalOpen: boolean;
   renameNode: TreeNodeData;
+
+  /**
+   * Variable tooltip target element id.
+   */
+  varTooltipTarget: string;
+
+  /**
+   * Variable tooltip variable name.
+   */
+  varTooltipName: string;
 }
 
 const initialState = {
@@ -139,6 +149,28 @@ export const uiSlice = createSlice({
      */
     closeRenameModal(state) {
       state.renameModalOpen = false;
+    },
+
+
+    /**
+     * Shows variable tooltip.
+     *
+     * @param state The UI state.
+     * @param action The action that contains the target element id and variable name.
+     */
+    showVarTooltip(state, action: PayloadAction<{id: string; name: string}>) {
+      const {id, name} = action.payload;
+      state.varTooltipTarget = `#${id}`;
+      state.varTooltipName = name;
+    },
+
+    /**
+     * Hides variable tooltip.
+     *
+     * @param state The UI state.
+     */
+    hideVarTooltip(state) {
+      delete state.varTooltipTarget;
     },
   },
 });

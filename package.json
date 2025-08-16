@@ -25,9 +25,9 @@
     "@electron-forge/plugin-fuses": "^7.5.0",
     "@electron-forge/plugin-webpack": "^7.5.0",
     "@electron/fuses": "^1.8.0",
-    "@mantine/core": "^8.1.2",
-    "@mantine/hooks": "^8.1.2",
-    "@mantine/notifications": "^8.1.2",
+    "@mantine/core": "^8.2.7",
+    "@mantine/hooks": "^8.2.7",
+    "@mantine/notifications": "^8.2.7",
     "@monaco-editor/react": "^4.6.0",
     "@reduxjs/toolkit": "^2.3.0",
     "@smithy/signature-v4": "^4.2.3",
@@ -69,6 +69,7 @@
   "license": "MIT",
   "dependencies": {
     "electron-squirrel-startup": "^1.0.1",
-    "fix-path": "^4.0.0"
+    "fix-path": "^4.0.0",
+    "html-entities": "^2.6.0"
   }
 }
