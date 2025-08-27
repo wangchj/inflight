@@ -15,7 +15,9 @@ interface RequestConfigProps {
 }
 
 export default function RequestConfig({request}: RequestConfigProps) {
-  const [selectedTab, setSelectedTab] = useState<string>('auth');
+  const [selectedTab, setSelectedTab] = useState<string>(
+    request.body ? 'body' : request.headers?.length ? 'headers' : 'auth'
+  );
 
   return (
     <Box
