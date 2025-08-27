@@ -1,18 +1,16 @@
-import { Box } from "@mantine/core";
-
 /**
  * The app title bar UI component.
  */
 export default function TitleBar() {
   return (
-    <Box
+    <div
       className="app-drag"
-      bg="gray.1"
-      h="2rem"
       style={{
-        alignItems: 'center'
+        height: '2rem',
+        flexGrow: 0,
+        flexShrink: 0,
+        backgroundColor: 'var(--mantine-color-gray-1)'
       }}
-    >
-    </Box>
+    />
   )
 }

@@ -41,8 +41,9 @@ export default function Project() {
       style={{
         display: 'flex',
         flexDirection: 'column',
-        width: '100%',
-        height: '100%',
+        width: '100vw',
+        height: '100vh',
+        overflow: 'hidden',
       }}
     >
       <TitleBar/>
@@ -52,7 +53,10 @@ export default function Project() {
           height: '100%',
           width: '100%',
           display: 'flex',
-          flexDirection: 'row'
+          flexDirection: 'row',
+          flex: '1 1 auto',
+          overflow: 'hidden',
+          minHeight: 0,
         }}
       >
         <NavBar/>

@@ -1,4 +1,4 @@
-import { Box, Button, Menu } from "@mantine/core";
+import { Button, Menu } from "@mantine/core";
 import { IconCheck } from "@tabler/icons-react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "renderer/redux/store";
@@ -143,24 +143,24 @@ function getEnvGroupIds(workspace: Workspace, project: Project, envId: string): 
 }
 
 /**
- * The footer UI component.
+ * The footer UI component
  */
 export default function Footer() {
   return (
-    <Box
-      px="md"
-      py="xs"
-      bg="gray.1"
+    <div
       style={{
-        // borderTop: '1px solid var(--mantine-color-default-border)',
+        flex: '0 0 auto',
+        paddingInline: 'var(--mantine-spacing-md)',
+        paddingBlock: 'var(--mantine-spacing-xs)',
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'flex-end',
         justifyContent: 'flex-end',
-        gap: '1em'
+        backgroundColor: 'var(--mantine-color-gray-1)',
+        gap: '1em',
       }}
     >
       <Envs/>
-    </Box>
+    </div>
   )
 }

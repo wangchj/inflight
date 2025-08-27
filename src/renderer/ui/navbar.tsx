@@ -14,6 +14,7 @@ export default function NavBar() {
       style={{
         backgroundColor: 'var(--mantine-color-gray-1)',
         flexGrow: 0,
+        flexShrink: 1,
         borderInlineEnd: '1p/x solid var(--mantine-color-default-border)',
         padding: '0.6em'
       }}

@@ -1,4 +1,4 @@
-import { Box, Stack } from '@mantine/core';
+import { Box } from '@mantine/core';
 import { useSelector } from 'react-redux';
 import { RootState } from 'renderer/redux/store';
 import NodeMenu from './node-menu';
@@ -32,8 +32,17 @@ export default function LeftPane() {
   const ui = useSelector((state: RootState) => state.ui);
 
   return (
-    <Stack gap="xs" bg="gray.0">
+    <div
+      style={{
+        backgroundColor: 'var(--mantine-color-gray-0)',
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden',
+        gap: 'var(--mantine-spacing-xs)',
+      }}
+    >
       <div style={{
+        flex: '0 0 auto',
         backgroundColor: 'var(--mantine-color-gray-0)',
         paddingInline: '1em',
         paddingBlock: '0.5em',
@@ -56,9 +65,11 @@ export default function LeftPane() {
         />
       </div>
 
-      <Box mb="sm" flex="1 1">
+      <div
+        style={{flex: 1, overflowX: 'hidden', overflowY: 'auto'}}
+      >
         {getTree(ui.selectedNavItem)}
-      </Box>
-    </Stack>
+      </div>
+    </div>
   )
 }
