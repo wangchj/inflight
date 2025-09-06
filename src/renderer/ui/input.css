@@ -34,12 +34,24 @@
   scrollbar-width: none;
 }
 
-.input-variable {
+.input-var {
   background-color: var(--mantine-color-blue-1);
   padding: 0px 2px 2px 2px;
   border-radius: 2px;
 }
 
-.input-variable:hover {
+.input-var-blue {
+  background-color: var(--mantine-color-blue-1);
+}
+
+.input-var-blue:hover {
   background-color: var(--mantine-color-blue-2);
+}
+
+.input-var-red {
+  background-color: var(--mantine-color-red-2);
+}
+
+.input-var-red:hover {
+  background-color: var(--mantine-color-red-3);
 }

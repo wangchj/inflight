@@ -1,10 +1,11 @@
+import { Text } from '@mantine/core';
 import { nanoid } from '@reduxjs/toolkit';
 import { encode } from 'html-entities';
 import { FormEvent, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { uiSlice } from "renderer/redux/ui-slice";
+import { get } from 'renderer/utils/env';
 import './input.css';
-import { Text } from '@mantine/core';
 
 interface InputProps {
   label?: string;
@@ -188,7 +189,7 @@ export default function Input({label, descr, value, onChange} : InputProps): Rea
       // Create the variable node
       const node = document.createElement('span');
       node.id = `i${nanoid()}`;
-      node.className = 'input-variable';
+      node.className = `input-var ${get(match[1]) ? 'input-var-blue' : 'input-var-red'}`;
       node.innerText = encode(match[0]);
       node.onmouseover = () => onMouseOver(node);
       node.onmouseleave = () => onMouseLeave();
