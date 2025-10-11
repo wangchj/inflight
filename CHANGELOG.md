@@ -1,5 +1,10 @@
 # CHANGELOG.md
 
+## 1.4.0 (2025-10-11)
+
+- Color unresolved input variables red.
+- Remove unused request config content type dropdown.
+
 ## 1.3.0 (2025-08-29)
 
 - Allow opening a project by dragging a file from the OS and dropping into the app when no project is open.
