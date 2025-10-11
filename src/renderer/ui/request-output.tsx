@@ -1,6 +1,8 @@
 import './minor-tabs.css';
 import {
   Box,
+  Group,
+  SegmentedControl,
   Tabs,
   Text,
 } from "@mantine/core";
@@ -17,6 +19,7 @@ export default function RequestOutput() {
   const workspace = useSelector((state: RootState) => state.workspace);
   const openedRequest = workspace.openedResources[workspace.selectedResourceIndex];
   const result = useSelector((state: RootState) => state.results)[openedRequest.id];
+  const [pretty, setPretty] = useState<boolean>(true);
 
   if (!result) {
     return
@@ -60,9 +63,21 @@ export default function RequestOutput() {
             <Tabs.Tab value="server_certificate">Server Certificate</Tabs.Tab>
           </Tabs.List>
 
-          <Text size="sm" py="0.4em">
-            <Status response={result.response}/>
-          </Text>
+          <Group>
+            <Text size="sm" py="0.4em">
+              <Status response={result.response}/>
+            </Text>
+
+            {selectedTab === 'body' && (
+              <SegmentedControl
+                data={['Pretty', 'Raw']}
+                value={pretty ? 'Pretty' : 'Raw'}
+                onChange={value => setPretty(value === 'Pretty')}
+                size='xs'
+              />
+            )}
+          </Group>
+
         </Box>
 
         <Tabs.Panel
@@ -71,7 +86,7 @@ export default function RequestOutput() {
           style={{display: 'flex', flexGrow: 1, flexShrink: 1}}
         >
           <Box pt="md" style={{display: 'flex', flexGrow: 1, flexShrink: 1}}>
-            <ResultBody id={openedRequest.id} requestResult={result}/>
+            <ResultBody id={openedRequest.id} requestResult={result} pretty={pretty}/>
           </Box>
         </Tabs.Panel>
 

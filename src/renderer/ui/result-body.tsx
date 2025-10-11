@@ -1,9 +1,29 @@
-import { Box, SegmentedControl, Stack } from '@mantine/core';
+import { Stack } from '@mantine/core';
 import { RequestResult } from "types/request-result";
 import Monaco from "./monaco";
 import { memo, useEffect, useRef, useState } from 'react';
 import resultEditorPath from 'renderer/utils/result-editor-path';
 import getEditorLanguage from 'renderer/utils/get-editor-language';
+
+/**
+ * ResultBody component props.
+ */
+interface ResultBodyProps {
+  /**
+   * The request id
+   */
+  id: string;
+
+  /**
+   * The request result object.
+   */
+  requestResult: RequestResult;
+
+  /**
+   * Determines if the response body should be display as prettified.
+   */
+  pretty: boolean;
+}
 
 /**
  * Debounce updateEditorContent() calls.
@@ -12,13 +32,9 @@ let updateTimer: ReturnType<typeof setTimeout>;
 
 /**
  * The result body UI component.
- *
- * @param id The request id
- * @param requestResult The request result object.
  */
-function ResultBody({id, requestResult}: {id: string, requestResult: RequestResult}) {
+function ResultBody({id, requestResult, pretty}: ResultBodyProps) {
   const editorRef = useRef(null);
-  const [pretty, setPretty] = useState<boolean>(true);
   const contentType = requestResult.response.headers?.['content-type'];
   const response = requestResult.response;
   const data = response.data;
@@ -67,17 +83,11 @@ function ResultBody({id, requestResult}: {id: string, requestResult: RequestResu
   }
 
   /**
-   * Handles pretty toggle event.
+   * Updates the editor content when the pretty prop or response has changed.
    */
-  function onPrettyChange(value: string) {
-    const p = value === 'Pretty';
-    setPretty(p);
-    updateEditorContent(p)
-  }
-
   useEffect(() => {
     updateEditorContent(pretty);
-  }, [response]);
+  }, [response, pretty]);
 
   if (!data) {
     return <div>The response does not contain data.</div>
@@ -85,15 +95,6 @@ function ResultBody({id, requestResult}: {id: string, requestResult: RequestResu
 
   return (
     <Stack style={{width: '100%', height: '100%'}}>
-      <Box px="md">
-        <SegmentedControl
-          data={['Pretty', 'Raw']}
-          value={pretty ? 'Pretty' : 'Raw'}
-          onChange={onPrettyChange}
-          size='xs'
-        />
-      </Box>
-
       <div style={{flexGrow: 1}}>
         <Monaco
           path={resultEditorPath(id)}

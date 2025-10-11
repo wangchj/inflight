@@ -9,13 +9,13 @@ export default function RequestBody({request}: {request: Request}) {
 
   return (
     <Stack style={{width: '100%', height: '100%'}}>
-      <Box px="md" style={{flexGrow: 0, paddingBottom: '2px'}}>
+      {/* <Box px="md" style={{flexGrow: 0, paddingBottom: '2px'}} hidden>
         <Select
           placeholder="Pick value"
           data={['None', 'JSON']}
           size="xs"
         />
-      </Box>
+      </Box> */}
 
       <div style={{flexGrow: 1}}>
         <Monaco
