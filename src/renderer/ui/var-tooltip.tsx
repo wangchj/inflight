@@ -14,7 +14,6 @@ export default function VarTooltip() {
       opened={!!target}
       target={target}
       position="bottom"
-
     />
   )
 }

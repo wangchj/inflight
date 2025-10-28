@@ -4,7 +4,7 @@ import { Var } from 'types/var';
 /**
  * The resolved environment map.
  */
-let resolved: Record<string, string>;
+let resolved: Record<string, string> = {};
 
 /**
  * Converts an array of Var objects to an plain JavaScript object.

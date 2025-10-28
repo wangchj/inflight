@@ -5,6 +5,7 @@ import { DragEvent } from "react";
 import { useDispatch } from "react-redux";
 import { projectSlice } from "renderer/redux/project-slice";
 import { workspaceSlice } from "renderer/redux/workspace-slice";
+import * as Env from "renderer/utils/env";
 import * as Persistence from "renderer/utils/persistence";
 
 /**
@@ -51,6 +52,7 @@ export default function NoProject() {
       if (project) {
         dispatch(projectSlice.actions.setProject(project));
         dispatch(workspaceSlice.actions.openProject(path));
+        Env.combine(project, {});
       }
     }
     catch (error) {

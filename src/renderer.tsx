@@ -41,6 +41,7 @@ import { Project } from 'types/project';
 import { Request } from 'types/request';
 import { Workspace } from 'types/workspace';
 import { RequestResult } from 'types/request-result';
+import * as Env from "renderer/utils/env";
 import { projectSlice } from 'renderer/redux/project-slice';
 import { workspaceSlice } from 'renderer/redux/workspace-slice';
 
@@ -105,6 +106,7 @@ window.onOpenProject(async filePath => {
     if (project) {
       dispatch(projectSlice.actions.setProject(project));
       dispatch(workspaceSlice.actions.openProject(filePath));
+      Env.combine(project, {});
     }
   }
   catch (error) {
