@@ -1,5 +1,9 @@
 # CHANGELOG.md
 
+## 1.4.1 (2025-10-28)
+
+- Fix the bug that resolved variables is undefined after opening a project.
+
 ## 1.4.0 (2025-10-11)
 
 - Color unresolved input variables red.
