@@ -1,3 +1,5 @@
+import { dispatch } from 'renderer/redux/store';
+import { uiSlice } from 'renderer/redux/ui-slice';
 import { Project } from 'types/project';
 import { Var } from 'types/var';
 
@@ -52,6 +54,8 @@ export function combine(project: Project, selectMap: Record<string, string>) {
       }
     }
   }
+
+  dispatch(uiSlice.actions.envCombined());
 }
 
 /**

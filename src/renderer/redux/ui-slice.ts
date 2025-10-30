@@ -31,6 +31,12 @@ interface UiState {
    * Variable tooltip variable name.
    */
   varTooltipName: string;
+
+  /**
+   * Tracks the count of Env.combine() performed. This is used to trigger UI component re-render
+   * when environments are updated.
+   */
+  envCombineCount: number;
 }
 
 const initialState = {
@@ -38,6 +44,7 @@ const initialState = {
   deleteModalOpen: false,
   selectedNavItem: 'requests',
   renameModalOpen: false,
+  envCombineCount: 0,
 } as UiState;
 
 export const uiSlice = createSlice({
@@ -171,6 +178,15 @@ export const uiSlice = createSlice({
      */
     hideVarTooltip(state) {
       delete state.varTooltipTarget;
+    },
+
+    /**
+     * Increments envCombineCount.
+     *
+     * @param state The UI state.
+     */
+    envCombined(state) {
+      state.envCombineCount++;
     },
   },
 });

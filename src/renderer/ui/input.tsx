@@ -2,7 +2,8 @@ import { Text } from '@mantine/core';
 import { nanoid } from '@reduxjs/toolkit';
 import { encode } from 'html-entities';
 import { FormEvent, useEffect, useRef } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from "renderer/redux/store";
 import { uiSlice } from "renderer/redux/ui-slice";
 import { get } from 'renderer/utils/env';
 import './input.css';
@@ -70,6 +71,12 @@ export default function Input({label, descr, value, onChange} : InputProps): Rea
   const mouseLeaveTimeoutRef = useRef<NodeJS.Timeout>();
 
   /**
+   * The environment combine() operation count. When this updates, the variables needs to be
+   * re-rendered.
+   */
+  const envCombineCount = useSelector((state: RootState) => state.ui).envCombineCount;
+
+  /**
    * Renders contenteditable content when the value changes.
    */
   useEffect(() => {
@@ -80,7 +87,7 @@ export default function Input({label, descr, value, onChange} : InputProps): Rea
     updateHistory(value);
 
     render();
-  }, [value]);
+  }, [value, envCombineCount]);
 
   /**
    * Handles contenteditable input event.
