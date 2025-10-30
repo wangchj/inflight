@@ -1,5 +1,9 @@
 # CHANGELOG.md
 
+## 1.4.2 (2025-10-29)
+
+- Re-render variable inputs after environment selections change.
+
 ## 1.4.1 (2025-10-28)
 
 - Fix the bug that resolved variables is undefined after opening a project.
