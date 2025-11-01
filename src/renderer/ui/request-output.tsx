@@ -3,6 +3,7 @@ import {
   Box,
   Group,
   SegmentedControl,
+  Stack,
   Tabs,
   Text,
 } from "@mantine/core";
@@ -13,12 +14,15 @@ import { Response } from "types/response";
 import ResultHeaders from "./result-headers";
 import ResultBody from "./result-body";
 import ServerCertificate from "./server-certificate";
+import LocalNetwork from './local-network';
+import RemoteNetwork from './remote-network';
 
 export default function RequestOutput() {
   const [selectedTab, setSelectedTab] = useState<string>('body');
   const workspace = useSelector((state: RootState) => state.workspace);
   const openedRequest = workspace.openedResources[workspace.selectedResourceIndex];
   const result = useSelector((state: RootState) => state.results)[openedRequest.id];
+  const socket = result.response.socket;
   const [pretty, setPretty] = useState<boolean>(true);
 
   if (!result) {
@@ -60,7 +64,7 @@ export default function RequestOutput() {
 
             <Tabs.Tab value="body">Body</Tabs.Tab>
             <Tabs.Tab value="headers">Headers</Tabs.Tab>
-            <Tabs.Tab value="server_certificate">Server Certificate</Tabs.Tab>
+            <Tabs.Tab value="network">Network</Tabs.Tab>
           </Tabs.List>
 
           <Group>
@@ -100,19 +104,23 @@ export default function RequestOutput() {
           </Box>
         </Tabs.Panel>
 
-        {
-          result.response.peerCertificate && (
-            <Tabs.Panel
-              key={`${openedRequest.id}_server_certificate`}
-              value="server_certificate"
-              style={{flexGrow: 1}}
-            >
-              <Box pt="md" px="md">
+        <Tabs.Panel
+          key={`${openedRequest.id}_network`}
+          value="network"
+          style={{flexGrow: 1}}
+        >
+          <Box pt="md" px="md">
+            <Stack>
+              <LocalNetwork socket={socket}/>
+
+              <RemoteNetwork socket={socket}/>
+
+              {socket.peerCertificate && (
                 <ServerCertificate requestResult={result}/>
-              </Box>
-            </Tabs.Panel>
-          )
-        }
+              )}
+            </Stack>
+          </Box>
+        </Tabs.Panel>
       </Tabs>
     </Box>
   )

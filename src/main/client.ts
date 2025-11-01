@@ -4,7 +4,7 @@
 
 import http, { IncomingMessage } from "http";
 import https, { RequestOptions } from "https";
-import { PeerCertificate, TLSSocket } from "tls";
+import { TLSSocket } from "tls";
 import { Request } from "types/request";
 import { Response } from "types/response";
 
@@ -14,7 +14,9 @@ function onRequestData(chunk: any) {
   data += chunk;
 }
 
-function onRequestEnd(resolve: (value: Response) => void, res: IncomingMessage, peerCertificate: PeerCertificate) {
+function onRequestEnd(resolve: (value: Response) => void, res: IncomingMessage, socket: TLSSocket) {
+  const peerCertificate = socket.getPeerCertificate ? socket.getPeerCertificate() : undefined;
+
   resolve({
     httpVersion: res.httpVersion,
     statusCode: res.statusCode,
@@ -22,11 +24,19 @@ function onRequestEnd(resolve: (value: Response) => void, res: IncomingMessage, 
     headers: {...res.headers},
     rawHeaders: res.rawHeaders,
     data: data,
-    peerCertificate: peerCertificate ? {
-      ...peerCertificate,
-      pubkey: peerCertificate.pubkey?.toString('hex'),
-      raw: peerCertificate.raw?.toString('hex'),
-    } : undefined,
+    socket: {
+      localAddress: socket.localAddress,
+      localFamily: socket.localFamily,
+      localPort: socket.localPort,
+      remoteAddress: socket.remoteAddress,
+      remoteFamily: socket.remoteFamily,
+      remotePort: socket.remotePort,
+      peerCertificate: peerCertificate ? {
+        ...peerCertificate,
+        pubkey: peerCertificate.pubkey?.toString('hex'),
+        raw: peerCertificate.raw?.toString('hex'),
+      } : undefined,
+    },
   });
 }
 
@@ -46,10 +56,9 @@ export async function sendRequest(requestOptions: RequestOptions, request: Reque
      */
     function callback(res: IncomingMessage) {
       const socket = res.socket as TLSSocket;
-      const peerCertificate = socket.getPeerCertificate ? socket.getPeerCertificate() : undefined;
 
       res.on('data', onRequestData);
-      res.on('end', () => onRequestEnd(resolve, res, peerCertificate));
+      res.on('end', () => onRequestEnd(resolve, res, socket));
       res.on('error', error => onRequestError(reject, error));
     }
 

@@ -3,16 +3,20 @@ import {
   Code,
   Stack,
   Table,
+  Text,
 } from "@mantine/core";
 import { RequestResult } from "types/request-result";
 
 
 export default function ServerCertificate({requestResult}: {requestResult: RequestResult}) {
-  const cert = requestResult.response.peerCertificate;
+  const cert = requestResult.response.socket.peerCertificate;
 
   return (
     <Stack gap="xl">
       <Card withBorder shadow="none" radius="md">
+        <Card.Section withBorder inheritPadding py="xs">
+          <Text fw={500}>Remote Certificate</Text>
+        </Card.Section>
         <Card.Section>
         <Table>
           <Table.Tbody>

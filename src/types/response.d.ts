@@ -1,4 +1,5 @@
 import { PeerCertificate } from "tls";
+import { Socket } from "./socket";
 
 export interface Response {
   httpVersion: string;
@@ -7,5 +8,5 @@ export interface Response {
   headers: any;
   rawHeaders: string[];
   data?: string;
-  peerCertificate: Omit<PeerCertificate, 'pubkey', 'raw'> & {pubkey?: string, raw: string};
+  socket: Socket;
 }
