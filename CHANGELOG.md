@@ -1,5 +1,9 @@
 # CHANGELOG.md
 
+## 1.5.0 (2025-10-31)
+
+- Add response network tab that contains local and remote network info and remote TLS certificate info.
+
 ## 1.4.2 (2025-10-29)
 
 - Re-render variable inputs after environment selections change.
