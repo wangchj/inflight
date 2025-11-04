@@ -1,5 +1,9 @@
 # CHANGELOG.md
 
+## 1.5.1 (2025-11-03)
+
+- Fix the UI crash when switching from a tab with response to a tab without response.
+
 ## 1.5.0 (2025-10-31)
 
 - Add response network tab that contains local and remote network info and remote TLS certificate info.
