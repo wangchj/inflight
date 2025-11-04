@@ -22,12 +22,13 @@ export default function RequestOutput() {
   const workspace = useSelector((state: RootState) => state.workspace);
   const openedRequest = workspace.openedResources[workspace.selectedResourceIndex];
   const result = useSelector((state: RootState) => state.results)[openedRequest.id];
-  const socket = result.response.socket;
   const [pretty, setPretty] = useState<boolean>(true);
 
   if (!result) {
     return
   }
+
+  const socket = result?.response?.socket;
 
   return (
     <Box
@@ -64,7 +65,7 @@ export default function RequestOutput() {
 
             <Tabs.Tab value="body">Body</Tabs.Tab>
             <Tabs.Tab value="headers">Headers</Tabs.Tab>
-            <Tabs.Tab value="network">Network</Tabs.Tab>
+            {socket && (<Tabs.Tab value="network">Network</Tabs.Tab>)}
           </Tabs.List>
 
           <Group>
@@ -104,23 +105,21 @@ export default function RequestOutput() {
           </Box>
         </Tabs.Panel>
 
-        <Tabs.Panel
-          key={`${openedRequest.id}_network`}
-          value="network"
-          style={{flexGrow: 1}}
-        >
-          <Box pt="md" px="md">
-            <Stack>
-              <LocalNetwork socket={socket}/>
-
-              <RemoteNetwork socket={socket}/>
-
-              {socket.peerCertificate && (
+        {socket && (
+          <Tabs.Panel
+            key={`${openedRequest.id}_network`}
+            value="network"
+            style={{flexGrow: 1}}
+          >
+            <Box pt="md" px="md">
+              <Stack>
+                <LocalNetwork socket={socket}/>
+                <RemoteNetwork socket={socket}/>
                 <ServerCertificate requestResult={result}/>
-              )}
-            </Stack>
-          </Box>
-        </Tabs.Panel>
+              </Stack>
+            </Box>
+          </Tabs.Panel>
+        )}
       </Tabs>
     </Box>
   )

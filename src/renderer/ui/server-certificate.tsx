@@ -9,7 +9,11 @@ import { RequestResult } from "types/request-result";
 
 
 export default function ServerCertificate({requestResult}: {requestResult: RequestResult}) {
-  const cert = requestResult.response.socket.peerCertificate;
+  const cert = requestResult?.response?.socket?.peerCertificate;
+
+  if (!cert) {
+    return;
+  }
 
   return (
     <Stack gap="xl">

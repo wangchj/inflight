@@ -7,7 +7,16 @@ import {
 } from "@mantine/core";
 import { Socket } from "types/socket";
 
+/**
+ * The local network info UI component.
+ *
+ * @param socket The request network socket.
+ */
 export default function LocalNetwork({socket}: {socket: Socket}) {
+  if (!socket) {
+    return;
+  }
+
   return (
     <Stack gap="xl">
       <Card withBorder shadow="none" radius="md">
