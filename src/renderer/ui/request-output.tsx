@@ -14,8 +14,8 @@ import { Response } from "types/response";
 import ResultHeaders from "./result-headers";
 import ResultBody from "./result-body";
 import ServerCertificate from "./server-certificate";
-import LocalNetwork from './local-network';
-import RemoteNetwork from './remote-network';
+import LocalInterface from './local-interface';
+import RemoteInterface from './remote-interface';
 
 export default function RequestOutput() {
   const [selectedTab, setSelectedTab] = useState<string>('body');
@@ -113,8 +113,8 @@ export default function RequestOutput() {
           >
             <Box pt="md" px="md">
               <Stack>
-                <LocalNetwork socket={socket}/>
-                <RemoteNetwork socket={socket}/>
+                <LocalInterface socket={socket}/>
+                <RemoteInterface socket={socket}/>
                 <ServerCertificate requestResult={result}/>
               </Stack>
             </Box>

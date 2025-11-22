@@ -8,11 +8,11 @@ import {
 import { Socket } from "types/socket";
 
 /**
- * The local network info UI component.
+ * The remote network interface info UI component.
  *
  * @param socket The request network socket.
  */
-export default function LocalNetwork({socket}: {socket: Socket}) {
+export default function RemoteInterface({socket}: {socket: Socket}) {
   if (!socket) {
     return;
   }
@@ -21,18 +21,18 @@ export default function LocalNetwork({socket}: {socket: Socket}) {
     <Stack gap="xl">
       <Card withBorder shadow="none" radius="md">
         <Card.Section withBorder inheritPadding py="xs">
-          <Text fw={500}>Local Network ({socket.localFamily})</Text>
+          <Text fw={500}>Remote Interface ({socket.remoteFamily})</Text>
         </Card.Section>
         <Card.Section>
         <Table>
           <Table.Tbody>
             <Table.Tr>
               <Table.Td w="20%"><Code color="none">IP Address</Code></Table.Td>
-              <Table.Td><Code color="none">{socket.localAddress}</Code></Table.Td>
+              <Table.Td><Code color="none">{socket.remoteAddress}</Code></Table.Td>
             </Table.Tr>
             <Table.Tr>
               <Table.Td><Code color="none">Port</Code></Table.Td>
-              <Table.Td><Code color="none">{socket.localPort}</Code></Table.Td>
+              <Table.Td><Code color="none">{socket.remotePort}</Code></Table.Td>
             </Table.Tr>
           </Table.Tbody>
         </Table>
