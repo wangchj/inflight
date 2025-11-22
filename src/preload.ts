@@ -35,7 +35,7 @@ contextBridge.exposeInMainWorld('showOpenProjectDialog',
 );
 
 contextBridge.exposeInMainWorld('showNewProjectDialog',
-  () => ipcRenderer.invoke('showNewProjectDialog')
+  (name: string) => ipcRenderer.invoke('showNewProjectDialog', name)
 );
 
 contextBridge.exposeInMainWorld('onSave',

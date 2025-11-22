@@ -7,6 +7,8 @@ export type NavItem = 'requests' | 'environments';
 interface UiState {
   selectedNavItem: NavItem;
 
+  newProjectModalOpen: boolean;
+
   newFolderModalOpen: boolean;
   newFolderParentId: string;
 
@@ -59,6 +61,24 @@ export const uiSlice = createSlice({
      */
     setSelectedNavItem(state, action: PayloadAction<NavItem>) {
       state.selectedNavItem = action.payload;
+    },
+
+    /**
+     * Opens the new project modal.
+     *
+     * @param state The UI state.
+     */
+    openNewProjectModal(state) {
+      state.newProjectModalOpen = true;
+    },
+
+    /**
+     * Closes the new project modal.
+     *
+     * @param state The UI state.
+     */
+    closeNewProjectModal(state) {
+      state.newProjectModalOpen = false;
     },
 
     /**

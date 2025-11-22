@@ -7,6 +7,7 @@ import { projectSlice } from "renderer/redux/project-slice";
 import { workspaceSlice } from "renderer/redux/workspace-slice";
 import * as Env from "renderer/utils/env";
 import * as Persistence from "renderer/utils/persistence";
+import { NewProjectModal, openNewProjectModal } from "./new-project-modal";
 
 /**
  * The UI that's shown when no project is open.
@@ -21,7 +22,13 @@ export default function NoProject() {
     notifications.clean();
 
     try {
-      const path = await window.showNewProjectDialog();
+      const name = await openNewProjectModal();
+
+      if (!name) {
+        return;
+      }
+
+      const path = await window.showNewProjectDialog(name);
       const project = await Persistence.openProject(path);
 
       if (project) {
@@ -149,6 +156,8 @@ export default function NoProject() {
           </Button>
         </Stack>
       </Stack>
+
+      <NewProjectModal/>
     </div>
   )
 }

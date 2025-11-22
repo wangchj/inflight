@@ -77,7 +77,7 @@ app.on('ready', () => {
   ipcMain.handle('sendRequest', (event, request) => sendRequest(event, request));
   ipcMain.handle('saveWorkspace', (event, workspace) => saveWorkspace(event, workspace));
   ipcMain.handle('showOpenProjectDialog', showOpenProjectDialog);
-  ipcMain.handle('showNewProjectDialog', showNewProjectDialog);
+  ipcMain.handle('showNewProjectDialog', (event, name) => showNewProjectDialog(event, name));
   createWindow();
 });
 
@@ -242,16 +242,20 @@ async function saveWorkspace(event: IpcMainInvokeEvent, workspace: Workspace) {
 /**
  * Shows new project dialog.
  *
+ * @param event Electron invoke event.
+ * @param name The project filename.
  * @returns The path of the new project file.
  */
-async function showNewProjectDialog(): Promise<string> {
+async function showNewProjectDialog(event: IpcMainInvokeEvent, name: string): Promise<string> {
   const res = await dialog.showSaveDialog(mainWindow, {
-    title: 'New Project'
+    title: 'New Project',
+    defaultPath: name
   });
+
 
   if (!res.canceled && res.filePath) {
     const ext = '.inflight.json';
-    const name = path.parse(res.filePath).name;
+    name = path.parse(res.filePath).name;
     const filePath = res.filePath.endsWith(ext) ? res.filePath : `${res.filePath}${ext}`;
     fs.writeFileSync(filePath, JSON.stringify(new CProject(name), null, 2), 'utf-8');
     return filePath;
