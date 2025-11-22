@@ -36,6 +36,7 @@ function onRequestEnd(resolve: (value: Response) => void, res: IncomingMessage, 
         pubkey: peerCertificate.pubkey?.toString('hex'),
         raw: peerCertificate.raw?.toString('hex'),
       } : undefined,
+      cipher: socket.getCipher ? socket.getCipher() : undefined,
     },
   });
 }

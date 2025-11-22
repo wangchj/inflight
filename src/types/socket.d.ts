@@ -1,4 +1,4 @@
-import { PeerCertificate } from "tls";
+import { CipherNameAndProtocol, PeerCertificate } from "tls";
 
 export interface Socket {
   readonly localAddress?: string;
@@ -10,4 +10,6 @@ export interface Socket {
   readonly remoteAddress?: string;
   readonly remoteFamily?: string;
   readonly remotePort?: number;
+
+  readonly cipher?: CipherNameAndProtocol;
 }
