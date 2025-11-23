@@ -54,6 +54,8 @@ const createWindow = (): void => {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
     },
     titleBarStyle: 'hidden',
+    // expose window controls in Windows/Linux
+    ...(process.platform !== 'darwin' ? { titleBarOverlay: true } : {}),
   });
 
   // and load the index.html of the app.
