@@ -47,11 +47,11 @@ import { workspaceSlice } from 'renderer/redux/workspace-slice';
 
 self.MonacoEnvironment = {
 	getWorkerUrl: function (moduleId, label) {
-		return 'vs/base/worker/workerMain.js';
+		return '../vs/base/worker/workerMain.js';
 	}
 };
 
-loader.config({ paths: { vs: 'vs' } });
+loader.config({ paths: { vs: '../vs' } });
 
 declare global {
   interface Window {
