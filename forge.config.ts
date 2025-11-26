@@ -25,7 +25,20 @@ const config: ForgeConfig = {
     },
   },
   rebuildConfig: {},
-  makers: [new MakerSquirrel({}), new MakerZIP({}, ['darwin']), new MakerRpm({}), new MakerDeb({})],
+  makers: [
+    new MakerSquirrel({}),
+    new MakerZIP({}, ['darwin']),
+    new MakerRpm({}),
+    new MakerDeb({}),
+    {
+      name: '@electron-forge/maker-appx',
+      config: {
+        publisher: process.env.PUBLISHER,
+        devCert: process.env.CERT_PATH,
+        certPass: process.env.CERT_PASSWORD,
+      }
+    },
+  ],
   plugins: [
     new AutoUnpackNativesPlugin({}),
     new WebpackPlugin({
