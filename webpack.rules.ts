@@ -29,3 +29,55 @@ export const rules: Required<ModuleOptions>['rules'] = [
     },
   },
 ];
+
+/**
+ * CSS webpack loader rules.
+ */
+export const rulesCss: Required<ModuleOptions>['rules'] = [
+  {
+    test: /\.css$/,
+    use: [
+      {
+        loader: 'style-loader'
+      },
+      {
+        loader: 'css-loader'
+      },
+      {
+        loader: 'postcss-loader',
+        options: {
+          postcssOptions: {
+            plugins: {
+              'postcss-preset-mantine': {},
+            }
+          },
+        },
+      }
+    ],
+  }
+];
+
+/**
+ * Webpack loader rulres for renderer.
+ */
+export const rulesRenderer: Required<ModuleOptions>['rules'] = [
+  ...rules,
+  ...rulesCss,
+];
+
+/**
+ * Webpack loader rules for web build.
+ */
+export const rulesWeb: Required<ModuleOptions>['rules'] = [
+  {
+    test: /\.tsx?$/,
+    exclude: /(node_modules|\.webpack)/,
+    use: {
+      loader: 'ts-loader',
+      options: {
+        transpileOnly: true,
+      },
+    },
+  },
+  ...rulesCss
+];

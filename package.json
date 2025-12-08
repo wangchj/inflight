@@ -8,6 +8,8 @@
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
+    "make-web": "webpack --config webpack.web.config.ts",
+    "server": "webpack serve --config webpack.web.config.ts --mode development --host 0.0.0.0",
     "publish": "electron-forge publish",
     "lint": "eslint --ext .ts,.tsx ."
   },
@@ -46,6 +48,7 @@
     "eslint": "^8.57.1",
     "eslint-plugin-import": "^2.31.0",
     "fork-ts-checker-webpack-plugin": "^7.3.0",
+    "html-webpack-plugin": "^5.6.5",
     "lodash": "^4.17.21",
     "monaco-editor": "^0.52.0",
     "node-loader": "^2.0.0",
@@ -60,7 +63,8 @@
     "style-loader": "^3.3.4",
     "ts-loader": "^9.5.1",
     "ts-node": "^10.9.2",
-    "typescript": "~4.5.4"
+    "typescript": "~4.5.4",
+    "webpack-cli": "^6.0.1"
   },
   "keywords": [],
   "author": {
@@ -71,6 +75,7 @@
   "dependencies": {
     "electron-squirrel-startup": "^1.0.1",
     "fix-path": "^4.0.0",
-    "html-entities": "^2.6.0"
+    "html-entities": "^2.6.0",
+    "webpack-dev-server": "^5.2.2"
   }
 }

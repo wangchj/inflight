@@ -44,14 +44,20 @@ import { RequestResult } from 'types/request-result';
 import * as Env from "renderer/utils/env";
 import { projectSlice } from 'renderer/redux/project-slice';
 import { workspaceSlice } from 'renderer/redux/workspace-slice';
+import './preload-web';
+
+/**
+ * This is defined in webpack config files (DefinePlugin).
+ */
+declare const WEB_BUILD: boolean;
 
 self.MonacoEnvironment = {
 	getWorkerUrl: function (moduleId, label) {
-		return '../vs/base/worker/workerMain.js';
+		return WEB_BUILD ? 'vs/base/worker/workerMain.js' : '../vs/base/worker/workerMain.js';
 	}
 };
 
-loader.config({ paths: { vs: '../vs' } });
+loader.config({ paths: { vs: WEB_BUILD ? 'vs' : '../vs' } });
 
 declare global {
   interface Window {
@@ -95,6 +101,19 @@ createRoot(document.querySelector('#root')).render(
 window.onSave(() => {
   onSave();
 });
+
+/**
+ * Handles cmd+s (ctrl+s) keyboard shortcut for web build.
+ */
+if (WEB_BUILD) {
+  window.addEventListener('keydown', event => {
+    if ((event.metaKey || event.ctrlKey) && event.key.toLocaleLowerCase() === 's') {
+      event.preventDefault();
+      event.stopPropagation();
+      onSave();
+    }
+  });
+}
 
 /**
  * Handles open project event from app menu.
