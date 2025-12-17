@@ -56,6 +56,11 @@ export default function Input({label, descr, value, onChange} : InputProps): Rea
   const edRef = useRef<HTMLDivElement>(null);
 
   /**
+   * Determines if this input has the focus.
+   */
+  const focusedRef = useRef<boolean>(false);
+
+  /**
    * React redux dispatch function.
    */
   const dispatch = useDispatch();
@@ -162,7 +167,10 @@ export default function Input({label, descr, value, onChange} : InputProps): Rea
     const element = edRef.current as HTMLElement;
     const nodes = highlightVariables(state.value);
     element.replaceChildren(...nodes);
-    setCaretCharacterOffset(state.caret);
+
+    if (focusedRef.current) {
+      setCaretCharacterOffset(state.caret);
+    }
   }
 
   /**
@@ -219,10 +227,7 @@ export default function Input({label, descr, value, onChange} : InputProps): Rea
    */
   function getCaretCharacterOffset(): number {
     let caretOffset = 0;
-    let sel;
-
-    // Get the selection object
-    sel = window.getSelection();
+    let sel = window.getSelection();
 
     if (sel.rangeCount > 0) {
       const range = window.getSelection().getRangeAt(0);
@@ -362,6 +367,20 @@ export default function Input({label, descr, value, onChange} : InputProps): Rea
     }
   }
 
+  /**
+   * Handles input focus event.
+   */
+  function onFocus() {
+    focusedRef.current = true;
+  }
+
+  /**
+   * Handles input blur event.
+   */
+  function onBlur() {
+    focusedRef.current = false;
+  }
+
   return (
     <div style={{width: '100%', minWidth: '0px', maxWidth: '100%'}}>
 
@@ -383,6 +402,8 @@ export default function Input({label, descr, value, onChange} : InputProps): Rea
           spellCheck="false"
           onInput={onInput}
           onKeyDown={onKeyDown}
+          onFocus={onFocus}
+          onBlur={onBlur}
         />
       </div>
     </div>
