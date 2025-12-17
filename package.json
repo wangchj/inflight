@@ -1,7 +1,7 @@
 {
   "name": "inflight",
   "productName": "Inflight",
-  "version": "1.5.1",
+  "version": "1.6.0",
   "description": "Inflight REST API test client.",
   "main": ".webpack/main",
   "scripts": {

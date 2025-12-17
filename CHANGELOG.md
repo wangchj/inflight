@@ -1,5 +1,15 @@
 # CHANGELOG.md
 
+## 1.6.0 (2025-12-16)
+
+- Add UI component to show request TLS cipher.
+- Expose window controls for Windows/Linux.
+- Update main window loadURL for Windows build.
+- Add @electron-forge/maker-appx
+- Add new project modal.
+- Add web build.
+- Update variable input component to set caret position only when it's focused.
+
 ## 1.5.1 (2025-11-03)
 
 - Fix the UI crash when switching from a tab with response to a tab without response.
