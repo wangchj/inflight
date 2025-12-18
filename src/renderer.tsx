@@ -46,11 +46,6 @@ import { projectSlice } from 'renderer/redux/project-slice';
 import { workspaceSlice } from 'renderer/redux/workspace-slice';
 import './preload-web';
 
-/**
- * This is defined in webpack config files (DefinePlugin).
- */
-declare const WEB_BUILD: boolean;
-
 self.MonacoEnvironment = {
 	getWorkerUrl: function (moduleId, label) {
 		return WEB_BUILD ? 'vs/base/worker/workerMain.js' : '../vs/base/worker/workerMain.js';

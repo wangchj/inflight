@@ -47,7 +47,7 @@ export default function Project() {
         overflow: 'hidden',
       }}
     >
-      <TitleBar/>
+      {(!WEB_BUILD) && <TitleBar/>}
 
       <div
         style={{
