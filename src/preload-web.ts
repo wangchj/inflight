@@ -4,6 +4,7 @@
  */
 
 import makeRequestOptions from 'main/make-request-options';
+import CProject from 'model/project';
 import { Project } from 'types/project';
 import { Request } from 'types/request';
 import { RequestResult } from 'types/request-result';
@@ -178,6 +179,18 @@ window.showOpenProjectDialog = async (): Promise<string> => {
 
     input.click();
   });
+}
+
+/**
+ * Creates a new project and returns the local storage key.
+ *
+ * @param name The name of the project.
+ * @returns The name of the project.
+ */
+window.showNewProjectDialog = async (name: string): Promise<string> => {
+  const project = new CProject(name);
+  localStorage.setItem(`proj/${name}`, JSON.stringify(project));
+  return name;
 }
 
 window.onSave = async () => {
