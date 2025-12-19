@@ -10,7 +10,7 @@ module.exports = {
   entry: './src/renderer.tsx',
   output: {
     path: path.resolve(__dirname, 'out', 'web'),
-  }, 
+  },
   module: {
     rules: rulesWeb,
   },
@@ -20,7 +20,7 @@ module.exports = {
       WEB_BUILD: true,
     }),
     new HtmlWebpackPlugin({
-      template: './src/index.html'
+      template: './src/index-web.html'
     }),
   ],
   resolve: {
