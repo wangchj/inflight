@@ -1,9 +1,12 @@
+import dotenv from 'dotenv';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import type { Configuration } from 'webpack';
 import { DefinePlugin } from 'webpack';
 import path from 'path';
 import { rulesWeb } from './webpack.rules';
 import { pluginsUI } from './webpack.plugins';
+
+dotenv.config();
 
 module.exports = {
   target: 'web',
@@ -20,7 +23,8 @@ module.exports = {
       WEB_BUILD: true,
     }),
     new HtmlWebpackPlugin({
-      template: './src/index-web.html'
+      template: './src/index-web.html',
+      GA_MEASURE_ID: process.env.GA_MEASURE_ID
     }),
   ],
   resolve: {
