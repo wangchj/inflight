@@ -1,4 +1,4 @@
-import { fromIni } from "@aws-sdk/credential-provider-ini";
+import { fromNodeProviderChain } from "@aws-sdk/credential-providers";
 import { AwsSigv4Auth } from "types/auth";
 import { Request } from "types/request";
 import { SignatureV4 } from '@smithy/signature-v4';
@@ -22,7 +22,7 @@ export default async function signRequestSigv4(
 
   const auth = request.auth as AwsSigv4Auth;
   const url = new URL(request.url);
-  const credentials = fromIni({profile: auth.profile, ignoreCache: true});
+  const credentials = fromNodeProviderChain({profile: auth.profile, ignoreCache: true});
 
   const signingParams: HttpRequest = {
     method: requestOptions.method,
