@@ -1,7 +1,7 @@
-import { Select, Stack, TextInput } from "@mantine/core";
+import { Select, Stack } from "@mantine/core";
 import { useDispatch } from "react-redux";
 import { workspaceSlice } from "renderer/redux/workspace-slice";
-import { Auth, AwsSigv4Auth } from "types/auth";
+import { Auth, AwsSigv4Auth, AwsSigv4CliProfileAuth, AwsSigv4InlineAuth } from "types/auth";
 import Input from "./input";
 
 const authTypeOptions = [
@@ -48,7 +48,7 @@ function AwsAuthSigv4Form({ auth }: { auth: AwsSigv4Auth }) {
 
   return (
     <Stack>
-      {/* <Select
+      <Select
         label="Credentials source"
         data={credentialSourceOptions}
         value={auth.source}
@@ -57,13 +57,13 @@ function AwsAuthSigv4Form({ auth }: { auth: AwsSigv4Auth }) {
             workspaceSlice.actions.setAwsCredsSource(value)
           )
         }
-      /> */}
+      />
 
       {auth.source === 'aws_cli_profile' && (
         <Input
           label="Profile"
           descr="The AWS CLI profile. If not specified, the default profile is used."
-          value={auth.profile}
+          value={(auth as AwsSigv4CliProfileAuth).profile}
           onChange={
             value => dispatch(
               workspaceSlice.actions.updateRequest(
@@ -74,9 +74,9 @@ function AwsAuthSigv4Form({ auth }: { auth: AwsSigv4Auth }) {
         />
       )}
 
-
-
-      {/* TODO: auth.source === 'inline' */}
+      {auth.source === 'inline' && (
+        <AwsAuthSigv4Inline auth={auth as AwsSigv4InlineAuth}/>
+      )}
 
       <Input
         label="Region"
@@ -102,5 +102,54 @@ function AwsAuthSigv4Form({ auth }: { auth: AwsSigv4Auth }) {
         }
       />
     </Stack>
+  )
+}
+
+/**
+ * The AWS Signature V4 inline auth form component.
+ *
+ * @param auth The auth settings model object.
+ */
+function AwsAuthSigv4Inline({auth}: {auth: AwsSigv4InlineAuth}) {
+  const dispatch = useDispatch();
+
+  return (
+    <>
+      <Input
+          label="Access key"
+          value={auth.accessKey ?? ''}
+          onChange={
+            value => dispatch(
+              workspaceSlice.actions.updateRequest(
+                { path: 'auth.accessKey', value }
+              )
+            )
+          }
+        />
+
+        <Input
+          label="Secret key"
+          value={auth.secretKey ?? ''}
+          onChange={
+            value => dispatch(
+              workspaceSlice.actions.updateRequest(
+                { path: 'auth.secretKey', value }
+              )
+            )
+          }
+        />
+
+        <Input
+          label="Session token"
+          value={auth.sessionToken ?? ''}
+          onChange={
+            value => dispatch(
+              workspaceSlice.actions.updateRequest(
+                { path: 'auth.sessionToken', value }
+              )
+            )
+          }
+        />
+    </>
   )
 }

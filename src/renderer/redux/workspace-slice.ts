@@ -3,7 +3,7 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 import { set } from 'lodash';
 import * as Persistence from 'renderer/utils/persistence';
 import { Workspace } from 'types/workspace';
-import { AwsSigv4Auth } from 'types/auth';
+import { AwsSigv4Auth, AwsSigv4CliProfileAuth, AwsSigv4InlineAuth } from 'types/auth';
 import { Request } from 'types/request';
 import { OpenedResource } from 'types/opened-resource';
 import { OpenedRequest } from 'types/opened-request';
@@ -184,7 +184,8 @@ export const workspaceSlice = createSlice({
 
     /**
      * Modifies the currently selected request object. If the currently selected resource is not
-     * a request, then no action is performed.
+     * a request, then no action is performed. This function unsets the property if the value is an
+     * empty string.
      *
      * @param state The workspace object.
      * @param action The action with payload.
@@ -193,11 +194,12 @@ export const workspaceSlice = createSlice({
       const openedResource = state.openedResources?.[state.selectedResourceIndex];
 
       if (openedResource && openedResource.type === 'request') {
-        set(openedResource, `props.request.${action.payload.path}`, action.payload.value);
+        const value = action.payload.value;
+        const path = `props.request.${action.payload.path}`;
+        set(openedResource, path, (typeof value !== 'string' || value) ? value : undefined);
         openedResource.dirty = true;
+        Persistence.saveWorkspaceDelay();
       }
-
-      Persistence.saveWorkspaceDelay();
     },
 
     /**
@@ -267,6 +269,48 @@ export const workspaceSlice = createSlice({
 
         default:
           delete request.auth;
+      }
+
+      openedResource.dirty = true;
+
+      Persistence.saveWorkspaceDelay();
+    },
+
+    /**
+     * Sets the AWS auth credentials source of the selected request object.
+     *
+     * @param state The workspace object.
+     * @param action The credentials source type.
+     */
+    setAwsCredsSource(state, action: PayloadAction<string>) {
+      const openedResource = state.openedResources?.[state.selectedResourceIndex];
+
+      if (!openedResource?.props?.request || openedResource.type !== 'request') {
+        return;
+      }
+
+      const request = openedResource.props.request;
+      const auth = request.auth as AwsSigv4Auth;
+
+      switch (action.payload) {
+        case 'aws_cli_profile':
+          request.auth = {
+            type: 'aws_sigv4',
+            source: 'aws_cli_profile',
+            profile: 'default',
+            region: auth?.region,
+            service: auth?.service,
+          } as AwsSigv4CliProfileAuth;
+          break;
+
+        case 'inline':
+          request.auth = {
+            type: 'aws_sigv4',
+            source: 'inline',
+            region: auth?.region,
+            service: auth?.service,
+          } as AwsSigv4InlineAuth;
+          break;
       }
 
       openedResource.dirty = true;
