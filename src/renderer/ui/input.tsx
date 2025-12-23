@@ -101,7 +101,9 @@ export default function Input({label, descr, value, onChange} : InputProps): Rea
    */
   function onInput(event: FormEvent) {
     const target = event.target as HTMLDivElement;
-    const text = target.innerText;
+
+    // Remove \n fixes the issue that backspace leaves a \n when all characters are removed.
+    const text = target.innerText.replace('\n', '');
 
     if (onChange) {
       onChange(text);
