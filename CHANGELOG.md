@@ -1,9 +1,10 @@
 # CHANGELOG.md
 
-## 1.7.0 (2025-12-22)
+## 1.7.1 (2025-12-22)
 
 - Add support for aws login CLI credentials.
 - Update sign-request-sigv4.ts to use AWS SDK fromNodeProviderChain credentials provider.
+- Use default AWS CLI profile when profile is not specified.
 
 ## 1.6.0 (2025-12-16)
 
