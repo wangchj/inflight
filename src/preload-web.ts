@@ -3,12 +3,10 @@
  * the web build.
  */
 
-import makeRequestOptions from 'main/make-request-options';
 import CProject from 'model/project';
 import { Project } from 'types/project';
-import { Request } from 'types/request';
-import { RequestResult } from 'types/request-result';
 import { Workspace } from 'types/workspace';
+import { sendRequestWeb } from 'renderer/utils/send-request-web';
 
 /**
  * This is defined in webpack config files (DefinePlugin).
@@ -72,63 +70,7 @@ window.saveProject = async (path: string, project: Project): Promise<void> => {
   localStorage.setItem(`proj/${path}`, JSON.stringify(project));
 }
 
-/**
- * Sends the HTTP request.
- *
- * @returns A promise that resolves to a RequestResult object.
- * @throws An error object if request fails.
- */
-window.sendRequest = async (request: Request): Promise<RequestResult> => {
-  console.log(`sendRequest() ${JSON.stringify(request)}`);
-
-  const headers = Array.isArray(request.headers) ? Object.fromEntries(
-    request.headers
-      .filter(headers => headers.enabled && !!headers.key)
-      .map(header => [header.key, header.value])
-  ) : {};
-
-  const options: RequestInit = {
-    method: request.method,
-    headers
-  };
-
-  if (request.body) {
-    options.body = request.body
-  }
-
-  try {
-    let resp = await fetch(request.url, options);
-    let res =  {
-      requestOptions: {
-        ...makeRequestOptions(request),
-        headers: request?.headers?.reduce((a, c) => {
-          if (c.enabled) {
-            a[c.key] = c.value;
-          }
-          return a;
-        }, {} as Record<string, string>) ?? {}
-      },
-      response: {
-        statusCode: resp.status,
-        statusMessage: resp.statusText,
-        headers: Object.fromEntries([...resp.headers.entries()]),
-        rawHeaders: [...resp.headers.entries()].reduce((a, e) => {
-          a.push(e[0]);
-          a.push(e[1])
-          return a;
-        }, []),
-        data: await resp.text(),
-      }
-    }
-
-    return res;
-  }
-  catch (error) {
-    console.log(error);
-    error.message = 'Make sure you are online and the URL supports CORS.';
-    throw error;
-  }
-}
+window.sendRequest = sendRequestWeb;
 
 /**
  * Opens file selection dialog window to allow user to select a project file from disk.

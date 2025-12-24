@@ -1,11 +1,10 @@
-import { fromNodeProviderChain } from "@aws-sdk/credential-providers";
-import { AwsCredentialIdentity, HttpRequest, Provider } from "@aws-sdk/types";
+import { HttpRequest } from "@aws-sdk/types";
 import { SignatureV4 } from '@smithy/signature-v4';
 import { Hash } from '@smithy/hash-node';
-import { AwsSigv4Auth, AwsSigv4CliProfileAuth, AwsSigv4InlineAuth } from "types/auth";
+import { AwsSigv4Auth } from "types/auth";
 import { Request } from "types/request";
 import { RequestOptions } from "https";
-
+import { getAwsCredentials } from './get-aws-credentials';
 
 /**
  * Updates specified request options params with AWS Signature V4 signature.
@@ -23,7 +22,7 @@ export default async function signRequestSigv4(
 
   const auth = request.auth as AwsSigv4Auth;
   const url = new URL(request.url);
-  const credentials = getCredentials(auth);
+  const credentials = getAwsCredentials(auth);
 
   const signingParams: HttpRequest = {
     method: requestOptions.method,
@@ -54,26 +53,4 @@ export default async function signRequestSigv4(
   requestOptions.headers = {
     ...signature.headers
   };
-}
-
-/**
- * Gets the sigv4 credentials provider object from request auth settings.
- *
- * @param auth The request auth settings object.
- * @returns The credentials provider object.
- */
-function getCredentials(auth: AwsSigv4Auth): AwsCredentialIdentity | Provider<AwsCredentialIdentity> | undefined {
-  switch (auth.source) {
-    case 'inline':
-      const inline = auth as AwsSigv4InlineAuth;
-      return {
-        accessKeyId: inline.accessKey,
-        secretAccessKey: inline.secretKey,
-        sessionToken: inline.sessionToken,
-      };
-
-    default:
-      const cli = auth as AwsSigv4CliProfileAuth;
-      return fromNodeProviderChain({profile: cli.profile, ignoreCache: true});
-  }
 }
