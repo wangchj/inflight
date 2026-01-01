@@ -27,7 +27,7 @@ Run the following;
 
 magick convert -size 1024x1024 xc:none -draw "roundrectangle 0,0 1024,1024 222,222" mask1024.png
 
-magick convert -size 1024x1024 xc:none -draw "roundrectangle 0,0 1024,1024 222,222" mask1024.png
+magick convert -size 512x512 xc:none -draw "roundrectangle 0,0 512,512 111,111" mask512.png
 
 # Create PNG icon files
 
