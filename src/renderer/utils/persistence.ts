@@ -17,6 +17,11 @@ let saveProjectTimeout: number;
  */
 export async function openWorkspace(): Promise<Workspace> {
   const workspace = await window.openWorkspace();
+
+  if (!workspace.schemaVersion) {
+    workspace.schemaVersion = '1.0';
+  }
+
   clearTimeout(saveWorkspaceTimeout);
   return workspace;
 }
@@ -62,6 +67,11 @@ export function saveWorkspaceDelay() {
  */
 export async function openProject(path: string): Promise<Project> {
   const project = path ? await window.openProject(path) : undefined;
+
+  if (!project.schemaVersion) {
+    project.schemaVersion = '1.0';
+  }
+
   clearTimeout(saveProjectTimeout);
   return project;
 }

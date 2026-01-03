@@ -3,6 +3,7 @@ import { Folder } from "types/folder";
 import { Project as IProject } from "types/project";
 
 export default class Project implements IProject {
+  readonly schemaVersion = '1.0';
   name: string;
   folders?: Record<string, Folder>;
   tree?: string;

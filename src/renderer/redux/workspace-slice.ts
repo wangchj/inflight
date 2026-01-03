@@ -8,7 +8,9 @@ import { Request } from 'types/request';
 import { OpenedResource } from 'types/opened-resource';
 import { OpenedRequest } from 'types/opened-request';
 
-const initialState: Workspace = {};
+const initialState: Workspace = {
+  schemaVersion: '1.0',
+};
 
 export const workspaceSlice = createSlice({
   name: 'workspace',

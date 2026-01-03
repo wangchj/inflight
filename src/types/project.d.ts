@@ -4,6 +4,7 @@ import { Environment } from 'types/environment';
 import { EnvironmentGroup } from 'types/environment-group';
 
 export interface Project {
+  schemaVersion: '1.0';
   name: string;
   folders?: Record<string, Folder>;
   requests?: Record<string, Request>;
