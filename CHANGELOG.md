@@ -1,5 +1,11 @@
 # CHANGELOG.md
 
+## 2.0.0 (2025-01-06)
+
+- Add AWS Signature V4 support for web build.
+- Update app icon.
+- Schema version 2.0: rename "environment group" to "dimension" and "environment" to "variant".
+
 ## 1.7.1 (2025-12-22)
 
 - Add support for aws login CLI credentials.
