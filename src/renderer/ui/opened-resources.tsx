@@ -1,11 +1,11 @@
-import { Button, Divider, Tabs } from '@mantine/core';
+import { Button, Tabs } from '@mantine/core';
 import { IconPlus } from '@tabler/icons-react';
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from 'renderer/redux/store';
 import { workspaceSlice } from 'renderer/redux/workspace-slice';
 import RequestForm from './request-form';
 import OpenedResourceTab from './opened-resource-tab';
-import Environment from './environment';
+import Variant from './variant';
 import { OpenedResource } from 'types/opened-resource';
 import './major-tabs.css';
 
@@ -26,8 +26,8 @@ function OpenedResourceContent({openedResource}: OpenedResourceContentProps) {
     case 'request':
       return openedResource.props.request && <RequestForm openedResource={openedResource}/>;
 
-    case 'env':
-      return <Environment openedResource={openedResource}/>;
+    case 'variant':
+      return <Variant openedResource={openedResource}/>;
   }
 }
 

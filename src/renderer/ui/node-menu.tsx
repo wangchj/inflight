@@ -1,11 +1,11 @@
 import { Menu, TreeNodeData } from "@mantine/core";
 import {
   IconCopy,
-  IconBraces,
-  IconBrackets,
   IconCursorText,
   IconDots,
   IconFolderPlus,
+  IconLayersSelected,
+  IconStack2,
   IconTrash
 } from "@tabler/icons-react";
 import { useState } from "react";
@@ -24,7 +24,7 @@ interface NodeMenuProps {
 export default function NodeMenu({node, deletable, hovered, backgroundColor, top}: NodeMenuProps) {
   const dispatch = useDispatch();
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
-  const isRoot = !node?.nodeProps?.parentId;
+  const root = node?.nodeProps?.root;
 
   /**
    * Handles delete menu item click.
@@ -47,21 +47,20 @@ export default function NodeMenu({node, deletable, hovered, backgroundColor, top
   }
 
   /**
-   * Handles new environment group menu item click event.
+   * Handles new dimension menu item click event.
    *
-   * @param node The node on which it's clicked.
    */
-  async function onEnvGroupClick(node: TreeNodeData) {
-    dispatch(uiSlice.actions.openNewEnvGroupModal(node.value));
+  async function onNewDimensionClick() {
+    dispatch(uiSlice.actions.openNewDimensionModal());
   }
 
   /**
-   * Handles new environment menu item click event.
+   * Handles new variant menu item click event.
    *
-   * @param node The group node on which it's clicked.
+   * @param node The dimension node on which it's clicked.
    */
-  async function onNewEnvClick(node: TreeNodeData) {
-    dispatch(uiSlice.actions.openNewEnvModal(node.value));
+  async function onNewVariantClick(node: TreeNodeData) {
+    dispatch(uiSlice.actions.openNewVariantModal(node.value));
   }
 
   /**
@@ -82,10 +81,10 @@ export default function NodeMenu({node, deletable, hovered, backgroundColor, top
         }));
         break;
 
-      case 'env':
-        dispatch(projectSlice.actions.duplicateEnv({
+      case 'variant':
+        dispatch(projectSlice.actions.duplicateVariant({
           id: node.value,
-          parentId: node.nodeProps.parentId
+          dimId: node.nodeProps.parentId
         }));
         break;
     }
@@ -139,7 +138,7 @@ export default function NodeMenu({node, deletable, hovered, backgroundColor, top
               </Menu.Item>
             )}
 
-            {(!isRoot && (node.nodeProps.type === 'request' || node.nodeProps.type === 'env')) && (
+            {(!root && (node.nodeProps.type === 'request' || node.nodeProps.type === 'variant')) && (
               <Menu.Item
                 leftSection={<IconCopy size="1em"/>}
                 fz="xs"
@@ -152,33 +151,33 @@ export default function NodeMenu({node, deletable, hovered, backgroundColor, top
               </Menu.Item>
             )}
 
-            {node.nodeProps.type === 'env' && (
+            {root && node.nodeProps.type === 'variant' && (
               <Menu.Item
-                leftSection={<IconBrackets size="1em"/>}
+                leftSection={<IconStack2 size="1em"/>}
                 fz="xs"
                 onClick={(e: any) => {
                   e.stopPropagation();
-                  onEnvGroupClick(node);
+                  onNewDimensionClick();
                 }}
               >
-                New Group
+                New Dimension
               </Menu.Item>
             )}
 
-            {node.nodeProps.type === 'envGroup' && (
+            {node.nodeProps.type === 'dimension' && (
               <Menu.Item
-                leftSection={<IconBraces size="1em"/>}
+                leftSection={<IconLayersSelected size="1em"/>}
                 fz="xs"
                 onClick={(e: any) => {
                   e.stopPropagation();
-                  onNewEnvClick(node);
+                  onNewVariantClick(node);
                 }}
               >
-                New Environment
+                New Variant
               </Menu.Item>
             )}
 
-            {(node && !isRoot) && (
+            {(node && !root) && (
               <Menu.Item
                 leftSection={<IconCursorText size="1em"/>}
                 fz="xs"
@@ -191,7 +190,7 @@ export default function NodeMenu({node, deletable, hovered, backgroundColor, top
               </Menu.Item>
             )}
 
-            {(node && !isRoot) && (
+            {(node && !root) && (
               <Menu.Item
                 color="red"
                 leftSection={<IconTrash size="1em"/>}

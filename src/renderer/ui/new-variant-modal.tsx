@@ -3,20 +3,19 @@ import { nanoid } from "@reduxjs/toolkit";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { projectSlice } from "renderer/redux/project-slice";
-import { RootState, store } from "renderer/redux/store";
+import { RootState } from "renderer/redux/store";
 import { uiSlice } from "renderer/redux/ui-slice";
 import { workspaceSlice } from "renderer/redux/workspace-slice";
 import * as Persistence from "renderer/utils/persistence";
 
-export function NewEnvModal() {
+export function NewVariantModal() {
   const dispatch = useDispatch();
-  const workspace = useSelector((state: RootState) => state.workspace);
   const ui = useSelector((state: RootState) => state.ui);
   const [name, setName] = useState<string>('');
 
   useEffect(() => {
     setName('');
-  }, [ui.newEnvOpen]);
+  }, [ui.newVariantOpen]);
 
   /**
    * Handles create button click event.
@@ -27,9 +26,9 @@ export function NewEnvModal() {
     }
 
     const id = nanoid();
-    const parentId = ui.newEnvParentId;
-    dispatch(projectSlice.actions.newEnv({id, name, parentId}));
-    dispatch(workspaceSlice.actions.openEnv({id}));
+    const parentId = ui.newVariantParentId;
+    dispatch(projectSlice.actions.newVariant({id, name, parentId}));
+    dispatch(workspaceSlice.actions.openVariant({id}));
     dispatch(workspaceSlice.actions.expandTreeNode(parentId));
 
     try {
@@ -39,14 +38,14 @@ export function NewEnvModal() {
       console.error("Error saving project", error);
     }
 
-    dispatch(uiSlice.actions.closeNewEnvModal());
+    dispatch(uiSlice.actions.closeNewVariantModal());
   }
 
   return (
     <Modal
-      opened={ui.newEnvOpen}
-      title={<Title order={3}>New Environment</Title>}
-      onClose={() => dispatch(uiSlice.actions.closeNewEnvModal())}
+      opened={ui.newVariantOpen}
+      title={<Title order={3}>New Variant</Title>}
+      onClose={() => dispatch(uiSlice.actions.closeNewVariantModal())}
       centered
     >
       <Stack>

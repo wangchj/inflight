@@ -2,13 +2,12 @@ import { Button, Modal, Stack, TextInput, Title } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { projectSlice } from "renderer/redux/project-slice";
-import { RootState, store } from "renderer/redux/store";
+import { RootState } from "renderer/redux/store";
 import { uiSlice } from "renderer/redux/ui-slice";
 import * as Persistence from "renderer/utils/persistence";
 
 export function NewFolderModal() {
   const dispatch = useDispatch();
-  const workspace = useSelector((state: RootState) => state.workspace);
   const ui = useSelector((state: RootState) => state.ui);
   const [name, setName] = useState<string>('');
 

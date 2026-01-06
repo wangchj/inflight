@@ -1,5 +1,5 @@
 import { ActionIcon, Text } from '@mantine/core';
-import { IconBraces, IconSend } from "@tabler/icons-react";
+import { IconSend, IconStack2 } from "@tabler/icons-react";
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'renderer/redux/store';
 import { uiSlice } from 'renderer/redux/ui-slice';
@@ -59,18 +59,18 @@ export default function NavBar() {
           }}
         >
           <ActionIcon
-            variant={selectedNavItem === 'environments' ? 'filled' : 'subtle'}
-            color={selectedNavItem === 'environments' ? 'blue' : 'gray'}
+            variant={selectedNavItem === 'dimensions' ? 'filled' : 'subtle'}
+            color={selectedNavItem === 'dimensions' ? 'blue' : 'gray'}
             size="xl"
-            onClick={() => dispatch(uiSlice.actions.setSelectedNavItem('environments'))}
+            onClick={() => dispatch(uiSlice.actions.setSelectedNavItem('dimensions'))}
           >
-            <IconBraces/>
+            <IconStack2/>
           </ActionIcon>
 
           <Text
             size="0.6em"
           >
-            Environments
+            Dimensions
           </Text>
         </div>
       </div>

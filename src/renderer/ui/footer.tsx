@@ -3,42 +3,40 @@ import { IconCheck } from "@tabler/icons-react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "renderer/redux/store";
 import { workspaceSlice } from "renderer/redux/workspace-slice";
-import { Project } from "types/project";
-import { Workspace } from "types/workspace";
 import * as Env from "renderer/utils/env";
 
 /**
- * Selectable environment menu component.
+ * Selectable dimension menu component.
  *
- * @param groupId The env group id.
+ * @param dimensionId The dimension id.
  * @returns The React UI element.
  */
-function EnvMenu({groupId}: {groupId: string}) {
+function DimensionMenu({dimensionId}: {dimensionId: string}) {
   const dispatch = useDispatch();
   const workspace = useSelector((state: RootState) => state.workspace);
   const project = useSelector((state: RootState) => state.project);
-  const group = project.envGroups?.[groupId];
-  const selectedEnvId = workspace.selectedEnvs?.[groupId];
-  const selectedEnv = project.envs?.[selectedEnvId];
+  const dimension = project.dimensions?.[dimensionId];
+  const selectedVariantId = workspace.selectedVariants?.[dimensionId];
+  const selectedVariant = project.variants?.[selectedVariantId];
 
   /**
-   * Handles environment select event.
+   * Handles variant select event.
    *
-   * @param groupId The id of the environment group on which the event occurred.
-   * @param envId The id of the environment that's selected.
+   * @param dimensionId The id of the dimension on which the event occurred.
+   * @param variantId The id of the variant that's selected.
    */
-  function onSelectEnv(groupId: string, envId?: string) {
-    if (!groupId) {
+  function onSelectVariant(dimensionId: string, variantId?: string) {
+    if (!dimensionId) {
       return;
     }
 
-    const selectMap = {...workspace.selectedEnvs};
-    envId ? selectMap[groupId] = envId : delete selectMap[groupId];
+    const selectMap = {...workspace.selectedVariants};
+    variantId ? selectMap[dimensionId] = variantId : delete selectMap[dimensionId];
     Env.combine(project, selectMap);
-    dispatch(workspaceSlice.actions.selectEnv({groupId, envId}));
+    dispatch(workspaceSlice.actions.selectVariant({dimensionId, variantId}));
   }
 
-  return group && (
+  return dimension && (
     <Menu
       withArrow
       offset={1}
@@ -50,7 +48,7 @@ function EnvMenu({groupId}: {groupId: string}) {
           color="dark"
           radius="lg"
         >
-          {group.name}: {selectedEnv ? selectedEnv.name : 'None'}
+          {dimension.name}: {selectedVariant ? selectedVariant.name : 'None'}
         </Button>
       </Menu.Target>
 
@@ -60,30 +58,30 @@ function EnvMenu({groupId}: {groupId: string}) {
           leftSection={
             <IconCheck
               size="1em"
-              style={{visibility: selectedEnvId ? 'hidden' : 'visible'}}
+              style={{visibility: selectedVariantId ? 'hidden' : 'visible'}}
             />
           }
-          onClick={() => onSelectEnv(groupId)}
+          onClick={() => onSelectVariant(dimensionId)}
         >
           None
         </Menu.Item>
 
-        {group.envs?.map(envId => {
-          const env = project.envs?.[envId];
-          return env ? (
+        {dimension.variants?.map(variantId => {
+          const variant = project.variants?.[variantId];
+          return variant ? (
             <Menu.Item
-              key={envId}
+              key={variantId}
               leftSection={
                 <IconCheck
                   size="1em"
                   style={{
-                    visibility: selectedEnvId === envId ? 'visible' : 'hidden'
+                    visibility: selectedVariantId === variantId ? 'visible' : 'hidden'
                   }}
                 />
               }
-              onClick={() => onSelectEnv(groupId, envId)}
+              onClick={() => onSelectVariant(dimensionId, variantId)}
             >
-              {env.name}
+              {variant.name}
             </Menu.Item>
           ) : null
         }).filter(item => !!item)}
@@ -93,53 +91,20 @@ function EnvMenu({groupId}: {groupId: string}) {
 }
 
 /**
- * The UI component that shows a list of selectable environments.
+ * The UI component that shows a list of selectable dimension.
  */
-function Envs() {
-  const workspace = useSelector((state: RootState) => state.workspace);
+function Dimensions() {
   const project = useSelector((state: RootState) => state.project);
-  const groupIds = getEnvGroupIds(workspace, project, project.envRoot);
+  const dimensionIds = Array.isArray(project.dimOrder) ? project.dimOrder : [];
 
   return (
     <>
-      {groupIds
-        .filter(groupId => !!project.envGroups?.[groupId])
-        .map(groupId => <EnvMenu key={groupId} groupId={groupId}/>)
+      {dimensionIds
+        .filter(dimensionId => !!project.dimensions?.[dimensionId])
+        .map(dimensionId => <DimensionMenu key={dimensionId} dimensionId={dimensionId}/>)
       }
     </>
   )
-}
-
-/**
- * Gets the list of ids of environment groups to show on the UI.
- *
- * @param workspace The workspace model object.
- * @param project The project model object.
- * @param envId The root environment id.
- * @returns The list of group ids.
- */
-function getEnvGroupIds(workspace: Workspace, project: Project, envId: string): string[] {
-  const env = project.envs?.[envId];
-
-  if (!env) {
-    return [];
-  }
-
-  const res = [];
-  const groupIds = env.envGroups ?? [];
-
-  for (const groupId of groupIds) {
-    const group = project.envGroups?.[groupId];
-
-    if (group?.envs?.length > 0) {
-      res.push(groupId);
-      res.push(getEnvGroupIds(workspace, project, group.envs.find(
-        id => id === workspace.selectedEnvs?.[groupId]
-      )));
-    }
-  }
-
-  return res.flat();
 }
 
 /**
@@ -160,7 +125,7 @@ export default function Footer() {
         gap: '1em',
       }}
     >
-      <Envs/>
+      <Dimensions/>
     </div>
   )
 }

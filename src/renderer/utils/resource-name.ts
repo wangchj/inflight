@@ -11,11 +11,11 @@ export default function resourceName(node: TreeNodeData, isTitle: boolean = fals
     case 'request':
       return isTitle ? 'Request' : 'request';
 
-    case 'envGroup':
-      return isTitle ? 'Environment Group' : 'environment group';
+    case 'dimension':
+      return isTitle ? 'Dimension' : 'dimension';
 
-    case 'env':
-      return isTitle ? 'Environment Group' : 'environment group';
+    case 'variant':
+      return isTitle ? 'Variant' : 'variant';
 
     default:
       return isTitle ? 'Resource' : 'resource';

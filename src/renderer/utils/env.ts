@@ -26,33 +26,21 @@ export function varsToObject(vars: Var[]) {
 }
 
 /**
- * Creates a flat map from all the selected environments.
+ * Creates a flat variable map from all selected variants.
  *
  * @param project The project model object.
- * @param selectMap An object that maps env group id to selected env id.
+ * @param selectMap An object that maps dimension id to selected variant id.
  */
 export function combine(project: Project, selectMap: Record<string, string>) {
   resolved = {};
 
-  const queue = [project.envRoot];
+  if (!selectMap) {
+    return;
+  }
 
-  while (queue.length > 0) {
-    const envId = queue.shift();
-    const env = project.envs?.[envId];
-
-    if (!env) {
-      continue;
-    }
-
-    resolved = {...resolved, ...varsToObject(env.vars)};
-
-    if (Array.isArray(env.envGroups)) {
-      for (const envGroupId of env.envGroups) {
-        if (selectMap?.[envGroupId]) {
-          queue.push(selectMap[envGroupId]);
-        }
-      }
-    }
+  for (let id of Object.values(selectMap)) {
+    const v = project.variants?.[id];
+    resolved = {...resolved, ...varsToObject(v?.vars)}
   }
 
   dispatch(uiSlice.actions.envCombined());
@@ -71,7 +59,7 @@ export function replacer(match: string, name: string) {
 
   if (!value) {
     throw new Error(
-      `The variable '${name}' cannot be resolved. Make sure the correct environment is selected.`
+      `The variable '${name}' cannot be resolved. Make sure the correct variant is selected.`
     );
   }
 

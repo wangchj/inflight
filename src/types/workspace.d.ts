@@ -1,7 +1,7 @@
 import { OpenedResource } from "./opened-resource";
 
 export interface Workspace {
-  schemaVersion: '1.0';
+  schemaVersion: '2.0';
   projectPath?: string;
   openedResources?: OpenedResource[];
   selectedResourceIndex?: number;
@@ -9,6 +9,6 @@ export interface Workspace {
   /** Tree expanded state */
   treeExpandedState?: Record<string, boolean>;
 
-  /** Maps env group id to its selected env id */
-  selectedEnvs?: Record<string, string>;
+  /** Maps dimension id to its selected variant id */
+  selectedVariants?: Record<string, string>;
 }

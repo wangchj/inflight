@@ -35,7 +35,7 @@
     "@monaco-editor/react": "^4.6.0",
     "@reduxjs/toolkit": "^2.3.0",
     "@smithy/signature-v4": "^4.2.3",
-    "@tabler/icons-react": "^3.22.0",
+    "@tabler/icons-react": "^3.36.1",
     "@types/lodash": "^4.17.13",
     "@types/node": "^22.9.0",
     "@types/react": "^18.3.12",

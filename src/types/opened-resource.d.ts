@@ -1,5 +1,3 @@
-import { Request } from "types/request";
-import { Environment } from "types/environment";
 import { OpenedResourceProps } from "types/opened-resource-props";
 import { OpenedResourceType } from "types/opened-resource-type";
 

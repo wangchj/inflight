@@ -10,7 +10,7 @@ import { Dispatch, UnknownAction } from "@reduxjs/toolkit";
 import { useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { projectSlice } from "renderer/redux/project-slice";
-import { RootState, store } from "renderer/redux/store";
+import { RootState } from "renderer/redux/store";
 import { workspaceSlice } from "renderer/redux/workspace-slice";
 import * as Persistence from "renderer/utils/persistence";
 import { OpenedResource } from "types/opened-resource";

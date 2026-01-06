@@ -1,15 +1,27 @@
+import { Dimension } from './dimension';
 import { Request } from 'types/request';
 import { Folder } from 'types/folder';
-import { Environment } from 'types/environment';
-import { EnvironmentGroup } from 'types/environment-group';
+import { Variant } from './variant';
 
 export interface Project {
-  schemaVersion: '1.0';
+  schemaVersion: '2.0';
   name: string;
   folders?: Record<string, Folder>;
   requests?: Record<string, Request>;
   tree?: string;
-  envs?: Record<string, Environment>;
-  envGroups?: Record<string, EnvironmentGroup>;
-  envRoot?: string;
+
+  /**
+   * Dimension records.
+   */
+  dimensions?: Record<string, Dimension>;
+
+  /**
+   * Variant records.
+   */
+  variants?: Record<string, Variant>;
+
+  /**
+   * Dimensions display order.
+   */
+  dimOrder?: string[];
 }

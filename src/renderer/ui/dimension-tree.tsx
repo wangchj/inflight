@@ -4,13 +4,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "renderer/redux/store";
 import { workspaceSlice } from "renderer/redux/workspace-slice";
 import TreeNode from "./tree-node";
-import makeEnvTree from "renderer/utils/make-env-tree";
+import makeDimensionsTree from "renderer/utils/make-dimensions-tree";
 
-export default function EnvTree() {
+export default function DimensionTree() {
   const dispatch = useDispatch();
   const workspace = useSelector((state: RootState) => state.workspace);
   const project = useSelector((state: RootState) => state.project);
-  const data = useMemo(() => makeEnvTree(project), [project]);
+  const data = useMemo(() => makeDimensionsTree(project), [project]);
 
   const tree = useTree({
     initialExpandedState: workspace.treeExpandedState,

@@ -1,3 +1,5 @@
+import { migrateProject } from "model/migrate-project";
+import { migrateWorkspace } from "model/migrate-workspace";
 import { store } from "renderer/redux/store";
 import { Project } from "types/project";
 import { Workspace } from "types/workspace";
@@ -16,11 +18,8 @@ let saveProjectTimeout: number;
  * Loads workspace from storage.
  */
 export async function openWorkspace(): Promise<Workspace> {
-  const workspace = await window.openWorkspace();
-
-  if (!workspace.schemaVersion) {
-    workspace.schemaVersion = '1.0';
-  }
+  let workspace = await window.openWorkspace();
+  workspace = migrateWorkspace(workspace);
 
   clearTimeout(saveWorkspaceTimeout);
   return workspace;
@@ -66,11 +65,8 @@ export function saveWorkspaceDelay() {
  * @param path The project file path.
  */
 export async function openProject(path: string): Promise<Project> {
-  const project = path ? await window.openProject(path) : undefined;
-
-  if (!project.schemaVersion) {
-    project.schemaVersion = '1.0';
-  }
+  let project = path ? await window.openProject(path) : undefined;
+  project = migrateProject(project);
 
   clearTimeout(saveProjectTimeout);
   return project;

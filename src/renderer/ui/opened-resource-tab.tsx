@@ -17,7 +17,7 @@ import { workspaceSlice } from 'renderer/redux/workspace-slice';
 import { OpenedResource } from "types/opened-resource";
 import MethodIcon from "./method-icon";
 import resultEditorPath from "renderer/utils/result-editor-path";
-import { IconBraces } from "@tabler/icons-react";
+import { IconLayersSelected } from "@tabler/icons-react";
 import { RootState } from "renderer/redux/store";
 import { Project } from "types/project";
 
@@ -33,8 +33,8 @@ function TabIcon({openedResource}: {openedResource: OpenedResource}) {
     case 'request':
       return <MethodIcon method={ openedResource?.props?.request.method}/>
 
-    case 'env':
-      return <IconBraces size="1em"/>
+    case 'variant':
+      return <IconLayersSelected size="1em"/>
   }
 }
 
@@ -50,9 +50,9 @@ function TabLabel({project, openedResource}: {project: Project, openedResource: 
       label = request.name || request.url || 'New Request';
       break;
 
-    case 'env':
-      const env = project.envs[openedResource.id];
-      label = env.name || '';
+    case 'variant':
+      const variant = project.variants[openedResource.id];
+      label = variant?.name || '';
       break;
   }
 

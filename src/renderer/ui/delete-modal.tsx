@@ -1,17 +1,16 @@
-import { Button, Code, Modal, Stack, Title, TreeNodeData } from "@mantine/core";
+import { Button, Code, Modal, Stack, Title } from "@mantine/core";
 import { useDispatch, useSelector } from "react-redux";
 import { projectSlice } from "renderer/redux/project-slice";
 import { RootState, store } from "renderer/redux/store";
 import { uiSlice } from "renderer/redux/ui-slice";
 import * as Persistence from "renderer/utils/persistence";
 import { workspaceSlice } from "renderer/redux/workspace-slice";
+import * as Env from "renderer/utils/env";
 import getDescendantRequestIds from "renderer/utils/get-descendant-request-ids";
-import getDescendantEnvIds from "renderer/utils/get-descendant-env-ids";
 import resourceName from "renderer/utils/resource-name";
 
 export function DeleteModal() {
   const dispatch = useDispatch();
-  const workspace = useSelector((state: RootState) => state.workspace);
   const project = useSelector((state: RootState) => state.project);
   const ui = useSelector((state: RootState) => state.ui);
   const node = ui.nodeToDelete;
@@ -39,24 +38,26 @@ export function DeleteModal() {
         }));
         break;
 
-      case 'envGroup':
-        var resIds = getDescendantEnvIds(project, node.value, 'envGroup');
-        resIds.forEach(i => dispatch(workspaceSlice.actions.closeResource(i)));
-        dispatch(projectSlice.actions.deleteEnvGroup({
-          id: node.value,
-          parentId: node.nodeProps.parentId
-        }));
+      case 'dimension':
+        const variants = project.dimensions?.[node.value]?.variants ?? [];
+        variants.forEach(i => dispatch(workspaceSlice.actions.closeResource(i)));
+        dispatch(projectSlice.actions.deleteDimension({dimId: node.value}));
+        dispatch(workspaceSlice.actions.deleteSelectedVariant({dimId: node.value}));
+        Env.combine(project, store.getState().workspace.selectedVariants);
         break;
 
-      case 'env':
-        var resIds = getDescendantEnvIds(project, node.value, 'env');
-        resIds.forEach(i => dispatch(workspaceSlice.actions.closeResource(i)));
-        dispatch(projectSlice.actions.deleteEnv({
+      case 'variant':
+        dispatch(workspaceSlice.actions.closeResource(node.value));
+        dispatch(projectSlice.actions.deleteVariant({
           id: node.value,
-          parentId: node.nodeProps.parentId
+          dimId: node.nodeProps.parentId
         }));
+        dispatch(workspaceSlice.actions.deleteSelectedVariant({varId: node.value}));
+        Env.combine(project, store.getState().workspace.selectedVariants);
         break;
     }
+
+    dispatch(workspaceSlice.actions.deleteTreeExpandedState(node.value));
 
     try {
       await Persistence.saveProject();

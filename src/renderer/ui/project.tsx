@@ -5,8 +5,8 @@ import { RootState } from "renderer/redux/store";
 import NavBar from './navbar';
 import LeftPane from "./left-pane";
 import OpenedResources from "./opened-resources";
-import { NewEnvGroupModal } from "./new-env-group-modal";
-import { NewEnvModal } from "./new-env-modal";
+import { NewDimensionModal } from "./new-dimension-modal";
+import { NewVariantModal } from "./new-variant-modal";
 import { NewFolderModal } from "./new-folder-modal";
 import { DeleteModal } from "./delete-modal";
 import Footer from "./footer";
@@ -27,15 +27,6 @@ export default function Project() {
    * Split pane widths.
    */
   const [gridTemplateColumns, setGridTemplateColumns] = useState('300px 4px 1fr');
-
-  /**
-   * Determines if the project has any selectable environments.
-   */
-  function hasSelectableEnvs() {
-    const rootEnv = project?.envs?.[project?.envRoot];
-    const rootGroups = rootEnv?.envGroups;
-    return Array.isArray(rootGroups) && rootGroups.length > 0;
-  }
 
   return (
     <div
@@ -80,14 +71,14 @@ export default function Project() {
 
         <NewFolderModal/>
         <DeleteModal/>
-        <NewEnvGroupModal/>
-        <NewEnvModal/>
+        <NewDimensionModal/>
+        <NewVariantModal/>
         <RenameModal/>
         <VarTooltip/>
       </div>
 
       {
-        hasSelectableEnvs() && <Footer/>
+        (Object.keys(project?.dimensions ?? {}).length > 0) && <Footer/>
       }
     </div>
   );

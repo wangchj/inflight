@@ -1,5 +1,5 @@
-import { createSlice, nanoid } from '@reduxjs/toolkit'
-import type { PayloadAction } from '@reduxjs/toolkit'
+import { createSlice, nanoid } from '@reduxjs/toolkit';
+import type { PayloadAction } from '@reduxjs/toolkit';
 import { set } from 'lodash';
 import * as Persistence from 'renderer/utils/persistence';
 import { Workspace } from 'types/workspace';
@@ -9,7 +9,7 @@ import { OpenedResource } from 'types/opened-resource';
 import { OpenedRequest } from 'types/opened-request';
 
 const initialState: Workspace = {
-  schemaVersion: '1.0',
+  schemaVersion: '2.0',
 };
 
 export const workspaceSlice = createSlice({
@@ -90,12 +90,12 @@ export const workspaceSlice = createSlice({
     },
 
     /**
-     * Adds an environment to opened resource list.
+     * Adds variant to opened resource list.
      *
      * @param state The workspace object.
      * @param action The action object.
      */
-    openEnv(state, action: PayloadAction<{id: string}>) {
+    openVariant(state, action: PayloadAction<{id: string}>) {
       const {id} = action.payload;
 
       if (!id) {
@@ -114,7 +114,7 @@ export const workspaceSlice = createSlice({
 
         state.openedResources.push({
           id,
-          type: 'env'
+          type: 'variant'
         });
 
         state.selectedResourceIndex = state.openedResources.length - 1;
@@ -484,30 +484,50 @@ export const workspaceSlice = createSlice({
     },
 
     /**
-     * Sets selected environment of an environment group.
+     * Deletes tree expanded state for a node.
      *
      * @param state The workspace object.
-     * @param action The payload contains the group id and environment id.
+     * @param action The id of the node.
      */
-    selectEnv(state, action: PayloadAction<{groupId: string, envId?: string}>) {
-      const {groupId, envId} = action.payload;
-
-      if (!groupId) {
+    deleteTreeExpandedState(state, action: PayloadAction<string>) {
+      if (!state.treeExpandedState) {
         return;
       }
 
-      if (envId) {
-        if (!state.selectedEnvs) {
-          state.selectedEnvs = {};
+      delete state.treeExpandedState[action.payload];
+
+      if (Object.keys(state.treeExpandedState).length === 0) {
+        delete state.treeExpandedState;
+      }
+
+      Persistence.saveWorkspaceDelay();
+    },
+
+    /**
+     * Sets selected variant of a dimension.
+     *
+     * @param state The workspace object.
+     * @param action The payload contains the dimension id and variant id.
+     */
+    selectVariant(state, action: PayloadAction<{dimensionId: string, variantId?: string}>) {
+      const {dimensionId, variantId} = action.payload;
+
+      if (!dimensionId) {
+        return;
+      }
+
+      if (variantId) {
+        if (!state.selectedVariants) {
+          state.selectedVariants = {};
         }
-        state.selectedEnvs[groupId] = envId;
+        state.selectedVariants[dimensionId] = variantId;
       }
       else {
-        if (state.selectedEnvs) {
-          delete state.selectedEnvs[groupId];
+        if (state.selectedVariants) {
+          delete state.selectedVariants[dimensionId];
 
-          if (Object.keys(state.selectedEnvs).length === 0) {
-            delete state.selectedEnvs;
+          if (Object.keys(state.selectedVariants).length === 0) {
+            delete state.selectedVariants;
           }
         }
       }
@@ -561,6 +581,22 @@ export const workspaceSlice = createSlice({
       res.props.request.name = name;
 
       Persistence.saveWorkspaceDelay();
+    },
+
+    /**
+     * Delete selectedVariant entries that has matching dimension id or variant id.
+     *
+     * @param state The workspace model.
+     * @param action The payload contains dimension id or variant id to delete.
+     */
+    deleteSelectedVariant(state, action: PayloadAction<{dimId?: string, varId?: string}>) {
+      const {dimId, varId} = action.payload;
+
+      if (state.selectedVariants) {
+        state.selectedVariants = Object.fromEntries(
+          Object.entries(state.selectedVariants).filter(e => e[0] !== dimId && e[1] !== varId)
+        )
+      }
     },
   },
 });

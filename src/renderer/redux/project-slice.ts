@@ -1,9 +1,7 @@
 import { Operation } from '@atlaskit/pragmatic-drag-and-drop-hitbox/dist/types/list-item';
-import { Edge } from '@atlaskit/pragmatic-drag-and-drop-hitbox/dist/types/types';
 import { TreeNodeData } from '@mantine/core/lib';
 import { createSlice, nanoid } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
-import getDescendantEnvIds from 'renderer/utils/get-descendant-env-ids';
 import getDescendantFolderIds from 'renderer/utils/get-descendant-folder-ids';
 import getDescendantRequestIds from 'renderer/utils/get-descendant-request-ids';
 import * as Persistence from 'renderer/utils/persistence';
@@ -190,89 +188,72 @@ export const projectSlice = createSlice({
     },
 
     /**
-     * Adds a new environment group to the project.
+     * Adds a new dimension to the project.
      *
      * @param state The project object.
-     * @param action Contains new group name and parent id.
+     * @param action Contains new dimension name.
      */
-    newEnvGroup(state, action: PayloadAction<{name: string, parentId?: string}>) {
-      let {name, parentId} = action.payload;
+    newDimension(state, action: PayloadAction<{name: string}>) {
+      let {name} = action.payload;
 
-      // Create the root environment if not exist.
-      if (!state.envs) {
-        const envRoot = nanoid();
-        state.envs = {};
-        state.envs[envRoot] = {name: ''}
-        state.envRoot = envRoot;
+      // Create dimension structure if not exist.
+      if (!state.dimensions) {
+        state.dimensions = {};
       }
 
-      // If parent id is undefined, then use the id of the root environment.
-      if (!parentId) {
-        parentId = state.envRoot;
+      // Create the new dimension.
+      const dimensionId = nanoid();
+      state.dimensions[dimensionId] = {name: name};
+
+      // Create order array if not already exist
+      if (!Array.isArray(state.dimOrder)) {
+        state.dimOrder = [];
       }
 
-      // Get the parent environment.
-      let env = state.envs[parentId];
-
-      // Make sure the parent environment exists.
-      if (!env) {
-        return;
-      }
-
-      // Create env group structure if not exist.
-      if (!state.envGroups) {
-        state.envGroups = {};
-      }
-
-      // Create the new env group.
-      const groupId = nanoid();
-      state.envGroups[groupId] = {name: name};
-
-      // Add the new group the the parent env.
-      if (!Array.isArray(env.envGroups)) {
-        env.envGroups = [];
-      }
-
-      env.envGroups.push(groupId);
+      // Add the new dimension to the order array
+      state.dimOrder.push(dimensionId);
 
       Persistence.saveProjectDelay();
     },
 
     /**
-     * Adds a new environment to the project.
+     * Adds a new variant to the project.
      *
      * @param state The project object.
-     * @param action The payload contains parameters for the new environment.
+     * @param action The payload contains parameters for the new variant.
      */
-    newEnv(state, action: PayloadAction<{id: string, name: string, parentId?: string}>) {
+    newVariant(state, action: PayloadAction<{id: string, name: string, parentId?: string}>) {
       const {id, name, parentId} = action.payload;
-      const parent = state.envGroups?.[parentId];
+      const dim = state.dimensions?.[parentId];
 
-      if (!parent || !name || !state.envs) {
+      if (!dim || !name) {
         return;
       }
 
-      state.envs[id] = {name}
-
-      if (!parent.envs) {
-        parent.envs = [];
+      if (!state.variants || typeof state.variants !== 'object') {
+        state.variants = {};
       }
 
-      parent.envs.push(id);
+      state.variants[id] = {name}
+
+      if (!dim.variants) {
+        dim.variants = [];
+      }
+
+      dim.variants.push(id);
 
       Persistence.saveProjectDelay();
     },
 
     /**
-     * Updates an environment variable name.
+     * Updates a variant variable name.
      *
      * @param state The project object.
-     * @param action The payload contains the environment id, variable index, and the updated
-     * value.
+     * @param action The payload contains the variant id, variable index, and the updated value.
      */
     updateVarName(state, action: PayloadAction<{id: string, index: number, value: string}>) {
       const {id, index, value} = action.payload;
-      const v = state.envs?.[id]?.vars?.[index];
+      const v = state.variants?.[id]?.vars?.[index];
       if (v) {
         v.name = value;
       }
@@ -281,15 +262,14 @@ export const projectSlice = createSlice({
     },
 
     /**
-     * Updates an environment variable value.
+     * Updates a variant variable value.
      *
      * @param state The project object.
-     * @param action The payload contains the environment id, variable index, and the updated
-     * value.
+     * @param action The payload contains the variant id, variable index, and the updated value.
      */
     updateVarValue(state, action: PayloadAction<{id: string, index: number, value: string}>) {
       const {id, index, value} = action.payload;
-      const v = state.envs?.[id]?.vars?.[index];
+      const v = state.variants?.[id]?.vars?.[index];
       if (v) {
         v.value = value;
       }
@@ -298,39 +278,39 @@ export const projectSlice = createSlice({
     },
 
     /**
-     * Adds a new empty environment variable.
+     * Adds a new empty variant variable.
      *
      * @param state The project object.
-     * @param action The payload contains the environment id.
+     * @param action The payload contains the variant id.
      */
     addEmptyVar(state, action: PayloadAction<string>) {
       const id = action.payload;
-      const env = state.envs?.[id];
+      const variant = state.variants?.[id];
 
-      if (env) {
-        if (!Array.isArray(env.vars)) {
-          env.vars = [];
+      if (variant) {
+        if (!Array.isArray(variant.vars)) {
+          variant.vars = [];
         }
 
-        env.vars.push({name: '', value: ''});
+        variant.vars.push({name: '', value: ''});
       }
 
       Persistence.saveProjectDelay();
     },
 
     /**
-     * Updates an environment variable.
+     * Deletes a variant variable.
      *
      * @param state The project object.
-     * @param action The payload contains the environment id, variable index.
+     * @param action The payload contains the variant id, variable index.
      */
     deleteVar(state, action: PayloadAction<{id: string, index: number}>) {
       const {id, index} = action.payload;
-      const env = state.envs?.[id];
-      const vars = env?.vars;
+      const variant = state.variants?.[id];
+      const vars = variant?.vars;
 
       if (!Array.isArray(vars) || vars.length == 1) {
-        delete env.vars;
+        delete variant.vars;
       }
       else if (index >= 0 && index < vars.length) {
         vars.splice(index, 1);
@@ -340,74 +320,85 @@ export const projectSlice = createSlice({
     },
 
     /**
-     * Deletes an environment group.
+     * Deletes a dimension.
      *
      * @param state The project object.
-     * @param action The payload contains the group id and parent env id.
+     * @param action The payload contains the dimension id.
      */
-    deleteEnvGroup(state, action: PayloadAction<{id: string, parentId: string}>) {
-      const {id, parentId} = action.payload;
-      const ids = getDescendantEnvIds(state, id, 'envGroup');
+    deleteDimension(state, action: PayloadAction<{dimId: string}>) {
+      const {dimId} = action.payload;
+      const dim = state.dimensions[dimId];
 
-      for (const id of ids) {
-        delete state.envs?.[id];
-        delete state.envGroups?.[id];
+      if (!dim) {
+        return;
       }
 
-      const parent = state.envs?.[parentId];
-      const index = parent?.envGroups?.findIndex(gid => gid === id);
+      // Delete variants of the dimension
+      for (const id of dim.variants ?? []) {
+        delete state.variants?.[id];
+      }
 
-      if (parent && index !== -1) {
-        state.envs[parentId].envGroups.splice(index, 1);
+      // Delete the dimension
+      delete state.dimensions[dimId];
+
+      // Delete the dimension from order array
+      if (Array.isArray(state.dimOrder)) {
+        state.dimOrder = state.dimOrder.filter(id => id !== dimId);
+      }
+
+      // Clean up the project dimensions if there are no more dimensions
+      if (Object.keys(state.dimensions).length === 0) {
+        delete state.dimensions;
+        delete state.variants;
+        delete state.dimOrder;
       }
 
       Persistence.saveProjectDelay();
     },
 
     /**
-     * Deletes an environment.
+     * Deletes a variant.
      *
      * @param state The project object.
-     * @param action The payload contains the group id and parent env id.
+     * @param action The payload contains the variant id and dimension id.
      */
-    deleteEnv(state, action: PayloadAction<{id: string, parentId: string}>) {
-      const {id, parentId} = action.payload;
-      const ids = getDescendantEnvIds(state, id, 'env');
+    deleteVariant(state, action: PayloadAction<{id: string, dimId: string}>) {
+      const {id, dimId } = action.payload;
 
-      for (const id of ids) {
-        delete state.envs?.[id];
-        delete state.envGroups?.[id];
+      if (!state.variants?.[id]) {
+        return;
       }
 
-      const parent = state.envGroups?.[parentId];
-      const index = parent?.envs?.findIndex(eid => eid === id);
+      delete state.variants[id];
 
-      if (parent && index !== -1) {
-        parent.envs.splice(index, 1);
+      const dim = state.dimensions[dimId];
+
+      if (dim && Array.isArray(dim.variants)) {
+        dim.variants = dim.variants.filter(i => i !== id);
       }
 
       Persistence.saveProjectDelay();
     },
 
     /**
-     * Duplicates an environment.
+     * Duplicates a variant.
      *
      * @param state The project object.
-     * @param action The the payload contains the id of the env and the id of its parent folder.
+     * @param action The the payload contains the id of the variant and the id of its dimension.
      */
-    duplicateEnv(state, action: PayloadAction<{id: string, parentId: string}>) {
-      const {id, parentId} = action.payload;
-      const group = state.envGroups?.[parentId];
-      const env = state.envs?.[id];
+    duplicateVariant(state, action: PayloadAction<{id: string, dimId: string}>) {
+      const {id, dimId} = action.payload;
+      const dim = state.dimensions?.[dimId];
+      const variant = state.variants?.[id];
 
-      if (!group || !env || !group.envs) {
+      if (!dim || !variant) {
         return;
       }
 
       const newId = nanoid();
 
-      state.envs[newId] = JSON.parse(JSON.stringify(env));
-      group.envs.push(newId);
+      state.variants[newId] = JSON.parse(JSON.stringify(variant));
+      dim.variants.push(newId);
 
       Persistence.saveProjectDelay();
     },
@@ -421,10 +412,10 @@ export const projectSlice = createSlice({
     renameResource(state, action: PayloadAction<{id: string, type: string, name: string}>) {
       const {id, type, name} = action.payload;
       const res = {
-        folder:   state.folders?.[id],
-        request:  state.requests?.[id],
-        envGroup: state.envGroups?.[id],
-        env:      state.envs?.[id],
+        folder:    state.folders?.[id],
+        request:   state.requests?.[id],
+        dimension: state.dimensions?.[id],
+        variant:   state.variants?.[id],
       }[type];
 
       if (!res || !name) {

@@ -2,7 +2,7 @@ import { Box } from '@mantine/core';
 import { useSelector } from 'react-redux';
 import { RootState } from 'renderer/redux/store';
 import NodeMenu from './node-menu';
-import EnvTree from './env-tree';
+import DimensionTree from './dimension-tree';
 import ProjectTree from './project-tree';
 import { NavItem } from 'renderer/redux/ui-slice';
 
@@ -17,8 +17,8 @@ function getTree(selectedNavItem: NavItem) {
     case 'requests':
       return <ProjectTree/>
 
-    case 'environments':
-      return <EnvTree/>
+    case 'dimensions':
+      return <DimensionTree/>
   }
 }
 
@@ -53,9 +53,12 @@ export default function LeftPane() {
         <NodeMenu
           node={
             project.folders && project.tree ? {
-              value: ui.selectedNavItem === 'requests' ? project.tree : project.envRoot,
+              value: ui.selectedNavItem === 'requests' ? project.tree : '',
               label: '',
-              nodeProps: {type: ui.selectedNavItem === 'requests' ? 'folder' : 'env'}
+              nodeProps: {
+                type: ui.selectedNavItem === 'requests' ? 'folder' : 'variant',
+                root: true,
+              }
             } : null
           }
           deletable={false}

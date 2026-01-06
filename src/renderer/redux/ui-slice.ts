@@ -2,7 +2,7 @@ import { TreeNodeData } from '@mantine/core';
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 
-export type NavItem = 'requests' | 'environments';
+export type NavItem = 'requests' | 'dimensions';
 
 interface UiState {
   selectedNavItem: NavItem;
@@ -15,11 +15,16 @@ interface UiState {
   deleteModalOpen: boolean;
   nodeToDelete: TreeNodeData;
 
-  newEnvGroupOpen: boolean;
-  newEnvGroupParentId: string;
+  /**
+   * Determines if the new dimension modal is open.
+   */
+  newDimensionOpen: boolean;
 
-  newEnvOpen: boolean;
-  newEnvParentId: string;
+  /**
+   * Determines if the new variant modal is open.
+   */
+  newVariantOpen: boolean;
+  newVariantParentId: string;
 
   renameModalOpen: boolean;
   renameNode: TreeNodeData;
@@ -122,41 +127,40 @@ export const uiSlice = createSlice({
     },
 
     /**
-     * Opens the new environment group modal.
+     * Opens the new dimension modal.
      *
      * @param state The UI state.
      */
-    openNewEnvGroupModal(state, action: PayloadAction<string>) {
-      state.newEnvGroupOpen = true;
-      state.newEnvGroupParentId = action.payload;
+    openNewDimensionModal(state, action: PayloadAction<string>) {
+      state.newDimensionOpen = true;
     },
 
     /**
-     * Closes the new environment group modal.
+     * Closes the new dimension modal.
      *
      * @param state The UI state.
      */
-    closeNewEnvGroupModal(state) {
-      state.newEnvGroupOpen = false;
+    closeNewDimensionModal(state) {
+      state.newDimensionOpen = false;
     },
 
     /**
-     * Opens the new environment modal.
+     * Opens the new variant modal.
      *
      * @param state The UI state.
      */
-    openNewEnvModal(state, action: PayloadAction<string>) {
-      state.newEnvOpen = true;
-      state.newEnvParentId = action.payload;
+    openNewVariantModal(state, action: PayloadAction<string>) {
+      state.newVariantOpen = true;
+      state.newVariantParentId = action.payload;
     },
 
     /**
-     * Closes the new environment modal.
+     * Closes the new variant modal.
      *
      * @param state The UI state.
      */
-    closeNewEnvModal(state) {
-      state.newEnvOpen = false;
+    closeNewVariantModal(state) {
+      state.newVariantOpen = false;
     },
 
     /**

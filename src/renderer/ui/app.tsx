@@ -49,7 +49,7 @@ export function App() {
       if (project) {
         dispatch(workspaceSlice.actions.setWorkspace(workspace));
         dispatch(projectSlice.actions.setProject(project));
-        Env.combine(project, workspace?.selectedEnvs ?? {});
+        Env.combine(project, workspace?.selectedVariants ?? {});
       }
     }
     catch (error) {

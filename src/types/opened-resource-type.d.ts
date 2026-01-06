@@ -1,1 +1,1 @@
-export type OpenedResourceType = 'request' | 'env';
+export type OpenedResourceType = 'request' | 'variant';

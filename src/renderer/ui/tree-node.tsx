@@ -4,14 +4,20 @@ import {
   dropTargetForElements
 } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import {
-    attachInstruction,
-    extractInstruction,
-    Operation,
+  attachInstruction,
+  extractInstruction,
+  Operation,
 } from '@atlaskit/pragmatic-drag-and-drop-hitbox/list-item';
 import { DropIndicator as DropBox } from '@atlaskit/pragmatic-drag-and-drop-react-drop-indicator/border';
 import { DropIndicator as DropLine } from "@atlaskit/pragmatic-drag-and-drop-react-drop-indicator/box";
 import { Group, RenderTreeNodePayload, TreeNodeData } from "@mantine/core";
-import { IconBraces, IconBrackets, IconChevronRight, IconFolder, IconFolderOpen } from "@tabler/icons-react";
+import {
+  IconChevronRight,
+  IconFolder,
+  IconFolderOpen,
+  IconLayersSelected,
+  IconStack2
+} from "@tabler/icons-react";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "renderer/redux/store";
@@ -160,8 +166,8 @@ export default function TreeNode({payload}: {payload: RenderTreeNodePayload}) {
         }));
         break;
 
-      case 'env':
-        dispatch(workspaceSlice.actions.openEnv({
+      case 'variant':
+        dispatch(workspaceSlice.actions.openVariant({
           id: node.value
         }));
         break;
@@ -231,8 +237,8 @@ export default function TreeNode({payload}: {payload: RenderTreeNodePayload}) {
       >
         {node.nodeProps.type === 'folder' && <FolderIcon size={folderWidth} opacity={0.8}/>}
         {node.nodeProps.type === 'request' && getRequestIcon(node.value)}
-        {node.nodeProps.type === 'envGroup' && <IconBrackets size="1rem" opacity={0.8}/>}
-        {node.nodeProps.type === 'env' && <IconBraces size="1rem" opacity={0.8}/>}
+        {node.nodeProps.type === 'dimension' && <IconStack2 size="1rem" opacity={0.8}/>}
+        {node.nodeProps.type === 'variant' && <IconLayersSelected size="1rem" opacity={0.8}/>}
 
         <div style={{textWrap: 'nowrap', overflow: 'hidden'}}>{node.label}</div>
       </div>
