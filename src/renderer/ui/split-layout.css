@@ -12,9 +12,26 @@
 }
 
 .split-handle {
+  position: relative;
+  outline: none;
+  background-color: var(--mantine-color-gray-2);
+}
+
+/* The split handle hit area, which is wider than the handle visual */
+.split-handle::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+
+  /* Centers the handle hit area */
+  left: 50%;
+  transform: translateX(-50%);
+
+  /* The width of the handle hit area */
+  width: 6px;
+
   cursor: ew-resize;
-  /* width: 4px; */
-  background-color: var(--mantine-color-gray-0);
 }
 
 .split-handle-request {

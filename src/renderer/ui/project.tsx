@@ -26,7 +26,7 @@ export default function Project() {
   /**
    * Split pane widths.
    */
-  const [gridTemplateColumns, setGridTemplateColumns] = useState('300px 4px 1fr');
+  const [gridTemplateColumns, setGridTemplateColumns] = useState('300px 1px 1fr');
 
   return (
     <div
