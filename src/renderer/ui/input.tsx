@@ -68,12 +68,12 @@ export default function Input({label, descr, value, onChange} : InputProps): Rea
   /**
    * Timeout for mouse over delay.
    */
-  const mouseOverTimeoutRef = useRef<NodeJS.Timeout>();
+  const mouseOverTimeoutRef = useRef<NodeJS.Timeout>(null);
 
   /**
    * Timeout for mouse leave delay.
    */
-  const mouseLeaveTimeoutRef = useRef<NodeJS.Timeout>();
+  const mouseLeaveTimeoutRef = useRef<NodeJS.Timeout>(null);
 
   /**
    * The environment combine() operation count. When this updates, the variables needs to be

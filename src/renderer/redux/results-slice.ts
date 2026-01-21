@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
+import { castDraft } from 'immer';
 import { RequestResult } from 'types/request-result';
 
 interface ResultsState {
@@ -19,7 +20,7 @@ export const resultsSlice = createSlice({
      * @param action Contains the request id and the result of the request to be added.
      */
     setResult(state, action: PayloadAction<{id: string, result: RequestResult}>) {
-      state[action.payload.id] = action.payload.result;
+      state[action.payload.id] = castDraft(action.payload.result);
     },
 
     /**
