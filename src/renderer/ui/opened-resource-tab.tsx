@@ -17,7 +17,7 @@ import { workspaceSlice } from 'renderer/redux/workspace-slice';
 import { OpenedResource } from "types/opened-resource";
 import MethodIcon from "./method-icon";
 import resultEditorPath from "renderer/utils/result-editor-path";
-import { IconLayersSelected } from "@tabler/icons-react";
+import { IconCircleFilled, IconLayersSelected } from "@tabler/icons-react";
 import { RootState } from "renderer/redux/store";
 import { Project } from "types/project";
 
@@ -56,7 +56,9 @@ function TabLabel({project, openedResource}: {project: Project, openedResource: 
       break;
   }
 
-  return <div style={{overflow: 'hidden', textOverflow: 'ellipsis'}}>{label}</div>
+  return (
+    <div style={{overflow: 'hidden', textOverflow: 'ellipsis', lineHeight: '1.5em'}}>{label}</div>
+  )
 }
 
 /**
@@ -206,7 +208,7 @@ export default function OpenedResourceTab({index} : OpenedResourceTabProps) {
         </Group>
 
         <Group gap="sm">
-          {openedResource.dirty && <Text c={'gray'} opacity={0.4} size='xs'>●</Text>}
+          {openedResource.dirty && <IconCircleFilled size="0.75em" color="gray" opacity={0.4}/>}
 
           <CloseButton
             size="sm"
