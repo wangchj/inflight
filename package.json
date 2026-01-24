@@ -20,7 +20,6 @@
     "@aws-sdk/credential-providers": "^3.956.0",
     "@aws-sdk/types": "^3.696.0",
     "@electron-forge/cli": "^7.5.0",
-    "@electron-forge/maker-appx": "^7.10.2",
     "@electron-forge/maker-deb": "^7.5.0",
     "@electron-forge/maker-msix": "^7.11.1",
     "@electron-forge/maker-rpm": "^7.5.0",

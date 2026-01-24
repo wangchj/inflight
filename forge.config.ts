@@ -7,9 +7,13 @@ import { AutoUnpackNativesPlugin } from '@electron-forge/plugin-auto-unpack-nati
 import { WebpackPlugin } from '@electron-forge/plugin-webpack';
 import { FusesPlugin } from '@electron-forge/plugin-fuses';
 import { FuseV1Options, FuseVersion } from '@electron/fuses';
-
+import dotenv from 'dotenv';
 import { mainConfig } from './webpack.main.config';
 import { rendererConfig } from './webpack.renderer.config';
+
+dotenv.config();
+
+console.log('----------------', process.env.MSIX_PUBLISHER, process.env.MSIX_PACKAGE_IDENTITY);
 
 const config: ForgeConfig = {
   packagerConfig: {
@@ -26,17 +30,20 @@ const config: ForgeConfig = {
   },
   rebuildConfig: {},
   makers: [
-    new MakerSquirrel({}),
+    // new MakerSquirrel({}),
     new MakerZIP({}, ['darwin']),
     new MakerRpm({}),
     new MakerDeb({}),
     {
-      name: '@electron-forge/maker-appx',
+      name: '@electron-forge/maker-msix',
       config: {
-        publisher: process.env.PUBLISHER,
-        devCert: process.env.CERT_PATH,
-        certPass: process.env.CERT_PASSWORD,
-      }
+        sign: false,
+        manifestVariables: {
+          publisher: process.env.MSIX_PUBLISHER,
+          publisherDisplayName: process.env.MSIX_PUBLISHER_DISPLAY_NAME,
+          packageIdentity: process.env.MSIX_PACKAGE_IDENTITY,
+        },
+      },
     },
   ],
   plugins: [
