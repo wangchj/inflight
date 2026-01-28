@@ -35,3 +35,9 @@ This section describe the steps to create MacOS icon file from the base icon ima
    The `icon.icns` file will be produced in the current directory.
 
 4. Move `icon.icns` into `images/`.
+
+## Windows Icon
+
+1. Follow the steps in the MacOs Icon section to genereate `icon512.png`.
+2. Use https://www.icoconverter.com/ to create `icon.ico`.
+3. Save `icon.ico` in `images/`

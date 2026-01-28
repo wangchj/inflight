@@ -1,5 +1,4 @@
 import type { ForgeConfig } from '@electron-forge/shared-types';
-import { MakerSquirrel } from '@electron-forge/maker-squirrel';
 import { MakerZIP } from '@electron-forge/maker-zip';
 import { MakerDeb } from '@electron-forge/maker-deb';
 import { MakerRpm } from '@electron-forge/maker-rpm';
@@ -26,18 +25,9 @@ const config: ForgeConfig = {
   },
   rebuildConfig: {},
   makers: [
-    new MakerSquirrel({}),
-    new MakerZIP({}, ['darwin']),
+    new MakerZIP({}, ['darwin', 'win32']),
     new MakerRpm({}),
     new MakerDeb({}),
-    {
-      name: '@electron-forge/maker-appx',
-      config: {
-        publisher: process.env.PUBLISHER,
-        devCert: process.env.CERT_PATH,
-        certPass: process.env.CERT_PASSWORD,
-      }
-    },
   ],
   plugins: [
     new AutoUnpackNativesPlugin({}),
