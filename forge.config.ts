@@ -14,7 +14,7 @@ import { rendererConfig } from './webpack.renderer.config';
 const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
-    icon: 'icon',
+    icon: 'images/icon',
     osxSign: { // object must exist even if empty
       identity: process.env.APPLE_CERT_ID,
     },

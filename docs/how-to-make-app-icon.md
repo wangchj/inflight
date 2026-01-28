@@ -32,4 +32,6 @@ This section describe the steps to create MacOS icon file from the base icon ima
    iconutil -c icns icon.iconset
    ```
 
-The final `icon.icns` file will be produced in the current directory.
+   The `icon.icns` file will be produced in the current directory.
+
+4. Move `icon.icns` into `images/`.
