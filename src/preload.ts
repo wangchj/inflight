@@ -62,3 +62,7 @@ contextBridge.exposeInMainWorld('getFilePath',
     return path;
   }
 );
+
+contextBridge.exposeInMainWorld('MAC_BUILD', process.platform === 'darwin');
+
+contextBridge.exposeInMainWorld('WIN_BUILD', process.platform === 'win32');
