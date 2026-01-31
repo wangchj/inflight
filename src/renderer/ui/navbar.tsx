@@ -1,5 +1,5 @@
-import { ActionIcon, Text } from '@mantine/core';
-import { IconSend, IconStack2 } from "@tabler/icons-react";
+import { ActionIcon, Menu, Text } from '@mantine/core';
+import { IconMenu2, IconSend, IconStack2 } from "@tabler/icons-react";
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'renderer/redux/store';
 import { uiSlice } from 'renderer/redux/ui-slice';
@@ -73,7 +73,47 @@ export default function NavBar() {
             Dimensions
           </Text>
         </div>
+
+        {WIN_BUILD && <AppMenu/>}
+
       </div>
     </div>
+  )
+}
+
+function AppMenu() {
+  return (
+    <Menu shadow="md" width={200}>
+      <Menu.Target>
+        <ActionIcon variant='subtle' color='gray' size="xl"
+          // onClick={() => dispatch(uiSlice.actions.setSelectedNavItem('dimensions'))}
+        >
+          <IconMenu2/>
+        </ActionIcon>
+      </Menu.Target>
+
+      <Menu.Dropdown>
+        <Menu.Label>Application</Menu.Label>
+        <Menu.Item >
+          Settings
+        </Menu.Item>
+        <Menu.Item >
+          Messages
+        </Menu.Item>
+        <Menu.Item >
+          Gallery
+        </Menu.Item>
+        <Menu.Item
+          // leftSection={<IconSearch size={14} />}
+          rightSection={
+            <Text size="xs" c="dimmed">
+              ⌘K
+            </Text>
+          }
+        >
+          Search
+        </Menu.Item>
+      </Menu.Dropdown>
+    </Menu>
   )
 }
