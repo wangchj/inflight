@@ -21,6 +21,8 @@ module.exports = {
     ...pluginsUI,
     new DefinePlugin({
       WEB_BUILD: true,
+      MAC_BUILD: false,
+      WIN_BUILD: false,
     }),
     new HtmlWebpackPlugin({
       template: './src/index-web.html',

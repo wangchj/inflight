@@ -18,6 +18,10 @@ contextBridge.exposeInMainWorld('openProject',
   (path: string) => ipcRenderer.invoke('openProject', path)
 );
 
+contextBridge.exposeInMainWorld('closeProject',
+  () => ipcRenderer.invoke('closeProject')
+);
+
 contextBridge.exposeInMainWorld('saveProject',
   (path: string, project: Project) => ipcRenderer.invoke('saveProject', path, project)
 );

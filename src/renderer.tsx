@@ -35,7 +35,8 @@ import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { dispatch, store } from 'renderer/redux/store';
 import { App } from 'renderer/ui/app';
-import onSave from "renderer/utils/on-save";
+import onCloseProject from 'renderer/utils/on-close-project';
+import onSave from 'renderer/utils/on-save';
 import * as Persistence from 'renderer/utils/persistence';
 import { Project } from 'types/project';
 import { Request } from 'types/request';
@@ -59,6 +60,7 @@ declare global {
     openWorkspace: () => Promise<Workspace>;
     saveWorkspace: (workspace: Workspace) => Promise<void>;
     openProject: (path: string) => Promise<Project>;
+    closeProject: () => Promise<void>;
     saveProject: (path: string, project: Project) => Promise<void>;
     sendRequest: (request: Request) => Promise<RequestResult>;
     showOpenProjectDialog: () => Promise<string>;
@@ -138,15 +140,7 @@ window.onOpenProject(async filePath => {
  * Handles close project event from app menu.
  */
 window.onCloseProject(async () => {
-  const workspace = store.getState().workspace;
-  const project = store.getState().project;
-
-  if (!project || !workspace.projectPath) {
-    return;
-  }
-
-  dispatch(projectSlice.actions.closeProject());
-  dispatch(workspaceSlice.actions.closeProject());
+  onCloseProject();
 });
 
 window.onCloseTab(() => {

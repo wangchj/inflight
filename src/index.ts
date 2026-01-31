@@ -73,6 +73,7 @@ const createWindow = (): void => {
 app.on('ready', () => {
   ipcMain.handle('openWorkspace', openWorkspace);
   ipcMain.handle('openProject', (event, path) => openProject(event, path));
+  ipcMain.handle('closeProject', (event) => closeProject(event));
   ipcMain.handle('saveProject', (event, path, project) => saveProject(event, path, project));
   ipcMain.handle('sendRequest', (event, request) => sendRequest(event, request));
   ipcMain.handle('saveWorkspace', (event, workspace) => saveWorkspace(event, workspace));
@@ -98,13 +99,45 @@ app.on('activate', () => {
   }
 });
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and import them here.
+/**
+ * Updates the application menu.
+ */
+function updateMenu() {
+  /**
+   * The Electron default application menu.
+   */
+  const defaultMenu = Menu.getApplicationMenu();
 
-async function updateMenu() {
-  const oldMenu = Menu.getApplicationMenu();
-  const newMenu = new Menu();
-  const newFileMenu = new MenuItem({
+  /**
+   * The result menu.
+   */
+  const menu = new Menu();
+
+  for (const item of defaultMenu.items) {
+    switch (item.label) {
+      case 'File':
+        menu.append(makeFileMenu());;
+        break;
+
+      case 'Window':
+        menu.append(makeWindowMenu(item));
+        break;
+
+      default:
+        menu.append(item);
+    }
+  }
+
+  Menu.setApplicationMenu(menu);
+}
+
+/**
+ * Makes the "File" application menu.
+ *
+ * @returns The File menu.
+ */
+function makeFileMenu() {
+  return new MenuItem({
     label: 'File',
     role: 'fileMenu',
     submenu:[
@@ -131,17 +164,41 @@ async function updateMenu() {
       },
     ]
   });
+}
 
-  for (const item of oldMenu.items) {
-    if (item.label === 'File') {
-      newMenu.append(newFileMenu);
-    }
-    else {
-      newMenu.append(item);
-    }
+/**
+ * Makes the "Window" application menu from the default menu.
+ *
+ * This function removes the default Ctrl+W key binding on Windows platform because we override this
+ * binding.
+ *
+ * @param menuItem The Electron default "Window" menu.
+ * @return The Window menu item.
+ */
+function makeWindowMenu(menuItem: MenuItem) {
+  if (process.platform !== 'win32' || !Array.isArray(menuItem.submenu?.items)) {
+    return menuItem;
   }
 
-  Menu.setApplicationMenu(newMenu);
+  const template = menuItem.submenu.items
+    .filter(item => item.label !== 'Close' && item.role !== 'close')
+    .map(item => {
+      // We must return a plain object template for buildFromTemplate
+      return {
+        label: item.label,
+        role: item.role as any,
+        accelerator: item.accelerator,
+        click: (item as any).click,
+        submenu: item.submenu,
+        type: item.type
+      };
+    });
+
+  // Create a new MenuItem with the new filtered submenu
+  return new MenuItem({
+    label: menuItem.label,
+    submenu: Menu.buildFromTemplate(template)
+  });
 }
 
 /**
@@ -171,6 +228,16 @@ async function openProject(event: IpcMainInvokeEvent, path: string): Promise<Pro
   hasProject = true;
   updateMenu();
   return JSON.parse(str);
+}
+
+/**
+ * Marks has project to false, and updates application menu.
+ *
+ * @param event Electron invoke event.
+ */
+function closeProject(event: IpcMainInvokeEvent) {
+  hasProject = false;
+  updateMenu();
 }
 
 /**

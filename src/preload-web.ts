@@ -8,11 +8,6 @@ import { Project } from 'types/project';
 import { Workspace } from 'types/workspace';
 import { sendRequestWeb } from 'renderer/utils/send-request-web';
 
-/**
- * This is defined in webpack config files (DefinePlugin).
- */
-declare const WEB_BUILD: boolean;
-
 if (WEB_BUILD) {
 
 /**
@@ -59,6 +54,11 @@ window.openProject = async (path: string) => {
     console.warn('Fail to open project', error.message);
   }
 }
+
+/**
+ * Notifies the main process to close the project. This is not implemented for web build.
+ */
+window.closeProject = async() => {}
 
 /**
  * Saves the project to local storage.

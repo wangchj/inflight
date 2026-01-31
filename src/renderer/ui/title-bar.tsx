@@ -9,7 +9,10 @@ export default function TitleBar() {
         height: '2rem',
         flexGrow: 0,
         flexShrink: 0,
-        backgroundColor: 'var(--mantine-color-gray-1)'
+        backgroundColor: 'var(--mantine-color-gray-1)',
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
       }}
     />
   )
