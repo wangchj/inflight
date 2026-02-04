@@ -1,6 +1,11 @@
 # CHANGELOG.md
 
-## 2.0.0 (2025-01-06)
+## 2.1.0 (2026-02-03)
+
+-  Update navigation split view to improve visual appearance by removing extra margin around split divider.
+- Add Windows x64 and arm64 zip distributable packages.
+
+## 2.0.0 (2026-01-06)
 
 - Add inline AWS credential source.
 - Add AWS Signature V4 support for web build.
