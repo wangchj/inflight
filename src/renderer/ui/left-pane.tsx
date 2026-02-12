@@ -1,10 +1,14 @@
-import { Box } from '@mantine/core';
-import { useSelector } from 'react-redux';
+import { Menu } from '@mantine/core';
+import {
+  IconFolderPlus,
+  IconStack2,
+} from "@tabler/icons-react";
+import { MouseEvent, useState } from "react";
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'renderer/redux/store';
-import NodeMenu from './node-menu';
+import { NavItem, uiSlice } from 'renderer/redux/ui-slice';
 import DimensionTree from './dimension-tree';
 import ProjectTree from './project-tree';
-import { NavItem } from 'renderer/redux/ui-slice';
 
 /**
  * Gets the tree element to render.
@@ -15,10 +19,10 @@ import { NavItem } from 'renderer/redux/ui-slice';
 function getTree(selectedNavItem: NavItem) {
   switch (selectedNavItem) {
     case 'requests':
-      return <ProjectTree/>
+      return <ProjectTree />
 
     case 'dimensions':
-      return <DimensionTree/>
+      return <DimensionTree />
   }
 }
 
@@ -28,8 +32,46 @@ function getTree(selectedNavItem: NavItem) {
  * @param project The project model object.
  */
 export default function LeftPane() {
-  const project = useSelector((state: RootState) => state.project);
+  /**
+   * The ui-slice redux state.
+   */
   const ui = useSelector((state: RootState) => state.ui);
+
+  /**
+   * Determines if the context menu is open.
+   */
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  /**
+   * The menu position.
+   */
+  const [menuPos, setMenuPos] = useState({ x: 0, y: 0 });
+
+  /**
+   * Handles onContextMenu event.
+   *
+   * @param event The event object.
+   */
+  function onContextMenu(event: MouseEvent) {
+    setMenuPos({ x: event.clientX, y: event.clientY + 8 });
+    setMenuOpen(true);
+    event.stopPropagation();
+  }
+
+  /**
+   * Gets the context menu React element based on selected nav item.
+   *
+   * @returns The React element.
+   */
+  function getContextMenu() {
+    switch (ui.selectedNavItem) {
+      case 'requests':
+        return <RequestsContextMenu/>
+
+      case 'dimensions':
+        return <DimensionsContextMenu/>
+    }
+  }
 
   return (
     <div
@@ -39,40 +81,94 @@ export default function LeftPane() {
         flexDirection: 'column',
         overflow: 'hidden',
         gap: 'var(--mantine-spacing-xs)',
+        paddingBlockStart: '1em',
       }}
+      onContextMenu={onContextMenu}
     >
-      <div style={{
-        flex: '0 0 auto',
-        backgroundColor: 'var(--mantine-color-gray-0)',
-        paddingInline: '1em',
-        paddingBlock: '0.5em',
-        overflow: 'hidden',
-        position: 'relative',
-      }}>
-        <Box fz="sm">{project.name}</Box>
-        <NodeMenu
-          node={
-            project.folders && project.tree ? {
-              value: ui.selectedNavItem === 'requests' ? project.tree : '',
-              label: '',
-              nodeProps: {
-                type: ui.selectedNavItem === 'requests' ? 'folder' : 'variant',
-                root: true,
-              }
-            } : null
-          }
-          deletable={false}
-          hovered={true}
-          backgroundColor='var(--mantine-color-gray-0)'
-          top="0.6em"
-        />
-      </div>
-
       <div
-        style={{flex: 1, overflowX: 'hidden', overflowY: 'auto'}}
+        style={{ flex: 1, overflowX: 'hidden', overflowY: 'auto' }}
       >
         {getTree(ui.selectedNavItem)}
       </div>
+
+      <Menu
+        opened={menuOpen}
+        onChange={open => !open && setMenuOpen(open)}
+        shadow='sm'
+      >
+        <Menu.Target>
+          <div
+            style={{
+              position: 'fixed',
+              left: menuPos.x,
+              top: menuPos.y,
+              width: 0,
+              height: 0,
+            }}
+          />
+        </Menu.Target>
+        {getContextMenu()}
+      </Menu>
     </div>
+  )
+}
+
+/**
+ * Requests context menu React component.
+ */
+function RequestsContextMenu() {
+  const dispatch = useDispatch();
+  const project = useSelector((state: RootState) => state.project);
+
+  /**
+   * Handles new folder menu item click event.
+   */
+  function onNewFolderClick() {
+    dispatch(uiSlice.actions.openNewFolderModal(project.tree));
+  }
+
+  return (
+    <Menu.Dropdown>
+      <Menu.Item
+        leftSection={<IconFolderPlus size="1em"/>}
+        fz="xs"
+        onClick={(e: any) => {
+          e.stopPropagation();
+          onNewFolderClick();
+        }}
+      >
+        New Folder
+      </Menu.Item>
+    </Menu.Dropdown>
+  )
+}
+
+/**
+ * Dimensions context menu React component.
+ */
+function DimensionsContextMenu() {
+  const dispatch = useDispatch();
+
+  /**
+   * Handles new dimension menu item click event.
+   *
+   */
+  function onNewDimensionClick() {
+    dispatch(uiSlice.actions.openNewDimensionModal());
+  }
+
+  return (
+    <Menu.Dropdown>
+      <Menu.Item
+        leftSection={<IconStack2 size="1em"/>}
+        fz="xs"
+        onClick={(e: any) => {
+          e.stopPropagation();
+          onNewDimensionClick();
+        }}
+      >
+        New Dimension
+      </Menu.Item>
+    </Menu.Dropdown>
   )
 }

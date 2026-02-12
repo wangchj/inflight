@@ -1,7 +1,12 @@
+import { useSelector } from 'react-redux';
+import { RootState } from 'renderer/redux/store';
+
 /**
  * The app title bar UI component.
  */
 export default function TitleBar() {
+  const project = useSelector((state: RootState) => state.project);
+
   return (
     <div
       className="app-drag"
@@ -12,8 +17,9 @@ export default function TitleBar() {
         backgroundColor: 'var(--mantine-color-gray-1)',
         display: 'flex',
         flexDirection: 'row',
+        justifyContent: 'center',
         alignItems: 'center',
       }}
-    />
+    >{project.name}</div>
   )
 }
