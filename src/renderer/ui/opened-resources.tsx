@@ -108,17 +108,7 @@ export default function OpenedResources() {
           alignItems: 'center'
         }
       }>
-        <div
-          className="app-drag"
-          style={{
-          position: 'fixed',
-          width: '65%',
-          height: '80px',
-          top: 0,
-        }}/>
-
         <Button
-          className="no-app-drag"
           leftSection={<IconPlus/>}
           onClick={() => dispatch(workspaceSlice.actions.newRequest())}
         >
