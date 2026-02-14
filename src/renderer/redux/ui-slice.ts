@@ -27,7 +27,7 @@ interface UiState {
   newVariantParentId: string;
 
   renameModalOpen: boolean;
-  renameNode: TreeNodeData;
+  renameNode: TreeNodeData | 'project';
 
   /**
    * Variable tooltip target element id.
@@ -168,7 +168,7 @@ export const uiSlice = createSlice({
      *
      * @param state The UI state.
      */
-    openRenameModal(state, action: PayloadAction<TreeNodeData>) {
+    openRenameModal(state, action: PayloadAction<TreeNodeData | 'project'>) {
       state.renameModalOpen = true;
       state.renameNode = action.payload;
     },

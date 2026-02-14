@@ -11,11 +11,15 @@ import resourceName from "renderer/utils/resource-name";
 export function RenameModal() {
   const dispatch = useDispatch();
   const ui = useSelector((state: RootState) => state.ui);
+  const project = useSelector((state: RootState) => state.project);
   const node = ui.renameNode;
   const [name, setName] = useState<string>('');
 
   useEffect(() => {
-    if (node?.label) {
+    if (node === 'project') {
+      setName(project.name);
+    }
+    else if (node?.label) {
       setName(node?.label as string);
     }
   }, [ui.renameModalOpen]);
@@ -28,16 +32,21 @@ export function RenameModal() {
       return;
     }
 
-    dispatch(projectSlice.actions.renameResource({
-      id: node.value,
-      type: node.nodeProps?.type,
-      name
-    }));
+    if (node === 'project') {
+      dispatch(projectSlice.actions.renameProject(name));
+    }
+    else {
+      dispatch(projectSlice.actions.renameResource({
+        id: node.value,
+        type: node.nodeProps?.type,
+        name
+      }));
 
-    dispatch(workspaceSlice.actions.renameResource({
-      id: node.value,
-      name
-    }));
+      dispatch(workspaceSlice.actions.renameResource({
+        id: node.value,
+        name
+      }));
+    }
 
     try {
       await Persistence.saveProject();

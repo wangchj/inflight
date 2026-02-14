@@ -428,6 +428,16 @@ export const projectSlice = createSlice({
     },
 
     /**
+     * Renames the project.
+     *
+     * @param state The project model draft.
+     * @param action The payload is the new name.
+     */
+    renameProject(state, action: PayloadAction<string>) {
+      state.name = action.payload;
+    },
+
+    /**
      * Moves a request or folder node in the project tree.
      *
      * @param state The project object.
