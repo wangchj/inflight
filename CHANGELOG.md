@@ -1,5 +1,12 @@
 # CHANGELOG.md
 
+## 2.2.0 (2026-02-15)
+
+- Add context menu for project tree.
+- Add project info popover to the app title bar.
+- Allow project renaming.
+- Show name input model for duplicate resource user action.
+
 ## 2.1.0 (2026-02-03)
 
 -  Update navigation split view to improve visual appearance by removing extra margin around split divider.
