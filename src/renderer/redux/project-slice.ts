@@ -138,10 +138,13 @@ export const projectSlice = createSlice({
      * Duplicates a request.
      *
      * @param state The project object.
-     * @param action The the payload contains the id of the request and the id of its parent folder.
+     * @param action The the payload contains
+     *  - The id of the original request
+     *  - The id of the parent folder
+     *  - The name of the new request
      */
-    duplicateRequest(state, action: PayloadAction<{id: string, parentId: string}>) {
-      const {id, parentId} = action.payload;
+    duplicateRequest(state, action: PayloadAction<{id: string, parentId: string, name: string}>) {
+      const {id, parentId, name} = action.payload;
       const folder = state.folders?.[parentId];
       const request = state.requests?.[id];
 
@@ -150,7 +153,9 @@ export const projectSlice = createSlice({
       }
 
       const newId = nanoid();
-      state.requests[newId] = JSON.parse(JSON.stringify(request));
+      const duplicate = JSON.parse(JSON.stringify(request));
+      duplicate.name = name;
+      state.requests[newId] = duplicate;
       folder.requests.push(newId);
 
       Persistence.saveProjectDelay();
@@ -384,10 +389,13 @@ export const projectSlice = createSlice({
      * Duplicates a variant.
      *
      * @param state The project object.
-     * @param action The the payload contains the id of the variant and the id of its dimension.
+     * @param action The the payload contains
+     *  - The id of the original variant
+     *  - The id of the parent dimension
+     *  - The name of the new variant
      */
-    duplicateVariant(state, action: PayloadAction<{id: string, dimId: string}>) {
-      const {id, dimId} = action.payload;
+    duplicateVariant(state, action: PayloadAction<{id: string, dimId: string, name: string}>) {
+      const {id, dimId, name} = action.payload;
       const dim = state.dimensions?.[dimId];
       const variant = state.variants?.[id];
 
@@ -396,8 +404,9 @@ export const projectSlice = createSlice({
       }
 
       const newId = nanoid();
-
-      state.variants[newId] = JSON.parse(JSON.stringify(variant));
+      const duplicate = JSON.parse(JSON.stringify(variant));
+      duplicate.name = name;
+      state.variants[newId] = duplicate;
       dim.variants.push(newId);
 
       Persistence.saveProjectDelay();

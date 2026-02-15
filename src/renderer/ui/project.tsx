@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import Split from 'react-split-grid';
 import { RootState } from "renderer/redux/store";
+import { InputModal } from "./input-modal";
 import NavBar from './navbar';
 import LeftPane from "./left-pane";
 import OpenedResources from "./opened-resources";
@@ -75,6 +76,7 @@ export default function Project() {
         <NewVariantModal/>
         <RenameModal/>
         <VarTooltip/>
+        <InputModal/>
       </div>
 
       {

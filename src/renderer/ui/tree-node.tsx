@@ -35,7 +35,8 @@ import MethodIcon from "./method-icon";
 import validTreeMove from "renderer/utils/valid-tree-move";
 import { projectSlice } from "renderer/redux/project-slice";
 import { uiSlice } from "renderer/redux/ui-slice";
-
+import { openInputModal } from "./input-modal";
+import resourceName from "renderer/utils/resource-name";
 /**
  * Project tree node component.
  */
@@ -242,23 +243,37 @@ export default function TreeNode({ payload }: { payload: RenderTreeNodePayload }
    *
    * @param node The node on which duplicate is clicked.
    */
-  function onDuplicateClick(node: TreeNodeData) {
+  async function onDuplicateClick(node: TreeNodeData) {
     if (!node?.value || !node?.nodeProps?.type) {
       return;
     }
 
-    switch (node.nodeProps.type) {
+    const nodeType = node.nodeProps.type;
+
+    const name = await openInputModal({
+      title: `Duplicate ${resourceName(node)}`,
+      value: `${node.label} copy`,
+      confirmLabel: 'Duplicate'
+    });
+
+    if (!name) {
+      return;
+    }
+
+    switch (nodeType) {
       case 'request':
         dispatch(projectSlice.actions.duplicateRequest({
           id: node.value,
-          parentId: node.nodeProps.parentId
+          parentId: node.nodeProps.parentId,
+          name,
         }));
         break;
 
       case 'variant':
         dispatch(projectSlice.actions.duplicateVariant({
           id: node.value,
-          dimId: node.nodeProps.parentId
+          dimId: node.nodeProps.parentId,
+          name,
         }));
         break;
     }
