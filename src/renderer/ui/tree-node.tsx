@@ -224,6 +224,7 @@ export default function TreeNode({ payload }: { payload: RenderTreeNodePayload }
   function onContextMenu(event: MouseEvent) {
     setMenuPos({ x: event.clientX, y: event.clientY + 8 });
     setMenuOpen(true);
+    event.preventDefault();
     event.stopPropagation();
   }
 
