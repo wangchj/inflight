@@ -37,6 +37,7 @@ import { projectSlice } from "renderer/redux/project-slice";
 import { uiSlice } from "renderer/redux/ui-slice";
 import { openInputModal } from "./input-modal";
 import resourceName from "renderer/utils/resource-name";
+
 /**
  * Project tree node component.
  */
@@ -166,11 +167,35 @@ export default function TreeNode({ payload }: { payload: RenderTreeNodePayload }
           onDrop({ source, self }) {
             setDropOp(null);
 
-            dispatch(projectSlice.actions.moveTreeNode({
-              drag: source.data.node as TreeNodeData,
-              drop: self.data.node as TreeNodeData,
-              op: dropOp
-            }));
+            const sourceNode = source.data?.node as TreeNodeData;
+            const sourceType = sourceNode.nodeProps?.type;
+
+            switch (sourceType) {
+              case 'request':
+              case 'folder':
+                dispatch(projectSlice.actions.moveTreeNode({
+                  drag: source.data.node as TreeNodeData,
+                  drop: self.data.node as TreeNodeData,
+                  op: dropOp
+                }));
+                break;
+
+              case 'dimension':
+                dispatch(projectSlice.actions.moveDimensionNode({
+                  drag: source.data.node as TreeNodeData,
+                  drop: self.data.node as TreeNodeData,
+                  op: dropOp
+                }));
+                break;
+
+              case 'variant':
+                dispatch(projectSlice.actions.moveVariantNode({
+                  drag: source.data.node as TreeNodeData,
+                  drop: self.data.node as TreeNodeData,
+                  op: dropOp
+                }));
+                break;
+            }
           },
         }
       )

@@ -524,8 +524,73 @@ export const projectSlice = createSlice({
       }
 
       Persistence.saveProjectDelay();
-    }
-  },
+    },
+
+    /**
+     * Moves (reorder) a dimension node in the tree.
+     *
+     * @param state The project object.
+     * @param action The payload contains:
+     *   - `drag`: the node that is being dragged (moved).
+     *   - `drop`: the node on which the dragged node is dropped.
+     *   - `op`: the drop operation.
+     */
+    moveDimensionNode(state,
+      action: PayloadAction<{drag: TreeNodeData, drop: TreeNodeData, op: Operation}>)
+    {
+      const {drag, drop, op} = action.payload;
+
+      if (!validTreeMove(state, drag, drop)) {
+        return;
+      }
+
+      const dragIndex = state.dimOrder.indexOf(drag.value);
+      const dropIndex = state.dimOrder.indexOf(drop.value);
+
+      state.dimOrder.splice(dragIndex, 1);
+      state.dimOrder.splice(op === 'reorder-before' ? dropIndex : dropIndex + 1, 0, drag.value);
+
+      Persistence.saveProjectDelay();
+    },
+
+    /**
+     * Moves (reorder) a variant node in the tree.
+     *
+     * @param state The project object.
+     * @param action The payload contains:
+     *   - `drag`: the node that is being dragged (moved).
+     *   - `drop`: the node on which the dragged node is dropped.
+     *   - `op`: the drop operation.
+     */
+    moveVariantNode(state,
+      action: PayloadAction<{drag: TreeNodeData, drop: TreeNodeData, op: Operation}>)
+    {
+      const {drag, drop, op} = action.payload;
+
+      if (!validTreeMove(state, drag, drop)) {
+        return;
+      }
+
+      const parentId = drag.nodeProps.parentId;
+      const dimension = state.dimensions[parentId];
+
+      if (!dimension || !Array.isArray(dimension.variants)) {
+        return;
+      }
+
+      const dragIndex = dimension.variants.indexOf(drag.value);
+      const dropIndex = dimension.variants.indexOf(drop.value);
+
+      if (dragIndex < 0 || dropIndex < 0) {
+        return;
+      }
+
+      dimension.variants.splice(dragIndex, 1);
+      dimension.variants.splice(op === 'reorder-before' ? dropIndex : dropIndex + 1, 0, drag.value);
+
+      Persistence.saveProjectDelay();
+    },
+  }
 });
 
 export default projectSlice.reducer
