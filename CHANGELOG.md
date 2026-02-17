@@ -1,5 +1,10 @@
 # CHANGELOG.md
 
+## 2.2.0 (2026-02-17)
+
+- Allow reordering dimension and variant tree nodes by drag and drop.
+- Wrap overflowing project path in project popover.
+
 ## 2.2.0 (2026-02-15)
 
 - Add context menu for project tree.
