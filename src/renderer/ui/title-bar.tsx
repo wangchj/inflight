@@ -43,7 +43,7 @@ export default function TitleBar() {
       <Group gap="sm">
         <Text size="sm">{project.name}</Text>
         <Popover
-          width={350}
+          width={400}
           position="bottom"
           withArrow shadow="md"
           opened = {popped}
@@ -71,7 +71,7 @@ export default function TitleBar() {
 
               <Table.Tr>
                 <Table.Th>Path</Table.Th>
-                <Table.Td>
+                <Table.Td style={{overflowWrap: 'anywhere'}}>
                   <Code>{workspace.projectPath}</Code>
                 </Table.Td>
               </Table.Tr>
