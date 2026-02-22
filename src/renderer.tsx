@@ -45,6 +45,7 @@ import { RequestResult } from 'types/request-result';
 import * as Env from "renderer/utils/env";
 import { projectSlice } from 'renderer/redux/project-slice';
 import { workspaceSlice } from 'renderer/redux/workspace-slice';
+import 'renderer/ui/app.css';
 import './preload-web';
 
 self.MonacoEnvironment = {
@@ -80,12 +81,25 @@ declare global {
 }
 
 const theme = createTheme({
-  /** Put your mantine theme override here */
+  colors: {
+    dark: [
+      '#C9C9C9', // 0, default: #C9C9C9
+      '#b8b8b8', // 1, default: #b8b8b8
+      '#828282', // 2, default: #828282
+      '#696969', // 3, default: #696969
+      '#333333', // 4, default: #424242
+      '#2f2f2f', // 5, default: #3b3b3b
+      '#232323', // 6, default: #2e2e2e
+      '#1e1e1e', // 7, default: #242424
+      '#181818', // 8, default: #1f1f1f
+      '#141414', // 9, default: #141414
+    ]
+  }
 });
 
 createRoot(document.querySelector('#root')).render(
   <Provider store={store}>
-    <MantineProvider theme={theme}>
+    <MantineProvider theme={theme} defaultColorScheme="auto">
       <App/>
       <Notifications autoClose={false} position="bottom-left"/>
     </MantineProvider>

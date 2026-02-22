@@ -1,7 +1,7 @@
 .input-container {
   flex-grow: 1;
   flex-shrink: 1;
-  border: 1px solid #ccc;
+  border: 1px solid var(--mantine-color-default-border);
   border-radius: var(--mantine-radius-default);
   width: 100%;
   min-width: 0;
@@ -15,6 +15,10 @@
   scrollbar-width: none;
   font-family: var(--mantine-font-family);
   font-size: var(--mantine-font-size-sm);
+
+  @mixin dark {
+    background-color: var(--mantine-color-dark-6);
+  }
 }
 
 .input-container:focus-within {
@@ -35,23 +39,23 @@
 }
 
 .input-var {
-  background-color: var(--mantine-color-blue-1);
+  /* background-color: var(--mantine-color-blue-1); */
   padding: 0px 2px 2px 2px;
   border-radius: 2px;
 }
 
 .input-var-blue {
-  background-color: var(--mantine-color-blue-1);
+  background-color: color-mix(in srgb,var(--mantine-color-blue-6),transparent 70%);
 }
 
 .input-var-blue:hover {
-  background-color: var(--mantine-color-blue-2);
+  background-color: color-mix(in srgb,var(--mantine-color-blue-6),transparent 50%);
 }
 
 .input-var-red {
-  background-color: var(--mantine-color-red-2);
+  background-color: color-mix(in srgb,var(--mantine-color-red-8),transparent 75%);
 }
 
 .input-var-red:hover {
-  background-color: var(--mantine-color-red-3);
+  background-color: color-mix(in srgb,var(--mantine-color-red-8),transparent 55%);
 }

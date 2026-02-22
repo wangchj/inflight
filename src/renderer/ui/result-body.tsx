@@ -1,4 +1,4 @@
-import { Stack } from '@mantine/core';
+import { Stack, useComputedColorScheme } from '@mantine/core';
 import { RequestResult } from "types/request-result";
 import Monaco from "./monaco";
 import { memo, useEffect, useRef, useState } from 'react';
@@ -34,6 +34,7 @@ let updateTimer: ReturnType<typeof setTimeout>;
  * The result body UI component.
  */
 function ResultBody({id, requestResult, pretty}: ResultBodyProps) {
+  const colorScheme = useComputedColorScheme('dark');
   const editorRef = useRef(null);
   const contentType = requestResult.response.headers?.['content-type'];
   const response = requestResult.response;
@@ -107,6 +108,7 @@ function ResultBody({id, requestResult, pretty}: ResultBodyProps) {
             automaticLayout: true,
             wordWrap: 'on',
           }}
+          theme={colorScheme === 'light' ? 'light' : 'vs-dark'}
         />
       </div>
     </Stack>

@@ -14,7 +14,7 @@
 .split-handle {
   position: relative;
   outline: none;
-  background-color: var(--mantine-color-gray-2);
+  background-color: var(--mantine-color-disabled);
 }
 
 /* The split handle hit area, which is wider than the handle visual */
@@ -36,7 +36,7 @@
 
 .split-handle-request {
   cursor: ew-resize;
-  background-color: var(--mantine-color-gray-1);
+  background-color: var(--mantine-color-disabled);
   /* width: 4px; */
   height: 100%;
 }

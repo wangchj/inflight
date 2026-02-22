@@ -1,4 +1,4 @@
-import { Button, Menu } from "@mantine/core";
+import { Button, Menu, Select } from "@mantine/core";
 import { IconCheck } from "@tabler/icons-react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "renderer/redux/store";
@@ -121,7 +121,7 @@ export default function Footer() {
         flexDirection: 'row',
         alignItems: 'flex-end',
         justifyContent: 'flex-end',
-        backgroundColor: 'var(--mantine-color-gray-1)',
+        backgroundColor: 'var(--body-shade-2)',
         gap: '1em',
       }}
     >

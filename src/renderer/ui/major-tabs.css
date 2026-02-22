@@ -1,14 +1,14 @@
 .major-tabs-list {
-  background-color: var(--mantine-color-gray-0);
+  background-color: var(--body-shade-1);
 }
 
 .major-tabs-tab {
 
-  opacity: 75%;
+  /* opacity: 75%; */
 
   &[data-active] {
     opacity: 100%;
-    background-color: #fff;
+    background-color: var(--mantine-color-body);
     border-top-left-radius: 0.4rem;
     border-top-right-radius: 0.4rem;
   }

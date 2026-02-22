@@ -69,6 +69,7 @@ export default function RequestForm({openedResource} : {openedResource: OpenedRe
     <Stack
       h="100%"
       gap={0}
+      bg="var(--mantine-color-body)"
     >
       <div
         style={{
@@ -77,7 +78,7 @@ export default function RequestForm({openedResource} : {openedResource: OpenedRe
           alignItems: 'center',
           gap: 'var(--mantine-spacing-md)',
           padding: 'var(--mantine-spacing-md)',
-          borderBottom: '1px solid var(--mantine-color-gray-1)'
+          borderBottom: '1px solid var(--mantine-color-disabled)'
         }}
       >
         <div

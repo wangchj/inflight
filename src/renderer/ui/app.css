@@ -4,7 +4,22 @@ html {
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  /* font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; */
   height: 100%;
   margin: 0;
+}
+
+/* :root[data-mantine-color-scheme='dark'],
+:host[data-mantine-color-scheme='dark'] {
+  --mantine-color-body: #1e1e1e;
+} */
+
+:root[data-mantine-color-scheme='dark'] {
+  --body-shade-1: var(--mantine-color-dark-8);
+  --body-shade-2: var(--mantine-color-dark-9);
+}
+
+:root[data-mantine-color-scheme='light'] {
+  --body-shade-1: var(--mantine-color-gray-0);
+  --body-shade-2: var(--mantine-color-gray-1);
 }

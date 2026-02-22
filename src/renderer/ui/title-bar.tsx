@@ -33,7 +33,7 @@ export default function TitleBar() {
         height: '2rem',
         flexGrow: 0,
         flexShrink: 0,
-        backgroundColor: 'var(--mantine-color-gray-1)',
+        backgroundColor: 'var(--body-shade-2)',
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'center',

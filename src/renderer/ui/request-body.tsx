@@ -1,10 +1,11 @@
-import { Box, Select, Stack } from "@mantine/core";
+import { Box, Select, Stack, useComputedColorScheme } from "@mantine/core";
 import { useDispatch } from "react-redux";
 import { workspaceSlice } from "renderer/redux/workspace-slice";
 import Monaco from "./monaco";
 import { Request } from "types/request";
 
 export default function RequestBody({request}: {request: Request}) {
+  const colorScheme = useComputedColorScheme('dark')
   const dispatch = useDispatch();
 
   return (
@@ -29,6 +30,7 @@ export default function RequestBody({request}: {request: Request}) {
             automaticLayout: true,
             wordWrap: 'on',
           }}
+          theme={colorScheme === 'light' ? 'light' : 'vs-dark'}
         />
       </div>
     </Stack>

@@ -18,7 +18,7 @@ export default function NavBar() {
   return (
     <div
       style={{
-        backgroundColor: 'var(--mantine-color-gray-1)',
+        backgroundColor: 'var(--body-shade-2)',
         flexGrow: 0,
         flexShrink: 1,
         borderInlineEnd: '1p/x solid var(--mantine-color-default-border)',

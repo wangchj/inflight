@@ -1,4 +1,4 @@
-import { Menu } from '@mantine/core';
+import { darken, Menu } from '@mantine/core';
 import {
   IconFolderPlus,
   IconStack2,
@@ -76,7 +76,7 @@ export default function LeftPane() {
   return (
     <div
       style={{
-        backgroundColor: 'var(--mantine-color-gray-0)',
+        backgroundColor: 'var(--body-shade-1)',
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
