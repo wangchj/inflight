@@ -1,5 +1,9 @@
 # CHANGELOG.md
 
+## 2.4.0 (2026-02-22)
+
+- Add dark mode (follow system color scheme).
+
 ## 2.3.0 (2026-02-17)
 
 - Allow reordering dimension and variant tree nodes by drag and drop.
