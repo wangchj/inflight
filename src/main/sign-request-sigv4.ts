@@ -5,6 +5,7 @@ import { AwsSigv4Auth } from "types/auth";
 import { Request } from "types/request";
 import { RequestOptions } from "https";
 import { getAwsCredentials } from './get-aws-credentials';
+import { makeHeaders } from "./sigv4-headers";
 
 /**
  * Updates specified request options params with AWS Signature V4 signature.
@@ -23,7 +24,6 @@ export default async function signRequestSigv4(
   const auth = request.auth as AwsSigv4Auth;
   const url = new URL(request.url);
   const credentials = getAwsCredentials(auth);
-
   const signingParams: HttpRequest = {
     method: requestOptions.method,
     protocol: requestOptions.protocol,
@@ -33,11 +33,7 @@ export default async function signRequestSigv4(
     query: (url.searchParams && url.searchParams.size > 0) ?
       Object.fromEntries(url.searchParams.entries()) : undefined,
     fragment: url.hash ? url.hash : undefined,
-    headers: {
-      'Host': url.hostname,
-      // Date format: YYYYMMDD'T'HHMMSS'Z'
-      'x-amz-date': new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z',
-    },
+    headers: makeHeaders(requestOptions.headers as Record<string, string>, url),
     body: request.body ? request.body : undefined
   };
 

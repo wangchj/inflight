@@ -1,6 +1,7 @@
 import { AwsCredentialIdentity, HttpRequest, Provider } from "@aws-sdk/types";
 import { SignatureV4 } from "@smithy/signature-v4";
 import { Sha256 } from "@aws-crypto/sha256-browser";
+import { makeHeaders } from "main/sigv4-headers";
 import { Request } from "types/request";
 import { AwsSigv4Auth } from "types/auth";
 
@@ -45,12 +46,7 @@ export async function signRequestSigv4Web(
     query: (url.searchParams && url.searchParams.size > 0) ?
       Object.fromEntries(url.searchParams.entries()) : undefined,
     fragment: url.hash ? url.hash : undefined,
-    headers: {
-      'host': url.host,
-      // Date format: YYYYMMDD'T'HHMMSS'Z'
-      'x-amz-date': new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z',
-      ...requestInit.headers as Record<string, string>,
-    },
+    headers: makeHeaders(requestInit.headers as Record<string, string>, url),
     body: requestInit.body? requestInit.body : undefined,
   };
 

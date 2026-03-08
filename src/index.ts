@@ -269,13 +269,6 @@ async function sendRequest(event: IpcMainInvokeEvent, request: Request): Promise
   if (request.headers && request.headers.length > 0) {
     requestOptions.headers = {
       ...requestOptions.headers,
-      ...(request.headers ?
-        Object.fromEntries(
-          request.headers
-            .filter(header => header.enabled && !!header.key)
-            .map(header => [header.key, header.value])
-        ) : {}
-      ),
     }
   }
 

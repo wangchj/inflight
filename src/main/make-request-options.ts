@@ -16,5 +16,8 @@ export default function makeRequestOptions(request: Request): RequestOptions {
     hostname: url.hostname,
     port: url.port ? parseInt(url.port) : undefined,
     path: `${url.pathname}${url.search ?? ''}`,
+    headers: Array.isArray(request.headers) ? Object.fromEntries(request.headers
+      .filter(header => header.enabled && !!header.key)
+      .map(header => [header.key, header.value])) : {},
   };
 }
