@@ -19,7 +19,7 @@ set -x APPLE_TEAM_ID <team id>
 set -x APPLE_CERT_ID '<cert id>'
 
 # Make the distribution bundle
-npm run make
+npm run make -- --arch=x64,arm64
 ```
 
 ## Troubleshooting
