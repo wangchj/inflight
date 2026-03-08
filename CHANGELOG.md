@@ -1,5 +1,9 @@
 # CHANGELOG.md
 
+## 2.3.1 (2026-03-08)
+
+- Include all user defined headers in sigv4 signed headers but excluding headers that AWS designated as should not be signed. This addresses issue #15.
+
 ## 2.4.0 (2026-02-22)
 
 - Add dark mode (follow system color scheme).
