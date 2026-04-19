@@ -70,6 +70,10 @@ export default function RequestForm({openedResource} : {openedResource: OpenedRe
       h="100%"
       gap={0}
       bg="var(--mantine-color-body)"
+      style={{
+        flex: 1,
+        minHeight: 0,
+      }}
     >
       <div
         style={{

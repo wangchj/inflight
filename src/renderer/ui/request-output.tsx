@@ -35,6 +35,11 @@ export default function RequestOutput() {
     <Box
       pt="md"
       display="flex"
+      style={{
+        flex: 1,
+        height: '100%',
+        minHeight: 0
+      }}
     >
       <Tabs
         variant='unstyled'
@@ -48,6 +53,8 @@ export default function RequestOutput() {
           flex: 1,
           display: 'flex',
           flexDirection: 'column',
+          height: '100%',
+          minHeight: 0,
         }}
       >
         <Box
@@ -55,7 +62,7 @@ export default function RequestOutput() {
           style={{
             display: 'flex',
             flexDirection: 'row',
-            justifyContent: 'space-between'
+            justifyContent: 'space-between',
           }}
         >
           <Tabs.List
@@ -99,9 +106,22 @@ export default function RequestOutput() {
         <Tabs.Panel
           key={`${openedRequest.id}_result_headers`}
           value="headers"
-          style={{flexGrow: 1}}
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            flex: 1,
+            minHeight: 0,
+          }}
         >
-          <Box pt="md" px="md">
+          <Box
+            py="md"
+            px="md"
+            style={{
+              flex: '1',
+              minHeight: 0,
+              overflowY: 'auto'
+            }}
+          >
             <ResultHeaders requestResult={result}/>
           </Box>
         </Tabs.Panel>

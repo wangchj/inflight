@@ -61,7 +61,13 @@ export default function Project() {
             <div className='main-split-grid' {...getGridProps()}>
               <LeftPane/>
               <div className="split-handle" {...getGutterProps('column', 1)}/>
-              <div style={{minWidth: 0}}>
+              <div
+                style={{
+                  flex: 1,
+                  minWidth: 0,
+                  minHeight: 0,
+                }}
+              >
                 <OpenedResources/>
               </div>
             </div>

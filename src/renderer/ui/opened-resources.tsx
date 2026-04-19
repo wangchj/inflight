@@ -55,8 +55,9 @@ export default function OpenedResources() {
         style={{
           display: 'flex',
           flexDirection: 'column',
+          width: '100%',
           height: '100%',
-          width: '100%'
+          minHeight: 0,
         }}
       >
         <Tabs.List
@@ -89,8 +90,8 @@ export default function OpenedResources() {
             key={openedResource.id}
             value={openedResource.id}
             style={{
-              flexGrow: 1,
-              width: '100%'
+              flex: 1,
+              minHeight: 0,
             }}
           >
             <OpenedResourceContent openedResource={openedResource}/>
