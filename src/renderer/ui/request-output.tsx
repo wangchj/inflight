@@ -19,13 +19,20 @@ import RemoteInterface from './remote-interface';
 import Connection from './connection';
 
 export default function RequestOutput() {
-  const [selectedTab, setSelectedTab] = useState<string>('body');
   const workspace = useSelector((state: RootState) => state.workspace);
-  const openedRequest = workspace.openedResources[workspace.selectedResourceIndex];
-  const result = useSelector((state: RootState) => state.results)[openedRequest.id];
+  const openedRequest = (
+    workspace &&
+    workspace.openedResources &&
+    workspace.selectedResourceIndex !== undefined
+   ) ? workspace.openedResources[workspace.selectedResourceIndex] : undefined;
+  const result = openedRequest?.id ?
+    useSelector((state: RootState) => state.results)[openedRequest.id] : undefined;
+  const [selectedTab, setSelectedTab] = useState<string>(
+    openedRequest?.props?.request.method === 'HEAD' ? 'headers' : 'body'
+  );
   const [pretty, setPretty] = useState<boolean>(true);
 
-  if (!result) {
+  if (!openedRequest || !result) {
     return
   }
 
