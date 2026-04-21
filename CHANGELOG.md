@@ -1,5 +1,11 @@
 # CHANGELOG.md
 
+## 2.5.0 (2026-04-20)
+
+- Allow response header component to vertically scroll.
+- Default to show response headers when the request method is HEAD.
+- Show Monaco editor for empty response body to make the UI uniform.
+
 ## 2.3.1 (2026-03-08)
 
 - Include all user defined headers in sigv4 signed headers but excluding headers that AWS designated as should not be signed. This addresses issue #15.
