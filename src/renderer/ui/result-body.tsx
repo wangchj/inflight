@@ -90,10 +90,6 @@ function ResultBody({id, requestResult, pretty}: ResultBodyProps) {
     updateEditorContent(pretty);
   }, [response, pretty]);
 
-  if (!data) {
-    return <div>The response does not contain data.</div>
-  }
-
   return (
     <Stack style={{width: '100%', height: '100%'}}>
       <div style={{flexGrow: 1}}>
