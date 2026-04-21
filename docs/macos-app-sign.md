@@ -22,6 +22,12 @@ set -x APPLE_CERT_ID '<cert id>'
 npm run make -- --arch=x64,arm64
 ```
 
+Run the following to get the checksum of the packages:
+
+```
+find out -type f -name "*.zip" -exec shasum -a 256 {} \;
+```
+
 ## Troubleshooting
 
 - The binary is not signed with a valid Developer ID certificate.
