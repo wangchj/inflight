@@ -127,8 +127,9 @@ export const workspaceSlice = createSlice({
      * Adds a new request to open resources list.
      *
      * @param state The workspace object.
+     * @param action Optional request object.
      */
-    newRequest(state) {
+    newRequest(state, action?: PayloadAction<Request>) {
       if (!Array.isArray(state.openedResources)) {
         state.openedResources = [];
       }
@@ -137,10 +138,12 @@ export const workspaceSlice = createSlice({
         id: nanoid(),
         type: 'request',
         props: {
-          request: {
-            method: 'GET',
-            url: '',
-          }
+          request: typeof action?.payload === 'object' ?
+            JSON.parse(JSON.stringify(action.payload)) :
+            {
+              method: 'GET',
+              url: '',
+            }
         } as OpenedRequest,
         dirty: true
       });

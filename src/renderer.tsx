@@ -38,6 +38,7 @@ import { App } from 'renderer/ui/app';
 import onCloseProject from 'renderer/utils/on-close-project';
 import onSave from 'renderer/utils/on-save';
 import * as Persistence from 'renderer/utils/persistence';
+import { History } from 'types/history';
 import { Project } from 'types/project';
 import { Request } from 'types/request';
 import { Workspace } from 'types/workspace';
@@ -63,6 +64,8 @@ declare global {
     openProject: (path: string) => Promise<Project>;
     closeProject: () => Promise<void>;
     saveProject: (path: string, project: Project) => Promise<void>;
+    openHistory: () => Promise<History>;
+    saveHistory: (history: History) => Promise<void>;
     sendRequest: (request: Request) => Promise<RequestResult>;
     showOpenProjectDialog: () => Promise<string>;
     showNewProjectDialog: (name?: string) => Promise<string>;
@@ -76,6 +79,7 @@ declare global {
     printResults: () => void;
     printUi: () => void;
     printPersistence: () => void;
+    printHistory: () => void;
     getFilePath: (file: any) => string;
   }
 }

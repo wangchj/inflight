@@ -2,6 +2,7 @@
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 
 import { contextBridge, ipcRenderer, webUtils } from 'electron'
+import { History } from 'types/history';
 import { Project } from 'types/project';
 import { Request } from 'types/request';
 import { Workspace } from 'types/workspace';
@@ -28,6 +29,14 @@ contextBridge.exposeInMainWorld('saveProject',
 
 contextBridge.exposeInMainWorld('loadProject',
   () => ipcRenderer.invoke('loadProject')
+);
+
+contextBridge.exposeInMainWorld('openHistory',
+  () => ipcRenderer.invoke('openHistory')
+);
+
+contextBridge.exposeInMainWorld('saveHistory',
+  (history: History) => ipcRenderer.invoke('saveHistory', history)
 );
 
 contextBridge.exposeInMainWorld('sendRequest',

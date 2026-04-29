@@ -10,12 +10,14 @@ import * as Env from "renderer/utils/env";
 import * as Persistence from 'renderer/utils/persistence';
 import Project from './project';
 import NoProject from './no-project';
+import { historySlice } from 'renderer/redux/history-slice';
 
 window.printWorkspace = () => console.log(JSON.stringify(store.getState().workspace, null, 2));
 window.printProject = () => console.log(JSON.stringify(store.getState().project, null, 2));
 window.printResults = () => console.log(JSON.stringify(store.getState().results, null, 2));
 window.printUi = () => console.log(JSON.stringify(store.getState().ui, null, 2));
 window.printPersistence = () => console.log(JSON.stringify(Persistence, null, 2));
+window.printHistory = () => console.log(JSON.stringify(store.getState().history, null, 2));
 
 /**
  * The app root component.
@@ -45,10 +47,12 @@ export function App() {
     try {
       const workspace = await Persistence.openWorkspace();
       const project = await Persistence.openProject(workspace?.projectPath);
+      const history = await Persistence.openHistory();
 
       if (project) {
         dispatch(workspaceSlice.actions.setWorkspace(workspace));
         dispatch(projectSlice.actions.setProject(project));
+        dispatch(historySlice.actions.setHistory(history));
         Env.combine(project, workspace?.selectedVariants ?? {});
       }
     }

@@ -1,5 +1,5 @@
 import { ActionIcon, Menu, Text } from '@mantine/core';
-import { IconMenu2, IconSend, IconStack2 } from "@tabler/icons-react";
+import { IconHistory, IconMenu2, IconSend, IconStack2 } from "@tabler/icons-react";
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'renderer/redux/store';
 import { uiSlice } from 'renderer/redux/ui-slice';
@@ -77,6 +77,30 @@ export default function NavBar() {
             size="0.6em"
           >
             Dimensions
+          </Text>
+        </div>
+
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '0.5em'
+          }}
+        >
+          <ActionIcon
+            variant={selectedNavItem === 'history' ? 'filled' : 'subtle'}
+            color={selectedNavItem === 'history' ? 'blue' : 'gray'}
+            size="xl"
+            onClick={() => dispatch(uiSlice.actions.setSelectedNavItem('history'))}
+          >
+            <IconHistory/>
+          </ActionIcon>
+
+          <Text
+            size="0.6em"
+          >
+            History
           </Text>
         </div>
 

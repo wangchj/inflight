@@ -33,9 +33,11 @@ import { RootState } from "renderer/redux/store";
 import { workspaceSlice } from "renderer/redux/workspace-slice";
 import MethodIcon from "./method-icon";
 import validTreeMove from "renderer/utils/valid-tree-move";
+import { historySlice } from "renderer/redux/history-slice";
 import { projectSlice } from "renderer/redux/project-slice";
 import { uiSlice } from "renderer/redux/ui-slice";
 import { openInputModal } from "./input-modal";
+import * as Persistence from "renderer/utils/persistence";
 import resourceName from "renderer/utils/resource-name";
 
 /**
@@ -61,6 +63,11 @@ export default function TreeNode({ payload }: { payload: RenderTreeNodePayload }
    * The project model object.
    */
   const project = useSelector((state: RootState) => state.project);
+
+  /**
+   * The history model object.
+   */
+  const history = useSelector((state: RootState) => state.history);
 
   /**
    * Node payload.
@@ -120,6 +127,11 @@ export default function TreeNode({ payload }: { payload: RenderTreeNodePayload }
     const droppableElement = outerRef.current;
 
     if (!draggableElement || !droppableElement) {
+      return;
+    }
+
+    // History nodes don't support drag and drop.
+    if (node.nodeProps?.type === 'historyGroup' || node.nodeProps?.type === 'historyEntry') {
       return;
     }
 
@@ -208,7 +220,7 @@ export default function TreeNode({ payload }: { payload: RenderTreeNodePayload }
    * @param node The node that's selected.
    */
   function onSelect(node: TreeNodeData) {
-    switch (node.nodeProps.type) {
+    switch (node.nodeProps?.type) {
       case 'request':
         dispatch(workspaceSlice.actions.openRequest({
           id: node.value,
@@ -222,6 +234,10 @@ export default function TreeNode({ payload }: { payload: RenderTreeNodePayload }
           id: node.value
         }));
         break;
+
+      case 'historyEntry':
+        dispatch(workspaceSlice.actions.newRequest(history?.entries?.[node.value].request));
+        break;
     }
   }
 
@@ -232,11 +248,25 @@ export default function TreeNode({ payload }: { payload: RenderTreeNodePayload }
    * @returns React element.
    */
   function getRequestIcon(requestId: string) {
-    const request = project.requests[requestId];
+    const request = project.requests?.[requestId];
+
+    return getMethodIcon(request?.method);
+  }
+
+  /**
+   * Gets the request method icon.
+   *
+   * @param method The request method.
+   * @returns The React element.
+   */
+  function getMethodIcon(method?: string) {
+    if (!method) {
+      return;
+    }
 
     return (
       <div style={{ display: 'flex', width: '2em', minWidth: '2em', justifyContent: 'flex-end' }}>
-        <MethodIcon method={request?.method} />
+        <MethodIcon method={method} />
       </div>
     )
   }
@@ -259,7 +289,7 @@ export default function TreeNode({ payload }: { payload: RenderTreeNodePayload }
    * @param node The node on which it's clicked.
    */
   function onNewFolderClick(node: TreeNodeData) {
-    if (node.nodeProps.type === 'folder') {
+    if (node.nodeProps?.type === 'folder') {
       dispatch(uiSlice.actions.openNewFolderModal(node.value));
     }
   }
@@ -329,7 +359,19 @@ export default function TreeNode({ payload }: { payload: RenderTreeNodePayload }
    * @param node The node on which delete is clicked.
    */
   function onDeleteClick(node: TreeNodeData) {
-    dispatch(uiSlice.actions.openDeleteModal(node));
+    switch (node.nodeProps.type) {
+      case 'historyEntry':
+        dispatch(historySlice.actions.deleteEntry(node.value));
+        Persistence.saveHistory();
+
+      case 'historyGroup':
+        dispatch(historySlice.actions.deleteGroup(node.children?.map(child => child.value)));
+        Persistence.saveHistory();
+        break;
+
+      default:
+        dispatch(uiSlice.actions.openDeleteModal(node));
+    }
   }
 
   return (
@@ -354,20 +396,22 @@ export default function TreeNode({ payload }: { payload: RenderTreeNodePayload }
         }}
         onContextMenu={onContextMenu}
       >
-        <div
-          style={{
-            padding: 0,
-            width: '1rem',
-            height: '1rem',
-            flex: '0 0'
-          }}
-        >
-          <IconChevronRight
-            size={chevronWidth}
-            style={{ transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)' }}
-            visibility={hasChildren ? 'visible' : 'hidden'}
-          />
-        </div>
+        {node.nodeProps?.type !== 'historyEntry' && (
+          <div
+            style={{
+              padding: 0,
+              width: '1rem',
+              height: '1rem',
+              flex: '0 0'
+            }}
+          >
+            <IconChevronRight
+              size={chevronWidth}
+              style={{ transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)' }}
+              visibility={hasChildren ? 'visible' : 'hidden'}
+            />
+          </div>
+        )}
 
         <div
           ref={innerRef}
@@ -379,10 +423,11 @@ export default function TreeNode({ payload }: { payload: RenderTreeNodePayload }
             gap: '0.5em',
           }}
         >
-          {node.nodeProps.type === 'folder' && <FolderIcon size={folderWidth} opacity={0.8} />}
-          {node.nodeProps.type === 'request' && getRequestIcon(node.value)}
-          {node.nodeProps.type === 'dimension' && <IconStack2 size="1rem" opacity={0.8} />}
-          {node.nodeProps.type === 'variant' && <IconLayersSelected size="1rem" opacity={0.8} />}
+          {node.nodeProps?.type === 'folder' && <FolderIcon size={folderWidth} opacity={0.8} />}
+          {node.nodeProps?.type === 'request' && getRequestIcon(node.value)}
+          {node.nodeProps?.type === 'dimension' && <IconStack2 size="1rem" opacity={0.8} />}
+          {node.nodeProps?.type === 'variant' && <IconLayersSelected size="1rem" opacity={0.8} />}
+          {node.nodeProps?.type === 'historyEntry' && getMethodIcon(node.nodeProps?.method)}
 
           <div style={{ textWrap: 'nowrap' }}>{node.label}</div>
         </div>
@@ -452,16 +497,18 @@ export default function TreeNode({ payload }: { payload: RenderTreeNodePayload }
             </Menu.Item>
           )}
 
-          <Menu.Item
-            leftSection={<IconCursorText size="1em" />}
-            fz="xs"
-            onClick={(e: any) => {
-              e.stopPropagation();
-              onRenameClick(node);
-            }}
-          >
-            Rename
-          </Menu.Item>
+          {(node.nodeProps.type !== 'historyGroup' && node.nodeProps.type !== 'historyEntry') && (
+            <Menu.Item
+              leftSection={<IconCursorText size="1em" />}
+              fz="xs"
+              onClick={(e: any) => {
+                e.stopPropagation();
+                onRenameClick(node);
+              }}
+            >
+              Rename
+            </Menu.Item>
+          )}
 
           <Menu.Item
             color="red"

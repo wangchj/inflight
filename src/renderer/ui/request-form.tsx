@@ -18,6 +18,8 @@ import * as Env from "renderer/utils/env";
 import { SaveRequestModal } from "./save-request-modal";
 import { OpenedResource } from "types/opened-resource";
 import Input from "./input";
+import { historySlice } from "renderer/redux/history-slice";
+import { saveHistory } from 'renderer/utils/persistence';
 
 export default function RequestForm({openedResource} : {openedResource: OpenedResource}) {
   const [sending, setSending] = useState<boolean>(false);
@@ -48,8 +50,11 @@ export default function RequestForm({openedResource} : {openedResource: OpenedRe
     setSending(true);
 
     try {
-      const resp = await window.sendRequest(Env.resolve(request));
+      const resolved = Env.resolve(request);
+      const resp = await window.sendRequest(resolved);
       dispatch(resultsSlice.actions.setResult({id: openedResource.id, result: resp}));
+      dispatch(historySlice.actions.pushRequest(resolved));
+      saveHistory();
     }
     catch (error) {
       dispatch(resultsSlice.actions.deleteResult(openedResource.id));
