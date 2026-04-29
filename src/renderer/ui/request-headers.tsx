@@ -33,7 +33,7 @@ export default function RequestHeaders({ headers }: { headers: Header[] }) {
 
             {
               headers.map((header, index) => (
-                <div className="row" style={{ display: 'contents'}}>
+                <div key={index} className="row" style={{ display: 'contents'}}>
                   <div className="cell fixed">
                     <Checkbox
                       checked={header.enabled}

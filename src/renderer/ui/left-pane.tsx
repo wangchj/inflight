@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'renderer/redux/store';
 import { NavItem, uiSlice } from 'renderer/redux/ui-slice';
 import DimensionTree from './dimension-tree';
+import HistoryTree from './history';
 import ProjectTree from './project-tree';
 
 /**
@@ -23,6 +24,9 @@ function getTree(selectedNavItem: NavItem) {
 
     case 'dimensions':
       return <DimensionTree />
+
+    case 'history':
+      return <HistoryTree/>
   }
 }
 

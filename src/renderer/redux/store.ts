@@ -1,4 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
+import historySlice from './history-slice';
 import workspaceSlice from './workspace-slice';
 import projectSlice from './project-slice';
 import resultsSlice from './results-slice';
@@ -9,6 +10,7 @@ export const store = configureStore({
     workspace: workspaceSlice,
     project: projectSlice,
     results: resultsSlice,
+    history: historySlice,
     ui: uiSlice,
   },
 })

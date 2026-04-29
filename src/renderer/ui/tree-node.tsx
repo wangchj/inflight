@@ -123,6 +123,11 @@ export default function TreeNode({ payload }: { payload: RenderTreeNodePayload }
       return;
     }
 
+    // History nodes don't support drag and drop.
+    if (node.nodeProps?.type === 'historyGroup' || node.nodeProps?.type === 'historyEntry') {
+      return;
+    }
+
     return combine(
       draggable(
         {
@@ -208,7 +213,7 @@ export default function TreeNode({ payload }: { payload: RenderTreeNodePayload }
    * @param node The node that's selected.
    */
   function onSelect(node: TreeNodeData) {
-    switch (node.nodeProps.type) {
+    switch (node.nodeProps?.type) {
       case 'request':
         dispatch(workspaceSlice.actions.openRequest({
           id: node.value,
@@ -222,6 +227,10 @@ export default function TreeNode({ payload }: { payload: RenderTreeNodePayload }
           id: node.value
         }));
         break;
+
+      case 'historyEntry':
+        console.log('history entry selected');
+        break;
     }
   }
 
@@ -232,11 +241,25 @@ export default function TreeNode({ payload }: { payload: RenderTreeNodePayload }
    * @returns React element.
    */
   function getRequestIcon(requestId: string) {
-    const request = project.requests[requestId];
+    const request = project.requests?.[requestId];
+
+    return getMethodIcon(request?.method);
+  }
+
+  /**
+   * Gets the request method icon.
+   *
+   * @param method The request method.
+   * @returns The React element.
+   */
+  function getMethodIcon(method?: string) {
+    if (!method) {
+      return;
+    }
 
     return (
       <div style={{ display: 'flex', width: '2em', minWidth: '2em', justifyContent: 'flex-end' }}>
-        <MethodIcon method={request?.method} />
+        <MethodIcon method={method} />
       </div>
     )
   }
@@ -259,7 +282,7 @@ export default function TreeNode({ payload }: { payload: RenderTreeNodePayload }
    * @param node The node on which it's clicked.
    */
   function onNewFolderClick(node: TreeNodeData) {
-    if (node.nodeProps.type === 'folder') {
+    if (node.nodeProps?.type === 'folder') {
       dispatch(uiSlice.actions.openNewFolderModal(node.value));
     }
   }
@@ -354,20 +377,22 @@ export default function TreeNode({ payload }: { payload: RenderTreeNodePayload }
         }}
         onContextMenu={onContextMenu}
       >
-        <div
-          style={{
-            padding: 0,
-            width: '1rem',
-            height: '1rem',
-            flex: '0 0'
-          }}
-        >
-          <IconChevronRight
-            size={chevronWidth}
-            style={{ transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)' }}
-            visibility={hasChildren ? 'visible' : 'hidden'}
-          />
-        </div>
+        {node.nodeProps?.type !== 'historyEntry' && (
+          <div
+            style={{
+              padding: 0,
+              width: '1rem',
+              height: '1rem',
+              flex: '0 0'
+            }}
+          >
+            <IconChevronRight
+              size={chevronWidth}
+              style={{ transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)' }}
+              visibility={hasChildren ? 'visible' : 'hidden'}
+            />
+          </div>
+        )}
 
         <div
           ref={innerRef}
@@ -379,10 +404,11 @@ export default function TreeNode({ payload }: { payload: RenderTreeNodePayload }
             gap: '0.5em',
           }}
         >
-          {node.nodeProps.type === 'folder' && <FolderIcon size={folderWidth} opacity={0.8} />}
-          {node.nodeProps.type === 'request' && getRequestIcon(node.value)}
-          {node.nodeProps.type === 'dimension' && <IconStack2 size="1rem" opacity={0.8} />}
-          {node.nodeProps.type === 'variant' && <IconLayersSelected size="1rem" opacity={0.8} />}
+          {node.nodeProps?.type === 'folder' && <FolderIcon size={folderWidth} opacity={0.8} />}
+          {node.nodeProps?.type === 'request' && getRequestIcon(node.value)}
+          {node.nodeProps?.type === 'dimension' && <IconStack2 size="1rem" opacity={0.8} />}
+          {node.nodeProps?.type === 'variant' && <IconLayersSelected size="1rem" opacity={0.8} />}
+          {node.nodeProps?.type === 'historyEntry' && getMethodIcon(node.nodeProps?.method)}
 
           <div style={{ textWrap: 'nowrap' }}>{node.label}</div>
         </div>

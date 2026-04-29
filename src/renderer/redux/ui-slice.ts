@@ -2,7 +2,7 @@ import { TreeNodeData } from '@mantine/core';
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 
-export type NavItem = 'requests' | 'dimensions';
+export type NavItem = 'requests' | 'dimensions' | 'history';
 
 interface UiState {
   selectedNavItem: NavItem;
@@ -49,7 +49,7 @@ interface UiState {
 const initialState = {
   newFolderModalOpen: false,
   deleteModalOpen: false,
-  selectedNavItem: 'requests',
+  selectedNavItem: 'history',
   renameModalOpen: false,
   envCombineCount: 0,
 } as UiState;

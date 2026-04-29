@@ -1,6 +1,7 @@
 import { migrateProject } from "model/migrate-project";
 import { migrateWorkspace } from "model/migrate-workspace";
 import { store } from "renderer/redux/store";
+import { History } from "types/history";
 import { Project } from "types/project";
 import { Workspace } from "types/workspace";
 
@@ -101,4 +102,22 @@ export async function saveProject() {
 export function saveProjectDelay() {
   clearTimeout(saveWorkspaceTimeout);
   saveWorkspaceTimeout = window.setTimeout(() => saveProject(), 500);
+}
+
+/**
+ * Loads the history from disk.
+ *
+ * @return The history object or undefined.
+ */
+export async function openHistory(): Promise<History> {
+  let history = await window.openHistory();
+  return history;
+}
+
+/**
+ * Saves history to disk.
+ */
+export function saveHistory() {
+  const history = store.getState().history;
+  window.saveHistory(history);
 }
