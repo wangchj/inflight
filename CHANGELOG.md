@@ -1,5 +1,9 @@
 # CHANGELOG.md
 
+## 2.6.0 (2026-05-09)
+
+- Add request history.
+
 ## 2.5.0 (2026-04-20)
 
 - Allow response header component to vertically scroll.
