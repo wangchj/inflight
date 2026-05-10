@@ -7,6 +7,7 @@ import CProject from 'model/project';
 import { Project } from 'types/project';
 import { Workspace } from 'types/workspace';
 import { sendRequestWeb } from 'renderer/utils/send-request-web';
+import { History } from 'types/history';
 
 if (WEB_BUILD) {
 
@@ -68,6 +69,35 @@ window.closeProject = async() => {}
  */
 window.saveProject = async (path: string, project: Project): Promise<void> => {
   localStorage.setItem(`proj/${path}`, JSON.stringify(project));
+}
+
+/**
+ * Gets the history object from local storage.
+ *
+ * @returns The history object or undefined if history does not exist.
+ */
+window.openHistory = async (): Promise<History> => {
+  try {
+    const str = localStorage.getItem('history');
+    return str ? JSON.parse(str) : undefined;
+  }
+  catch (error) {
+    console.warn('Fail to open history', error.message);
+  }
+}
+
+/**
+ * Saves history model object to local storage.
+ *
+ * @param history The history object to save.
+ */
+window.saveHistory = async (history: History): Promise<void> => {
+  try {
+    localStorage.setItem('history', JSON.stringify(history));
+  }
+  catch (error) {
+    console.warn('Fail to save history:', error.message);
+  }
 }
 
 window.sendRequest = sendRequestWeb;
