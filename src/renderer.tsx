@@ -28,7 +28,7 @@
 
 import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
-import { createTheme, MantineProvider } from '@mantine/core';
+import { createTheme, Button, Input, MantineProvider, rem, Select } from '@mantine/core';
 import { notifications, Notifications } from '@mantine/notifications';
 import { loader } from '@monaco-editor/react';
 import { createRoot } from 'react-dom/client';
@@ -98,7 +98,83 @@ const theme = createTheme({
       '#181818', // 8, default: #1f1f1f
       '#141414', // 9, default: #141414
     ]
-  }
+  },
+  fontSizes: {
+    xs: rem(10),
+    sm: rem(12), // 12px default
+    md: rem(14),
+    lg: rem(16),
+    xl: rem(20),
+  },
+  // spacing: {
+  //   xs: rem(8),
+  //   sm: rem(10), // Tighter global padding rules
+  //   md: rem(12),
+  //   lg: rem(16),
+  //   xl: rem(24),
+  // },
+  lineHeights: {
+    xs: '1.1',
+    sm: '1.2',
+    md: '1.35',
+    lg: '1.45',
+    xl: '1.6',
+  },
+  components: {
+    // 1. Adjust Buttons globally
+    Button: Button.extend({
+      vars: (theme, props) => {
+        // If the user uses the default size (sm), override its dimensions
+        if (props.size === 'sm' || !props.size) {
+          return {
+            root: {
+              '--button-height': rem(30),      // Drop default height from 36px to 30px
+              '--button-padding-x': rem(12),   // Tighten horizontal padding
+            },
+          };
+        }
+        return { root: {} };
+      },
+    }),
+
+    // 2. Adjust Inputs globally (TextInput, Select, Textarea, NumberInput, etc.)
+    Input: Input.extend({
+      vars: (theme, props) => {
+        if (props.size === 'sm' || !props.size) {
+          return {
+            wrapper: {
+              '--input-height': rem(30),       // Drop default input height to 30px
+              '--input-padding-y': rem(4),     // Tighter vertical balance
+            },
+          };
+        }
+        return { wrapper: {} };
+      },
+    }),
+
+    Select: Select.extend({
+      styles: {
+        // 1. Target the actual input box
+        input: {
+          paddingLeft: rem(8),
+          // Note: We don't recommend manually overriding paddingRight
+          // too aggressively here, otherwise your text might overlap the chevron/clear icon.
+        },
+
+        // 2. Target the outer shell of the dropdown menu
+        dropdown: {
+          padding: rem(4), // Reduces the white space around the edge of the dropdown
+        },
+
+        // 3. Target the individual selectable items in the list
+        option: {
+          padding: `${rem(4)} ${rem(8)}`, // 4px top/bottom, 8px left/right
+          fontSize: rem(12),              // Ensure options match your dense font size
+          minHeight: rem(26),             // Override the default 36px min-height for items
+        },
+      },
+    }),
+  },
 });
 
 createRoot(document.querySelector('#root')).render(

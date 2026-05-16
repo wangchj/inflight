@@ -388,8 +388,8 @@ export default function TreeNode({ payload }: { payload: RenderTreeNodePayload }
         }}
         pl={pl}
         pr="sm"
-        pt="0.2rem"
-        pb="0.2rem"
+        pt="0.3rem"
+        pb="0.3rem"
         fz="sm"
         style={{
           alignItems: 'center',
