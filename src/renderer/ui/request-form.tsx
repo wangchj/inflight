@@ -110,6 +110,7 @@ export default function RequestForm({openedResource} : {openedResource: OpenedRe
                 workspaceSlice.actions.updateRequest({path: 'method', value})
               )
             }
+            size="xs"
           />
 
           <Input
@@ -121,9 +122,10 @@ export default function RequestForm({openedResource} : {openedResource: OpenedRe
 
         <Button
           onClick={onSendClick}
-          leftSection={sending ? <Loader size="xs" color="gray"/> : <IconSend size="1.4em"/>}
+          // leftSection={sending ? <Loader size="xs" color="gray"/> : <IconSend size="1.4em"/>}
           style={{flexGrow: 0, flexShrink: 0}}
           disabled={sending}
+          size="xs"
         >
           Send
         </Button>

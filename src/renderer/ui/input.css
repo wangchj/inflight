@@ -8,13 +8,13 @@
   max-width: 100%;
   white-space: nowrap;
   outline: none;
-  padding-inline: var(--mantine-spacing-sm);
-  padding-block: calc(var(--mantine-spacing-sm) / 2);
+  padding-inline: var(--mantine-spacing-xs);
+  padding-block: calc(var(--mantine-spacing-xs) / 2);
   overflow-x: hidden;
   overflow-y: hidden;
   scrollbar-width: none;
   font-family: var(--mantine-font-family);
-  font-size: var(--mantine-font-size-sm);
+  font-size: var(--mantine-font-size-xs);
 
   @mixin dark {
     background-color: var(--mantine-color-dark-6);

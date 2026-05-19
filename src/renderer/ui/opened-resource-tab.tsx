@@ -202,6 +202,7 @@ export default function OpenedResourceTab({index} : OpenedResourceTabProps) {
           style={{
             overflow: 'hidden'
           }}
+          fz="xs"
         >
           <TabIcon openedResource={openedResource}/>
           <TabLabel project={project} openedResource={openedResource}/>

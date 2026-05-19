@@ -28,6 +28,7 @@ export default function RequestAuth({ auth }: { auth: Auth }) {
             workspaceSlice.actions.setAuthType(value)
           )
         }
+        size="xs"
       />
 
       {
@@ -57,6 +58,7 @@ function AwsAuthSigv4Form({ auth }: { auth: AwsSigv4Auth }) {
             workspaceSlice.actions.setAwsCredsSource(value)
           )
         }
+        size="xs"
       />
 
       {auth.source === 'aws_cli_profile' && (

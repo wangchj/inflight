@@ -43,7 +43,7 @@ export default function NavBar() {
           <ActionIcon
             variant={selectedNavItem === 'requests' ? 'filled' : 'subtle'}
             color={selectedNavItem === 'requests' ? 'blue' : 'gray'}
-            size="xl"
+            size="lg"
             onClick={() => dispatch(uiSlice.actions.setSelectedNavItem('requests'))}
           >
             <IconSend/>
@@ -67,7 +67,7 @@ export default function NavBar() {
           <ActionIcon
             variant={selectedNavItem === 'dimensions' ? 'filled' : 'subtle'}
             color={selectedNavItem === 'dimensions' ? 'blue' : 'gray'}
-            size="xl"
+            size="lg"
             onClick={() => dispatch(uiSlice.actions.setSelectedNavItem('dimensions'))}
           >
             <IconStack2/>
@@ -91,7 +91,7 @@ export default function NavBar() {
           <ActionIcon
             variant={selectedNavItem === 'history' ? 'filled' : 'subtle'}
             color={selectedNavItem === 'history' ? 'blue' : 'gray'}
-            size="xl"
+            size="lg"
             onClick={() => dispatch(uiSlice.actions.setSelectedNavItem('history'))}
           >
             <IconHistory/>

@@ -6,7 +6,7 @@
 .minor-tabs-tab {
   padding-block: 0.6em;
   padding-inline: 0.4em;
-
+  font-size: var(--mantine-font-size-xs);
   &[data-active] {
     border-bottom: 1px solid var(--mantine-color-blue-filled);
   }

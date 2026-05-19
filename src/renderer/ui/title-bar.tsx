@@ -41,7 +41,7 @@ export default function TitleBar() {
       }}
     >
       <Group gap="sm">
-        <Text size="sm">{project.name}</Text>
+        <Text size="xs">{project.name}</Text>
         <Popover
           width={400}
           position="bottom"

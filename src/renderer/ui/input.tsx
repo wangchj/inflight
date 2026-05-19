@@ -387,11 +387,11 @@ export default function Input({label, descr, value, onChange} : InputProps): Rea
     <div style={{width: '100%', minWidth: '0px', maxWidth: '100%'}}>
 
       {label && (
-        <Text size="sm" fw={500} lh="md">{label}</Text>
+        <Text size="xs" fw={500} lh="sm">{label}</Text>
       )}
 
       {descr && (
-        <Text size="xs" c="dimmed" mb="calc(var(--mantine-spacing-xs)/2)">{descr}</Text>
+        <Text size="10px" c="dimmed" mb="calc(var(--mantine-spacing-xs)/2)">{descr}</Text>
       )}
 
       <div
