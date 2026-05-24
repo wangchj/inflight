@@ -7,37 +7,37 @@ export type NavItem = 'requests' | 'dimensions' | 'history';
 interface UiState {
   selectedNavItem: NavItem;
 
-  newProjectModalOpen: boolean;
+  newProjectModalOpen?: boolean;
 
   newFolderModalOpen: boolean;
-  newFolderParentId: string;
+  newFolderParentId?: string;
 
   deleteModalOpen: boolean;
-  nodeToDelete: TreeNodeData;
+  nodeToDelete?: TreeNodeData;
 
   /**
    * Determines if the new dimension modal is open.
    */
-  newDimensionOpen: boolean;
+  newDimensionOpen?: boolean;
 
   /**
    * Determines if the new variant modal is open.
    */
-  newVariantOpen: boolean;
-  newVariantParentId: string;
+  newVariantOpen?: boolean;
+  newVariantParentId?: string;
 
   renameModalOpen: boolean;
-  renameNode: TreeNodeData | 'project';
+  renameNode?: TreeNodeData | 'project';
 
   /**
    * Variable tooltip target element id.
    */
-  varTooltipTarget: string;
+  varTooltipTarget?: string;
 
   /**
    * Variable tooltip variable name.
    */
-  varTooltipName: string;
+  varTooltipName?: string;
 
   /**
    * Tracks the count of Env.combine() performed. This is used to trigger UI component re-render

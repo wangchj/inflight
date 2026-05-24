@@ -422,15 +422,24 @@ export default function TreeNode({ payload }: { payload: RenderTreeNodePayload }
             flexWrap: 'nowrap',
             alignItems: 'center',
             gap: '0.5em',
+            flex: 'auto',
+            minWidth: 0,
+            overflow: 'hidden',
           }}
         >
-          {node.nodeProps?.type === 'folder' && <FolderIcon size={folderWidth} opacity={0.8} />}
-          {node.nodeProps?.type === 'request' && getRequestIcon(node.value)}
-          {node.nodeProps?.type === 'dimension' && <IconStack2 size="1rem" opacity={0.8} />}
-          {node.nodeProps?.type === 'variant' && <IconLayersSelected size="1rem" opacity={0.8} />}
-          {node.nodeProps?.type === 'historyEntry' && getMethodIcon(node.nodeProps?.method)}
+          <div style={{flex: 'none'}}>
+            {node.nodeProps?.type === 'folder' && <FolderIcon size={folderWidth} opacity={0.8} />}
+            {node.nodeProps?.type === 'request' && getRequestIcon(node.value)}
+            {node.nodeProps?.type === 'dimension' && <IconStack2 size="1rem" opacity={0.8} />}
+            {node.nodeProps?.type === 'variant' && <IconLayersSelected size="1rem" opacity={0.8} />}
+            {node.nodeProps?.type === 'historyEntry' && getMethodIcon(node.nodeProps?.method)}
+          </div>
 
-          <div style={{ textWrap: 'nowrap' }}>{node.label}</div>
+          <div style={{
+            textWrap: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+          }}>{node.label}</div>
         </div>
 
         {dropOp && (dropOp === 'combine' ?
