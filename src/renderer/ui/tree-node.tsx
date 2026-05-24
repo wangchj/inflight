@@ -366,6 +366,7 @@ export default function TreeNode({ payload }: { payload: RenderTreeNodePayload }
 
       case 'historyGroup':
         dispatch(historySlice.actions.deleteGroup(node.children?.map(child => child.value)));
+        dispatch(uiSlice.actions.expandHistoryGroup(node.value));
         Persistence.saveHistory();
         break;
 

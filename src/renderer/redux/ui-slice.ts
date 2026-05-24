@@ -44,6 +44,11 @@ interface UiState {
    * when environments are updated.
    */
   envCombineCount: number;
+
+  /**
+   * Contains the label of History group tree nodes that are folded.
+   */
+  historyFoldedGroups: string[];
 }
 
 const initialState = {
@@ -52,6 +57,7 @@ const initialState = {
   selectedNavItem: 'requests',
   renameModalOpen: false,
   envCombineCount: 0,
+  historyFoldedGroups: [],
 } as UiState;
 
 export const uiSlice = createSlice({
@@ -212,6 +218,32 @@ export const uiSlice = createSlice({
     envCombined(state) {
       state.envCombineCount++;
     },
+
+    /**
+     * Expands a history group node.
+     *
+     * @param state The UI state.
+     * @param action The label of the history group.
+     */
+    expandHistoryGroup(state, action: PayloadAction<string>) {
+      const index = state.historyFoldedGroups.indexOf(action.payload);
+      if (index > -1) {
+        state.historyFoldedGroups.splice(index, 1);
+      }
+    },
+
+    /**
+     * Collapses a history group node.
+     *
+     * @param state The UI state.
+     * @param action The label of the history group.
+     */
+    foldHistoryGroup(state, action: PayloadAction<string>) {
+      const index = state.historyFoldedGroups.indexOf(action.payload);
+      if (index === -1) {
+        state.historyFoldedGroups.push(action.payload);
+      }
+    }
   },
 });
 
