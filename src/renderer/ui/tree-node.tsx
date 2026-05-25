@@ -20,8 +20,8 @@ import {
   IconChevronRight,
   IconCopy,
   IconCursorText,
-  IconFolder,
-  IconFolderOpen,
+  IconFolderFilled,
+  IconFolderOpenFilled,
   IconFolderPlus,
   IconLayersSelected,
   IconStack2,
@@ -102,7 +102,7 @@ export default function TreeNode({ payload }: { payload: RenderTreeNodePayload }
   /**
    * Folder icon (open or closed).
    */
-  const FolderIcon = expanded ? IconFolderOpen : IconFolder;
+  const FolderIcon = expanded ? IconFolderOpenFilled : IconFolderFilled;
 
   /**
    * Node ref. This is used for drag and drop purposes.
@@ -428,7 +428,7 @@ export default function TreeNode({ payload }: { payload: RenderTreeNodePayload }
           }}
         >
           <div style={{flex: 'none'}}>
-            {node.nodeProps?.type === 'folder' && <FolderIcon size={folderWidth} opacity={0.8} />}
+            {node.nodeProps?.type === 'folder' && <FolderIcon size={folderWidth} opacity={0.3} />}
             {node.nodeProps?.type === 'request' && getRequestIcon(node.value)}
             {node.nodeProps?.type === 'dimension' && <IconStack2 size="1rem" opacity={0.8} />}
             {node.nodeProps?.type === 'variant' && <IconLayersSelected size="1rem" opacity={0.8} />}
