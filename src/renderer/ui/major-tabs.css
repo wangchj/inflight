@@ -4,12 +4,29 @@
 
 .major-tabs-tab {
 
-  /* opacity: 75%; */
+  opacity: 0.6;
 
   &[data-active] {
-    opacity: 100%;
+    opacity: 1;
     background-color: var(--mantine-color-body);
     border-top-left-radius: 0.4rem;
     border-top-right-radius: 0.4rem;
+    font-weight: 500;
+  }
+
+  .mantine-CloseButton-root {
+    display: none;
+  }
+
+  &:hover {
+    opacity: 1;
+
+    .mantine-CloseButton-root {
+      display: flex;
+    }
+
+    .dot {
+      display: none;
+    }
   }
 }

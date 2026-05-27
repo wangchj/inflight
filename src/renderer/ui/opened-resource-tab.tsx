@@ -207,11 +207,23 @@ export default function OpenedResourceTab({index} : OpenedResourceTabProps) {
           <TabLabel project={project} openedResource={openedResource}/>
         </Group>
 
-        <Group gap="sm">
-          {openedResource.dirty && <IconCircleFilled size="0.75em" color="gray" opacity={0.4}/>}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '18px',
+            height: '18px',
+            flex: '0 0 auto',
+          }}
+        >
+          {openedResource.dirty &&
+            <IconCircleFilled className="dot" size="0.75em" color="gray" opacity={0.4}/>
+          }
 
           <CloseButton
             size="sm"
+            m={0}
             onClick={(event: MouseEvent) => {
               event.stopPropagation();
 
@@ -229,7 +241,7 @@ export default function OpenedResourceTab({index} : OpenedResourceTabProps) {
               dispatch(workspaceSlice.actions.closeResource(index));
             }}
           />
-        </Group>
+        </div>
       </Group>
       {dragEdge && <DropIndicator edge={dragEdge} gap="1px" type="terminal-no-bleed"/>}
     </Tabs.Tab>
