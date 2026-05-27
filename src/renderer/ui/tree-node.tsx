@@ -39,6 +39,7 @@ import { uiSlice } from "renderer/redux/ui-slice";
 import { openInputModal } from "./input-modal";
 import * as Persistence from "renderer/utils/persistence";
 import resourceName from "renderer/utils/resource-name";
+import './tree-node.css';
 
 /**
  * Project tree node component.
