@@ -1,5 +1,14 @@
 # CHANGELOG.md
 
+## 2.7.0 (2026-05-27)
+
+- Reduce overall app font size.
+- Track the expanded state of history group tree nodes.
+- Show ellipsis when tree node label overflow.
+- Update project tree folder icon to filled.
+- Add tree node label CSS style for hover highlight.
+- Update opened resource tabs CSS style to give feedback when hovered.
+
 ## 2.6.0 (2026-05-09)
 
 - Add request history.
