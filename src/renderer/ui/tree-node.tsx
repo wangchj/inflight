@@ -122,7 +122,15 @@ export default function TreeNode({ payload }: { payload: RenderTreeNodePayload }
    */
   const [dropOp, setDropOp] = useState<Operation>(null);
 
-  const [clipped, setClipped] = useState(false);
+  /**
+   * The label element ref.
+   */
+  const labelRef = useRef<HTMLDivElement>(null);
+
+  /**
+   * Determines the label text is clipped and tooltip should be enabled.
+   */
+  const [tooltipEnabled, setTooltipEnabled] = useState(false);
 
   /**
    * Support node drag and drop.
@@ -380,6 +388,19 @@ export default function TreeNode({ payload }: { payload: RenderTreeNodePayload }
     }
   }
 
+  /**
+   * Handles the event when the mouse enter the node. Checks if the label is clipped and the tooltip
+   * should be enabled.
+   */
+  function onMouseEnter() {
+    // The referenced DOM element.
+    const el = labelRef.current;
+
+    if (el) {
+      setTooltipEnabled(el.scrollWidth > el.clientWidth);
+    }
+  }
+
   return (
     <>
       <Group
@@ -419,41 +440,48 @@ export default function TreeNode({ payload }: { payload: RenderTreeNodePayload }
           </div>
         )}
 
-        <div
-          ref={innerRef}
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            flexWrap: 'nowrap',
-            alignItems: 'center',
-            gap: '0.5em',
-            flex: 'auto',
-            minWidth: 0,
-            overflow: 'hidden',
-          }}
+        <Tooltip
+          label={node.label}
+          openDelay={200}
+          position="right"
+          disabled={!tooltipEnabled}
         >
-          <div style={{flex: 'none'}}>
-            {node.nodeProps?.type === 'folder' && <FolderIcon size={folderWidth} opacity={0.3} />}
-            {node.nodeProps?.type === 'request' && getRequestIcon(node.value)}
-            {node.nodeProps?.type === 'dimension' && <IconStack2 size="1rem" opacity={0.8} />}
-            {node.nodeProps?.type === 'variant' && <IconLayersSelected size="1rem" opacity={0.8} />}
-            {node.nodeProps?.type === 'historyEntry' && getMethodIcon(node.nodeProps?.method)}
-          </div>
-
-          <Tooltip label={node.label} openDelay={500} disabled={!clipped}>
-            <div
-
-              style={{
-                textWrap: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-              }}
-              onMouseEnter={() => }
-            >
-              {node.label}
+          <div
+            ref={innerRef}
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              flexWrap: 'nowrap',
+              alignItems: 'center',
+              gap: '0.5em',
+              flex: 'auto',
+              minWidth: 0,
+              overflow: 'hidden',
+            }}
+            onMouseEnter={onMouseEnter}
+          >
+            <div style={{flex: 'none'}}>
+              {node.nodeProps?.type === 'folder' && <FolderIcon size={folderWidth} opacity={0.3} />}
+              {node.nodeProps?.type === 'request' && getRequestIcon(node.value)}
+              {node.nodeProps?.type === 'dimension' && <IconStack2 size="1rem" opacity={0.8} />}
+              {node.nodeProps?.type === 'variant' && <IconLayersSelected size="1rem" opacity={0.8} />}
+              {node.nodeProps?.type === 'historyEntry' && getMethodIcon(node.nodeProps?.method)}
             </div>
-          </Tooltip>
-        </div>
+
+
+              <div
+                ref={labelRef}
+                style={{
+                  textWrap: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                }}
+              >
+                {node.label}
+              </div>
+
+          </div>
+        </Tooltip>
 
         {dropOp && (dropOp === 'combine' ?
           <DropBox /> :
