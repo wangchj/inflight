@@ -193,7 +193,7 @@ export default function OpenedResourceTab({index} : OpenedResourceTabProps) {
       ref={ref}
       component="div"
     >
-      <Group gap="lg">
+      <Group gap="lg" wrap="nowrap">
 
         <Group
           gap="xs"

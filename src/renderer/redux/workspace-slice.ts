@@ -129,7 +129,7 @@ export const workspaceSlice = createSlice({
      * @param state The workspace object.
      * @param action Optional request object.
      */
-    newRequest(state, action?: PayloadAction<Request>) {
+    newRequest(state, action: PayloadAction<Request | void>) {
       if (!Array.isArray(state.openedResources)) {
         state.openedResources = [];
       }

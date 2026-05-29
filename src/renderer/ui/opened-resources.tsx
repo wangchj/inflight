@@ -1,5 +1,6 @@
 import { Button, Tabs } from '@mantine/core';
 import { IconPlus } from '@tabler/icons-react';
+import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from 'renderer/redux/store';
 import { workspaceSlice } from 'renderer/redux/workspace-slice';
@@ -39,6 +40,42 @@ export default function OpenedResources() {
   const workspace = useSelector((state: RootState) => state.workspace);
   const openedResources = workspace.openedResources;
   const selectedId = openedResources?.[workspace.selectedResourceIndex]?.id;
+  const tabsListRef = useRef<HTMLDivElement>(null);
+
+  /**
+   * Scrolls the tabs list to the active tab.
+   */
+  useEffect(() => {
+    scrollToActiveTab();
+  }, []);
+
+  /**
+   * Scrolls the tabs list element to the active tab.
+   */
+  function scrollToActiveTab() {
+    const listElement = tabsListRef.current;
+
+    if (listElement) {
+      const tabElement = listElement.querySelector<HTMLElement>('[data-active=true]');
+
+      if (tabElement) {
+        setTimeout(() => {
+          listElement.scrollTo({
+            left: tabElement.offsetLeft,
+            behavior: 'smooth',
+          })
+        }, 50)
+      }
+    }
+  }
+
+  /**
+   * Handles the New Request button click event.
+   */
+  function onAddClick() {
+    dispatch(workspaceSlice.actions.newRequest());
+    scrollToActiveTab();
+  }
 
   return openedResources?.length ?
     (
@@ -61,7 +98,13 @@ export default function OpenedResources() {
         }}
       >
         <Tabs.List
-          style={{flexGrow: 0, flexShrink: 1}}
+          ref={tabsListRef}
+          style={{
+            flexWrap: 'nowrap',
+            overflowX: 'auto',
+            overflowY: 'hidden',
+            scrollbarWidth: 'none', // Hide scrollbar in Firefox
+          }}
         >
           {
             openedResources.map((openedResource, index) => (
@@ -74,11 +117,20 @@ export default function OpenedResources() {
 
           {/* <Divider orientation="vertical" ml="md" mt="sm" mb="sm"/> */}
 
-          <div style={{display: 'flex', alignItems: 'center'}}>
+          <div
+            style={{
+              position: 'sticky',
+              right: 0,
+              display: 'flex',
+              alignItems: 'center',
+              backgroundColor: 'var(--body-shade-1)',
+              zIndex: 1,
+            }}
+          >
             <Button
               variant="transparent"
               color="dark"
-              onClick={() => dispatch(workspaceSlice.actions.newRequest())}
+              onClick={onAddClick}
             >
               <IconPlus size="18"/>
             </Button>
