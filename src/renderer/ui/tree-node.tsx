@@ -14,8 +14,10 @@ import {
   Group,
   Menu,
   RenderTreeNodePayload,
+  Tooltip,
   TreeNodeData
 } from "@mantine/core";
+import { useHover } from "@mantine/hooks";
 import {
   IconChevronRight,
   IconCopy,
@@ -119,6 +121,8 @@ export default function TreeNode({ payload }: { payload: RenderTreeNodePayload }
    * Drop target operation.
    */
   const [dropOp, setDropOp] = useState<Operation>(null);
+
+  const [clipped, setClipped] = useState(false);
 
   /**
    * Support node drag and drop.
@@ -436,11 +440,19 @@ export default function TreeNode({ payload }: { payload: RenderTreeNodePayload }
             {node.nodeProps?.type === 'historyEntry' && getMethodIcon(node.nodeProps?.method)}
           </div>
 
-          <div style={{
-            textWrap: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-          }}>{node.label}</div>
+          <Tooltip label={node.label} openDelay={500} disabled={!clipped}>
+            <div
+
+              style={{
+                textWrap: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              }}
+              onMouseEnter={() => }
+            >
+              {node.label}
+            </div>
+          </Tooltip>
         </div>
 
         {dropOp && (dropOp === 'combine' ?
