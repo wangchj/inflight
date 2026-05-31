@@ -129,7 +129,7 @@ export const workspaceSlice = createSlice({
      * @param state The workspace object.
      * @param action Optional request object.
      */
-    newRequest(state, action: PayloadAction<Request | void>) {
+    newRequest(state, action: PayloadAction<Request | undefined>) {
       if (!Array.isArray(state.openedResources)) {
         state.openedResources = [];
       }
@@ -159,7 +159,7 @@ export const workspaceSlice = createSlice({
      * @param state The workspace state.
      * @param action The action that contains the id of the resource to close.
      */
-    closeResource(state, action: PayloadAction<number | string>) {
+    closeResource(state, action: PayloadAction<number | string | undefined>) {
       const payload = action.payload;
       const index = payload === undefined ? state.selectedResourceIndex :
         typeof payload === 'number' ? payload :

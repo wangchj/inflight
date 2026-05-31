@@ -4,11 +4,43 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'renderer/redux/store';
 import { uiSlice } from 'renderer/redux/ui-slice';
+import { AppMenuBar } from './app-menu';
 
 /**
  * The app title bar UI component.
  */
 export default function TitleBar() {
+  return (
+    <div
+      className="app-drag"
+      style={{
+        height: '2rem',
+        flexGrow: 0,
+        flexShrink: 0,
+        backgroundColor: 'var(--body-shade-2)',
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+      }}
+    >
+      <div style={{flex: '1 1 0'}}>
+        {(WIN_BUILD || WEB_BUILD) && <AppMenuBar/>}
+      </div>
+
+      <div style={{flex: 'none'}}>
+        <Project/>
+      </div>
+
+      <div style={{flex: '1 1 0'}}/>
+    </div>
+  )
+}
+
+/**
+ * The project info section.
+ */
+function Project() {
   const project = useSelector((state: RootState) => state.project);
   const workspace = useSelector((state: RootState) => state.workspace);
   const dispatch = useDispatch();
@@ -27,58 +59,44 @@ export default function TitleBar() {
   }
 
   return (
-    <div
-      className="app-drag"
-      style={{
-        height: '2rem',
-        flexGrow: 0,
-        flexShrink: 0,
-        backgroundColor: 'var(--body-shade-2)',
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-    >
-      <Group gap="sm">
-        <Text size="sm">{project.name}</Text>
-        <Popover
-          width={400}
-          position="bottom"
-          withArrow shadow="md"
-          opened = {popped}
-          onChange={open => !open && setPopped(false)}
-        >
-          <Popover.Target>
-            <IconChevronDown
-              size="0.85em"
-              className="no-app-drag"
-              onClick={() => setPopped(!popped)}
-            />
-          </Popover.Target>
-          <Popover.Dropdown>
-            <Table withRowBorders={false}>
-              <Table.Tr>
-                <Table.Th>Name</Table.Th>
-                <Table.Td>{project.name}
-                  <Button
-                    variant="transparent"
-                    size="xs"
-                    onClick={onEditClick}
-                  >Edit</Button>
-                </Table.Td>
-              </Table.Tr>
+    <Group gap="sm" ta="center">
+      <Text size="sm">{project.name}</Text>
+      <Popover
+        width={400}
+        position="bottom"
+        withArrow shadow="md"
+        opened = {popped}
+        onChange={open => !open && setPopped(false)}
+      >
+        <Popover.Target>
+          <IconChevronDown
+            size="0.85em"
+            className="no-app-drag"
+            onClick={() => setPopped(!popped)}
+          />
+        </Popover.Target>
+        <Popover.Dropdown>
+          <Table withRowBorders={false}>
+            <Table.Tr>
+              <Table.Th>Name</Table.Th>
+              <Table.Td>{project.name}
+                <Button
+                  variant="transparent"
+                  size="xs"
+                  onClick={onEditClick}
+                >Edit</Button>
+              </Table.Td>
+            </Table.Tr>
 
-              <Table.Tr>
-                <Table.Th>Path</Table.Th>
-                <Table.Td style={{overflowWrap: 'anywhere'}}>
-                  <Code>{workspace.projectPath}</Code>
-                </Table.Td>
-              </Table.Tr>
-            </Table>
-          </Popover.Dropdown>
-        </Popover>
-      </Group>
-    </div>
+            <Table.Tr>
+              <Table.Th>Path</Table.Th>
+              <Table.Td style={{overflowWrap: 'anywhere'}}>
+                <Code>{workspace.projectPath}</Code>
+              </Table.Td>
+            </Table.Tr>
+          </Table>
+        </Popover.Dropdown>
+      </Popover>
+    </Group>
   )
 }

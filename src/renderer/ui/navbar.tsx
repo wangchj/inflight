@@ -1,11 +1,8 @@
-import { ActionIcon, Menu, Text } from '@mantine/core';
-import { IconHistory, IconMenu2, IconSend, IconStack2 } from "@tabler/icons-react";
+import { ActionIcon, Text } from '@mantine/core';
+import { IconHistory, IconSend, IconStack2 } from "@tabler/icons-react";
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'renderer/redux/store';
 import { uiSlice } from 'renderer/redux/ui-slice';
-import { workspaceSlice } from 'renderer/redux/workspace-slice';
-import onCloseProject from 'renderer/utils/on-close-project';
-import onSave from 'renderer/utils/on-save';
 
 /**
  * The app vertical navigation UI component.
@@ -103,58 +100,7 @@ export default function NavBar() {
             History
           </Text>
         </div>
-
-        {(WIN_BUILD || WEB_BUILD) && <AppMenu/>}
       </div>
     </div>
-  )
-}
-
-/**
- * Application menu UI component that is only used on Windows and Linux (platforms that do not have
- * application menu at the top of the screen.). This menu should contain the same items as the
- * application menu defined in `index.ts`.
- */
-function AppMenu() {
-  const dispatch = useDispatch();
-  return (
-    <Menu shadow="md" width={200}>
-      <Menu.Target>
-        <ActionIcon variant='subtle' color='gray' size="xl">
-          <IconMenu2/>
-        </ActionIcon>
-      </Menu.Target>
-
-      <Menu.Dropdown>
-        <Menu.Label>File</Menu.Label>
-        <Menu.Item
-          rightSection={
-            <Text size="xs" c="dimmed">
-              Ctrl+S
-            </Text>
-          }
-          onClick={() => onSave()}
-        >
-          Save
-        </Menu.Item>
-
-        <Menu.Item
-          rightSection={
-            <Text size="xs" c="dimmed">
-              Ctrl+W
-            </Text>
-          }
-          onClick={() => dispatch(workspaceSlice.actions.closeResource())}
-        >
-          Close Tab
-        </Menu.Item>
-
-        <Menu.Item
-          onClick={() => onCloseProject()}
-        >
-          Close Project
-        </Menu.Item>
-      </Menu.Dropdown>
-    </Menu>
   )
 }

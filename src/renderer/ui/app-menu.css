@@ -1,0 +1,26 @@
+.app-menu-bar {
+  padding-inline: 0.5rem;
+}
+
+.app-menu-bar .menu-trigger {
+  opacity: 0.75;
+  padding: 0.3em 0.8em;
+  border: none;
+  border-radius: 1em;
+}
+
+.app-menu-bar .menu-trigger:hover {
+  opacity: 1;
+}
+
+.app-menu-bar .menu-trigger[data-expanded="true"] {
+  opacity: 1;
+}
+
+:where([data-mantine-color-scheme='dark']) .app-menu-bar .menu-trigger[data-expanded="true"] {
+  background-color: var(--mantine-color-dark-5);
+}
+
+:where([data-mantine-color-scheme='light']) .app-menu-bar .menu-trigger[data-expanded="true"] {
+  background-color: var(--mantine-color-gray-1);
+}
