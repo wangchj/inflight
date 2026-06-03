@@ -29,4 +29,7 @@
       display: none;
     }
   }
+
+  /* Make sure the + new request button doesn't obstruct a tab when scrolled */
+  scroll-margin-right: 50px;
 }

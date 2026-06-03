@@ -47,7 +47,7 @@ export default function OpenedResources() {
    */
   useEffect(() => {
     scrollToActiveTab();
-  }, []);
+  }, [selectedId]);
 
   /**
    * Scrolls the tabs list element to the active tab.
@@ -59,22 +59,12 @@ export default function OpenedResources() {
       const tabElement = listElement.querySelector<HTMLElement>('[data-active=true]');
 
       if (tabElement) {
-        setTimeout(() => {
-          listElement.scrollTo({
-            left: tabElement.offsetLeft,
-            behavior: 'smooth',
-          })
-        }, 50)
+        tabElement.scrollIntoView({
+          behavior: 'smooth',
+          inline: 'nearest',
+        });
       }
     }
-  }
-
-  /**
-   * Handles the New Request button click event.
-   */
-  function onAddClick() {
-    dispatch(workspaceSlice.actions.newRequest());
-    scrollToActiveTab();
   }
 
   return openedResources?.length ?
@@ -115,8 +105,6 @@ export default function OpenedResources() {
             ))
           }
 
-          {/* <Divider orientation="vertical" ml="md" mt="sm" mb="sm"/> */}
-
           <div
             style={{
               position: 'sticky',
@@ -130,7 +118,7 @@ export default function OpenedResources() {
             <Button
               variant="transparent"
               color="dark"
-              onClick={onAddClick}
+              onClick={() => dispatch(workspaceSlice.actions.newRequest())}
             >
               <IconPlus size="18"/>
             </Button>
