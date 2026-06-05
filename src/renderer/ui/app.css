@@ -17,9 +17,17 @@ body {
 :root[data-mantine-color-scheme='dark'] {
   --body-shade-1: var(--mantine-color-dark-8);
   --body-shade-2: var(--mantine-color-dark-9);
+  --text-color: var(--mantine-color-dark-0);
+  --text-color-lighter-1: var(--mantine-color-dark-2);
+  --text-color-lighter-2: var(--mantine-color-dark-3);
+  --text-color-lighter-3: var(--mantine-color-dark-4);
 }
 
 :root[data-mantine-color-scheme='light'] {
   --body-shade-1: var(--mantine-color-gray-0);
   --body-shade-2: var(--mantine-color-gray-1);
+  --text-color: var(--mantine-color-gray-8);
+  --text-color-lighter-1: var(--mantine-color-gray-7);
+  --text-color-lighter-2: var(--mantine-color-gray-6);
+  --text-color-lighter-3: var(--mantine-color-gray-5);
 }

@@ -1,11 +1,12 @@
-import { ActionIcon, Text } from '@mantine/core';
-import { IconHistory, IconSend, IconStack2 } from "@tabler/icons-react";
+import { Tabs, Tooltip } from '@mantine/core';
+import { IconHistory, IconSend, IconStack2, type Icon } from "@tabler/icons-react";
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'renderer/redux/store';
-import { uiSlice } from 'renderer/redux/ui-slice';
+import { NavItem, uiSlice } from 'renderer/redux/ui-slice';
+import './navbar.css';
 
 /**
- * The app vertical navigation UI component.
+ * The NavBar UI component.
  */
 export default function NavBar() {
   const dispatch = useDispatch();
@@ -13,94 +14,42 @@ export default function NavBar() {
   const selectedNavItem = ui.selectedNavItem;
 
   return (
-    <div
-      style={{
-        backgroundColor: 'var(--body-shade-2)',
-        flexGrow: 0,
-        flexShrink: 1,
-        borderInlineEnd: '1p/x solid var(--mantine-color-default-border)',
-        padding: '0.6em'
+    <Tabs
+      defaultValue="gallery"
+      orientation="vertical"
+      placement="right"
+      classNames= {{
+        root: 'navbar',
+        list: 'navbar-list',
+        tab: 'navbar-tab',
       }}
+      value={selectedNavItem}
+      onChange={value => dispatch(uiSlice.actions.setSelectedNavItem(value as NavItem))}
     >
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap:"1.4em"
-        }}
-      >
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '0.5em'
-          }}
-        >
-          <ActionIcon
-            variant={selectedNavItem === 'requests' ? 'filled' : 'subtle'}
-            color={selectedNavItem === 'requests' ? 'blue' : 'gray'}
-            size="xl"
-            onClick={() => dispatch(uiSlice.actions.setSelectedNavItem('requests'))}
-          >
-            <IconSend/>
-          </ActionIcon>
+      <Tabs.List>
+        <Item Icon={IconSend} value="requests" label="Requests"/>
+        <Item Icon={IconStack2} value="dimensions" label="Dimensions"/>
+        <Item Icon={IconHistory} value="history" label="History"/>
+      </Tabs.List>
+    </Tabs>
+  )
+}
 
-          <Text
-            size="0.6em"
-          >
-            Requests
-          </Text>
+/**
+ * The navbar item UI component.
+ *
+ * @param Icon Icon component
+ * @param value The item identifier
+ * @param label The item label
+ */
+function Item({Icon, value, label}: {Icon: Icon, value: string, label: string}) {
+  return (
+    <Tooltip label={label} position="right" withArrow openDelay={300}>
+      <Tabs.Tab value={value}>
+        <div style={{padding: '3px 1px'}}>
+          <Icon size="1.2rem"/>
         </div>
-
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '0.5em'
-          }}
-        >
-          <ActionIcon
-            variant={selectedNavItem === 'dimensions' ? 'filled' : 'subtle'}
-            color={selectedNavItem === 'dimensions' ? 'blue' : 'gray'}
-            size="xl"
-            onClick={() => dispatch(uiSlice.actions.setSelectedNavItem('dimensions'))}
-          >
-            <IconStack2/>
-          </ActionIcon>
-
-          <Text
-            size="0.6em"
-          >
-            Dimensions
-          </Text>
-        </div>
-
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '0.5em'
-          }}
-        >
-          <ActionIcon
-            variant={selectedNavItem === 'history' ? 'filled' : 'subtle'}
-            color={selectedNavItem === 'history' ? 'blue' : 'gray'}
-            size="xl"
-            onClick={() => dispatch(uiSlice.actions.setSelectedNavItem('history'))}
-          >
-            <IconHistory/>
-          </ActionIcon>
-
-          <Text
-            size="0.6em"
-          >
-            History
-          </Text>
-        </div>
-      </div>
-    </div>
+      </Tabs.Tab>
+    </Tooltip>
   )
 }

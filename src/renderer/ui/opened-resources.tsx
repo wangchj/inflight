@@ -71,12 +71,10 @@ export default function OpenedResources() {
     (
       <Tabs
         variant="none"
-        classNames={
-          {
+        classNames={{
           'list': 'major-tabs-list',
           'tab': 'major-tabs-tab'
-        }
-        }
+        }}
         value={selectedId}
         onChange={id => dispatch(workspaceSlice.actions.setSelectedTab(id))}
         style={{

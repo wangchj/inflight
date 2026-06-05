@@ -70,7 +70,11 @@ export const uiSlice = createSlice({
      * @param state The UI state.
      * @param action The payload is the select item name.
      */
-    setSelectedNavItem(state, action: PayloadAction<NavItem>) {
+    setSelectedNavItem(state, action: PayloadAction<NavItem | null>) {
+      if (!action.payload) {
+        return;
+      }
+
       state.selectedNavItem = action.payload;
     },
 
