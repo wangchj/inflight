@@ -17,7 +17,6 @@ import {
   Tooltip,
   TreeNodeData
 } from "@mantine/core";
-import { useHover } from "@mantine/hooks";
 import {
   IconChevronRight,
   IconCopy,
@@ -461,7 +460,7 @@ export default function TreeNode({ payload }: { payload: RenderTreeNodePayload }
             onMouseEnter={onMouseEnter}
           >
             <div style={{flex: 'none'}}>
-              {node.nodeProps?.type === 'folder' && <FolderIcon size={folderWidth} opacity={0.3} />}
+              {node.nodeProps?.type === 'folder' && <FolderIcon size={folderWidth} opacity={0.4} />}
               {node.nodeProps?.type === 'request' && getRequestIcon(node.value)}
               {node.nodeProps?.type === 'dimension' && <IconStack2 size="1rem" opacity={0.8} />}
               {node.nodeProps?.type === 'variant' && <IconLayersSelected size="1rem" opacity={0.8} />}
@@ -471,6 +470,7 @@ export default function TreeNode({ payload }: { payload: RenderTreeNodePayload }
 
               <div
                 ref={labelRef}
+                className="label"
                 style={{
                   textWrap: 'nowrap',
                   overflow: 'hidden',

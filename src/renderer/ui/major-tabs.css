@@ -4,14 +4,11 @@
 
 .major-tabs-tab {
 
-  opacity: 0.6;
-
   &[data-active] {
     opacity: 1;
     background-color: var(--mantine-color-body);
     border-top-left-radius: 0.4rem;
     border-top-right-radius: 0.4rem;
-    font-weight: 500;
   }
 
   .mantine-CloseButton-root {
@@ -19,8 +16,6 @@
   }
 
   &:hover {
-    opacity: 1;
-
     .mantine-CloseButton-root {
       display: flex;
     }
@@ -32,4 +27,17 @@
 
   /* Make sure the + new request button doesn't obstruct a tab when scrolled */
   scroll-margin-right: 50px;
+}
+
+.major-tabs-tab .label {
+  font-weight: 500;
+  opacity: 0.65;
+}
+
+.major-tabs-tab:hover .label {
+  opacity: 1;
+}
+
+.major-tabs-tab[data-active] .label {
+  opacity: 1;
 }

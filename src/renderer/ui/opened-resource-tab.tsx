@@ -57,7 +57,10 @@ function TabLabel({project, openedResource}: {project: Project, openedResource: 
   }
 
   return (
-    <div style={{overflow: 'hidden', textOverflow: 'ellipsis', lineHeight: '1.5em'}}>{label}</div>
+    <div
+      className="label"
+      style={{overflow: 'hidden', textOverflow: 'ellipsis', lineHeight: '1.5em'}}
+    >{label}</div>
   )
 }
 

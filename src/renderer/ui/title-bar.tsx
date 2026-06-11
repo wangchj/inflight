@@ -60,7 +60,7 @@ function Project() {
 
   return (
     <Group gap="sm" ta="center">
-      <Text size="sm">{project.name}</Text>
+      <Text size="sm" fw={600}>{project.name}</Text>
       <Popover
         width={400}
         position="bottom"

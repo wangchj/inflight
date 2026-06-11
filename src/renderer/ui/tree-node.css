@@ -1,11 +1,12 @@
-.mantine-Tree-label {
-  opacity: 0.7;
+.mantine-Tree-label .label {
+  opacity: 0.75;
+  font-weight: 500;
 }
 
-.mantine-Tree-label:hover {
+.mantine-Tree-label:hover .label {
   opacity: 1;
 }
 
-.mantine-Tree-label[data-selected='true'] {
+.mantine-Tree-label[data-selected='true'] .label {
   opacity: 1;
 }

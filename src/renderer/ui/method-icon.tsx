@@ -28,7 +28,8 @@ function MethodIcon({method}: {method: string}) {
     <Box
       c={colorMap.get(method)}
       fz="0.7em"
-      fw="600"
+      fw="700"
+      opacity={0.8}
     >
       {method.length > 4 ? method.substring(0, 3) : method}
     </Box>
