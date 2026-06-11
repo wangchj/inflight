@@ -30,4 +30,5 @@ body {
   --text-color-lighter-1: var(--mantine-color-gray-7);
   --text-color-lighter-2: var(--mantine-color-gray-6);
   --text-color-lighter-3: var(--mantine-color-gray-5);
+  --mantine-color-text: var(--mantine-color-gray-9);
 }
