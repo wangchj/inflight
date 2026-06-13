@@ -1,5 +1,16 @@
 # CHANGELOG.md
 
+## 2.8.0 (2026-06-13)
+
+- Show tree node label in tooltip when the label is truncated (overflown).
+- Allow opened tabs list to horizontally scroll.
+- Move application menu (Windows, Linux, Web only) to titlebar.
+- Scroll active resource tab into view when selected tab id changes.
+- Implement compact navbar by using tooltip for labels.
+- Reduce text color contrast for light mode to match text color contrast for dark mode.
+- Update tree node and open resource tabs font weight and color.
+-  Update navbar hover and active color.
+
 ## 2.7.0 (2026-05-27)
 
 - Reduce overall app font size.
