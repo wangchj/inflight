@@ -1,20 +1,34 @@
+:root[data-mantine-color-scheme='dark'] {
+  --text-color: var(--mantine-color-dark-0);
+  --text-color-lighter-1: var(--mantine-color-dark-2);
+  --text-color-lighter-2: var(--mantine-color-dark-3);
+}
+
+:root[data-mantine-color-scheme='light'] {
+  --text-color: var(--mantine-color-gray-7);
+  --text-color-lighter-1: var(--mantine-color-gray-6);
+  --text-color-lighter-2: var(--mantine-color-gray-5);
+}
+
 .navbar {
   background-color: var(--body-shade-2);
   border: 0;
 }
 
 .navbar-list::before {
-  border: solid 0px green !important;
+  border-width: 0px;
 }
 
 .navbar-tab {
-  color: var(--text-color-lighter-2);
+  color: var(--text-color-lighter-1);
 }
 
 .navbar-tab:hover {
-  color: var(--text-color-lighter-1);
+  color: var(--text-color);
+  background-color: transparent;
 }
 
 .navbar-tab[data-active="true"] {
   color: var(--text-color);
+  background-color: var(--tab-hover-color);
 }
