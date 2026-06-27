@@ -1,10 +1,18 @@
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import path from 'path';
 import type { Configuration } from 'webpack';
 import { DefinePlugin } from 'webpack';
-import path from 'path';
+import { Configuration as DevServerConfiguration } from 'webpack-dev-server';
 import { rulesRenderer } from './webpack.rules';
 import { pluginsUI } from './webpack.plugins';
 
-export const rendererConfig: Configuration = {
+// Combine configuration type
+type Config =  Configuration & {
+  devServer?: DevServerConfiguration;
+};
+
+module.exports = {
+  entry: './src/renderer.tsx',
   module: {
     rules: rulesRenderer,
   },
@@ -12,6 +20,9 @@ export const rendererConfig: Configuration = {
     ...pluginsUI,
     new DefinePlugin({
       WEB_BUILD: false,
+    }),
+    new HtmlWebpackPlugin({
+      template: './src/index.html'
     }),
   ],
   resolve: {
@@ -21,4 +32,7 @@ export const rendererConfig: Configuration = {
     ],
     extensions: ['.js', '.ts', '.jsx', '.tsx', '.css'],
   },
-};
+  devServer: {
+    port: 3000,
+  },
+} as Config;
