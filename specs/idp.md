@@ -1,137 +1,281 @@
-# Inflight Directory-Based Project (IDP) Format (Proposal A)
+# Inflight Directory-Based Project Format (IDP)
 
 Version: 1.0
-Date: July 15, 2026
+Date: August 19, 2026
 
 ## Introduction
 
-This document describes Inflight Directory-Based Project (IDP) format, an Inflight Project organization scheme on disk. In IDP a project consists of a collection of directories and files. This format is an on-disk storage schema, which is distinct from how Inflight organize project model in memory.
+Inflight is a REST API client designed to help developers and testers create, organize, replay, and share HTTP request configurations. A central feature of Inflight is the **Project**, which stores reusable requests and request dimensions (such as environments and variable sets).
 
-Why do we have a separate project format for on-disk storage? The first version of Inflight did not have a separate storage format. The project file was just a JSON document that has the same structure as the in-memory project model. This approach actually made things very simple. When saving a project, all we really had to do was calling `JSON.stringify(project)` and passing in the in-memory project model. However, this format has the following limitations:
+The first version of Inflight stored an entire project as a single JSON document that mirrored the in-memory project model. While this approach was simple to implement, it had several limitations:
 
-- No progressive loading: Since all the resources inside the project (requests, dimensions) is inside a single JSOn file, we couldn't just load one single resource. Once the project is open, everything is loaded into the memory. This is un-scalable for large projects that contains large number of requests (and long payloads).
-- Hard to source control: Request payloads (body) had to be encoded into a JSON string to be in the JSON document. What this often means is that multiple lines in the request body are combined into a single line and line breaks are escaped as `\n`. This makes diffing between versions difficult.
+- **Memory inefficiency**: opening a project required loading all requests, dimensions, headers, authentication settings, and request bodies into memory at once. A project with a large number of requests or large request payloads could therefore have a large memory footprint.
+- **Difficult source control**: developers may want to version-control projects using Git. Storing multiple request payloads inside a single JSON document makes diffs difficult to review. In particular, JSON request bodies become strings inside another JSON document, causing line breaks to be escaped.
+- **Prone to project corruption**: saving a project required overwriting the entire project file. A failure during a save operation could therefore affect the entire project.
+- **Limited extensibility**: adding new resource types or large resource properties required expanding a centralized document.
 
-With these motivations, the rest of this document describes the format.
+To address these limitations, Inflight introduces the **Inflight Directory-Based Project Format (IDP)**.
 
-## Format
+In IDP, a project consists of a root directory containing a collection of directories and files. Requests and dimensions are represented as independent resources on disk, while related configuration is grouped into the resource it belongs to. Large or independently editable content, such as request bodies and Markdown documentation, may be stored as separate files.
 
-An Inflight multi-file project consists of a collection of directories and files on disk and has the following structure:
+IDP is a persistence format and is intentionally distinct from the in-memory project model. The in-memory representation may use a different structure optimized for application performance.
 
-```
+## Design Principles
+
+IDP is designed with the following principles:
+
+- **Human-readable**: users should be able to browse a project using a normal file manager or text editor.
+- **Git-friendly**: changes to one resource should affect only the files associated with that resource whenever practical.
+- **Incrementally loadable**: implementations should be able to load resource metadata without loading the entire contents of a project into memory.
+- **Self-describing**: the directory structure should make it possible to determine what each resource represents.
+- **Extensible**: new resource types and resource properties should be addable without requiring a centralized project database.
+- **Reasonable file granularity**: individual files should represent meaningful resources or independently editable content. Small properties of a resource should generally remain together rather than being split into separate files.
+
+## Project Structure
+
+An IDP project is a directory containing project metadata and resource directories.
+
+For example:
+
+```text
 my-api/
-├── dimensions/
-│   ├── my-dimension-1/
-│   │   ├── _index.json
-│   │   ├── README.md
-│   │   ├── variant-1.json
-│   │   └── variant-2.json
-│   ├── my-dimension-2/
-│   │   ├── _index.json
-│   │   ├── README.md
-│   │   ├── variant-1.json
-│   │   └── variant-2.json
-│   └── _index.json
+├── project.json
 ├── requests/
-│   ├── my-dir-1/
-│   │   ├── my-request-1/
-│   │   │   ├── _index.json
-│   │   │   ├── auth.json
-│   │   │   ├── body
-│   │   │   ├── headers.json
-│   │   │   └── README.md
-│   │   ├── my-request-2/
-│   │   │   ├── _index.json
-│   │   │   ├── auth.json
-│   │   │   ├── body
-│   │   │   ├── headers.json
-│   │   │   └── README.md
-│   │   └── _index.json
-│   ├── my-dir-2/
-│   │   └── _index.json
-│   └── _index.json
-└── project.json
+│   ├── folder.json
+│   ├── Users/
+│   │   ├── folder.json
+│   │   ├── Get User/
+│   │   │   ├── request.json
+│   │   │   ├── body
+│   │   │   └── README.md
+│   │   └── Create User/
+│   │       ├── request.json
+│   │       └── README.md
+│   └── Orders/
+│       ├── folder.json
+│       └── List Orders/
+│           ├── request.json
+│           └── README.md
+└── dimensions/
+    ├── Environment/
+    │   ├── dimension.json
+    │   └── README.md
+    └── Region/
+        ├── dimension.json
+        └── README.md
 ```
 
-The following are the components:
+The root directory name is user-defined and has no functional significance.
 
-- The root of the project is a directory (name `my-api` above). The name of the this directory is defined by the user and does not affect the functionality of the application.
-- `project.json`: this file contains information about the project, such as the name of the project. This file is required for a project.
-- `dimensions` directory: this directory contains user defined dimensions.
-  - Each directory inside this directory is a dimension, which contain variants.
-  - The name of a dimension file is defined by the user. The same name is showed in the app.
-- `requests` directory: this directory contains requests defined by the user.
-  - This directory contains arbitrary user defined number of directories (e.g., `my-dir-1`, and `my-dir-2`) and the directory structure can be arbitrarily deep. The same structure is showed as the project structure in the app.
-- The request directory: each request is a directory. The name of the request directory is defined by the user and can be arbitrary. The request directory has the following:
-  - `_index.json`: this file contains the metadata of a request, such as request method and URL. This file is required.
-  - `README.md`: a markdown document describing the request.
-  - `headers.json`: holds request headers.
-  - `auth.json`: contains request authentication settings.
-  - `body`: holds the content of the request body (payload).
+The project root must contain `project.json`.
+
+The `requests` directory contains the request hierarchy. A directory containing `folder.json` represents a request folder. A directory containing `request.json` represents a request. If a directory contains neither `folder.json` nor `request.json`, it is considered a request folder.
+
+The `dimensions` directory contains dimensions. Each dimension is represented by a directory containing `dimension.json`.
+
+---
 
 ## `project.json`
 
-Every project has a `project.json`, which has the following format described in TypeScript definition:
+Every project must contain a `project.json` file.
 
-```TypeScript
-interface Project {
+The file contains project-level metadata.
+
+```typescript
+interface ProjectFile {
   /**
-   * The project format. This should be 'IDP' followed by '-' and the spec version. Currently, the
-   * only available version is 1.0.
+   * The project storage format identifier.
    */
   spec: 'IDP-1.0';
 
   /**
-   * The project name.
+   * Human-readable project name.
    */
   name: string;
 }
 ```
 
-## Request
+Example:
 
-This section describes how a request inside a project is organized. A request contains saved reusable request settings; so the user can easily replay the same or slight different requests in the future. In IDP, a request consists of a single directory and multiple file, each contains different settings of the request. In the previous Format section already lists the files within a request directory. This section specify the format of each file.
+```json
+{
+  "spec": "IDP-1.0",
+  "name": "My API"
+}
+```
 
-### `README.md`
+`project.json` should contain only project-level metadata. It should not contain indexes of requests, folders, or dimensions.
 
-The `README.md` is just a plain markdown file.
+---
 
-### `_index.json`
+# Requests
 
-Each request has a `_index.json`. This file services are the root of the request and contains the metadata of the request. Note that we aim to keep this file small because the application needs to read this file for every request in the project to construct the request tree. Any additional files are referenced in this file, but currently, all files in the directory are implied and not specified in the file.
+The `requests` directory contains the requests in the project.
 
-The following describe the format:
+Requests may be organized into an arbitrary hierarchy of folders. The directory structure is reflected in the Inflight project tree.
 
-```TypeScript
-interface RequestIndex {
+For example:
+
+```text
+requests/
+├── Users/
+│   ├── Get User/
+│   └── Create User/
+└── Orders/
+    └── List Orders/
+```
+
+A directory is considered a request folder if it contains `folder.json` or if it contains neither `folder.json` nor `request.json`.
+
+A directory is considered a request if it contains `request.json`.
+
+A directory should not contain both `folder.json` and `request.json`.
+
+---
+
+## Request Folder
+
+A request folder may contain a `folder.json` file.
+
+Example:
+
+```text
+Users/
+├── folder.json
+├── Get User/
+└── Create User/
+```
+
+### `folder.json`
+
+```typescript
+interface FolderFile {
   /**
-   * A global unique string that identifies this resource.
+   * A globally unique identifier for the folder.
+   */
+  id: string;
+}
+```
+
+The `id` is the only metadata currently stored for a folder.
+
+Child folders and requests are displayed in alphabetical order according to their filesystem names. No explicit ordering information is stored in the project format.
+
+The root `requests` directory is also a request folder and may contain a `folder.json`.
+
+---
+
+# Request
+
+A request is represented by a directory containing `request.json`.
+
+Example:
+
+```text
+Get User/
+├── request.json
+└── README.md
+```
+
+The request directory may contain the following files:
+
+| File | Required | Description |
+|---|---|---|
+| `request.json` | Yes | Request metadata and configuration |
+| `README.md` | No | Markdown documentation |
+
+Additional files may be present in the request directory. Payload files referenced by parts are not required to have a particular filename or location.
+
+---
+
+## `request.json`
+
+`request.json` contains the request metadata and configuration.
+
+The file intentionally contains both the request's basic metadata and its relatively small configuration properties, such as headers and authentication. These properties are kept together because they are all part of the request and are typically small.
+
+```typescript
+interface RequestFile {
+  /**
+   * A globally unique identifier for the request.
    */
   id: string;
 
   /**
-   * The request method, e.g., GET, POST.
+   * Human-readable request name.
+   */
+  name: string;
+
+  /**
+   * HTTP request method, such as GET or POST.
    */
   method: string;
 
   /**
-   * The request URL.
+   * Request URL.
    */
   url: string;
+
+  /**
+   * HTTP request headers.
+   */
+  headers?: Header[];
+
+  /**
+   * Request authentication configuration.
+   */
+  auth?: Auth;
+
+  /**
+   * Request payload parts.
+   *
+   * Required when the request has a request body.
+   * A request with a body always has at least one part.
+   */
+  parts?: Part[];
 }
 ```
 
-### `auth.json`
+### Headers
 
-The `auth.json` contains the authentications settings of the request. This has the same structure as the current project format:
+```typescript
+interface Header {
+  key: string;
+  value: string;
+  enabled: boolean;
+}
+```
 
-```TypeScript
+Example:
+
+```json
+{
+  "id": "req_get_user",
+  "name": "Get User",
+  "method": "GET",
+  "url": "{{baseUrl}}/users/{{userId}}",
+  "headers": [
+    {
+      "key": "Accept",
+      "value": "application/json",
+      "enabled": true
+    }
+  ],
+  "auth": {
+    "type": "none"
+  }
+}
+```
+
+### Authentication
+
+```typescript
 interface Auth {
   type: 'none' | 'aws_sigv4';
 }
 
 /**
- * The base interface for AWS Signature V4 auth settings.
+ * Base interface for AWS Signature V4 authentication.
  */
 interface AwsSigv4Auth extends Auth {
   source: string;
@@ -140,15 +284,15 @@ interface AwsSigv4Auth extends Auth {
 }
 
 /**
- * AWS Signature V4 authentication with AWS CLI profile as the credentials source.
+ * AWS Signature V4 authentication using an AWS CLI profile.
  */
 interface AwsSigv4CliProfileAuth extends AwsSigv4Auth {
   source: 'aws_cli_profile';
-  profile?: string
+  profile?: string;
 }
 
 /**
- * AWS Signature V4 authentication with inline credentials.
+ * AWS Signature V4 authentication using inline credentials.
  */
 interface AwsSigv4InlineAuth extends AwsSigv4Auth {
   source: 'inline';
@@ -158,111 +302,291 @@ interface AwsSigv4InlineAuth extends AwsSigv4Auth {
 }
 ```
 
-### `headers.json`
+### Request Parts
 
-The `headers.json` contains a list of HTTP request header settings. Each header entry is defined as:
+A request payload is represented by one or more `Part` objects.
 
-```TypeScript
-interface Header {
-  key: string;
-  value: string;
-  enabled: boolean;
+```typescript
+interface Part {
+  /**
+   * Headers associated with this part.
+   */
+  headers?: Header[];
+
+  /**
+   * Path to the file containing the part payload.
+   *
+   * The path may be absolute or relative. A relative path is resolved relative to the request
+   * directory.
+   */
+  path: string;
 }
 ```
 
-An example of the `headers.json` file:
+For a non-multipart request, `parts` contains exactly one entry.
+
+For a multipart request, `parts` contains one entry for each multipart part.
+
+This representation intentionally uses the same structure for both multipart and non-multipart requests.
+
+For example, a simple JSON request may have:
 
 ```json
-[
-  {
-    "key": "Content-Type",
-    "value": "application/json",
-    "enabled": true
-  },
-  {
-    "key": "User-Agent",
-    "value": "Inflight",
-    "enabled": true
-  }
-]
+{
+  "parts": [
+    {
+      "path": "payload.json"
+    }
+  ]
+}
 ```
 
-### `body`
+A multipart request may have:
 
-The `body` file has no specific format. The content type is determined by the `Content-Type` header.
-
-## Dimensions
-
-The `dimensions` directory contains user defined dimensions in the project. A dimension contains a list of variants; each containing a list of key-value pairs. For example, the user can define an `Environment` dimension containing the variants `Beta`, `Gamma`, `Prod`. Then each of the variants holds the API URL for that environment. Environments shows as dropdown menu on the UI and each variant as an option. Variables in a request are replaced with the variables in selected variants.
-
-### Dimension
-
-A dimension is represented as a sub-directory of the `dimensions` directory. The name of the dimension directory is user defined. A dimension contains a `_index.json`, which has the following structure:
-
-```TypeScript
+```json
 {
+  "parts": [
+    {
+      "headers": [
+        {
+          "key": "Content-Disposition",
+          "value": "form-data; name=\"description\"",
+          "enabled": true
+        }
+      ],
+      "path": "parts/description"
+    },
+    {
+      "headers": [
+        {
+          "key": "Content-Disposition",
+          "value": "form-data; name=\"file\"; filename=\"example.txt\"",
+          "enabled": true
+        }
+      ],
+      "path": "parts/file"
+    }
+  ]
+}
+```
+
+The `parts` field is required when a request has a payload. Its absence means that the request has no request payload.
+
+The format therefore does not infer the existence of a request body from the presence of files in the request directory.
+
+---
+
+## `README.md`
+
+An optional `README.md` file contains Markdown documentation associated with the request.
+
+The file is a plain Markdown document.
+
+---
+
+# Dimensions
+
+The `dimensions` directory contains user-defined dimensions.
+
+A dimension is represented by a directory containing a single `dimension.json` file.
+
+For example:
+
+```text
+dimensions/
+└── Environment/
+    ├── dimension.json
+    └── README.md
+```
+
+The name of the dimension directory is user-defined and is used as the dimension's display name.
+
+---
+
+## `dimension.json`
+
+`dimension.json` contains the variants belonging to the dimension.
+
+A variant is not treated as an independent resource. A variant exists only as part of its containing dimension.
+
+```typescript
+interface DimensionFile {
   /**
-   * The unique identifier of the dimension.
+   * A globally unique identifier for the dimension.
    */
   id: string;
 
   /**
-   * Contains a list variant ids. Variants will be displayed in this order on the UI.
+   * Human-readable dimension name.
    */
-  variants: string[];
+  name: string;
+
+  /**
+   * Variants belonging to this dimension.
+   */
+  variants?: Variant[];
 }
-```
 
-### `README.md`
+interface Variant {
+  /**
+   * A globally unique identifier for the variant.
+   */
+  id: string;
 
-The `README.md` file is a plain markdown file.
+  /**
+   * Human-readable variant name.
+   */
+  name: string;
 
-### Variant
+  /**
+   * Variables provided by this variant.
+   */
+  vars?: Variable[];
+}
 
-In addition to `_index.json` and `README.md`, the remaining `.json` files in a dimension directory are variant files e.g., `variant-1.json` in the example above; each is a variant defined by the user. A variant file has the following format:
-
-```TypeScript
 interface Variable {
   name: string;
   value: string;
 }
 ```
 
-```TypeScript
-interface Variant {
-  /**
-   * The unique identifier of the variant.
-   */
-  id: string;
+Example:
 
-  /**
-   * Contains a list variant ids. Variants will be displayed in this order on the UI.
-   */
-  vars: Variable[];
+```json
+{
+  "id": "dim_environment",
+  "name": "Environment",
+  "variants": [
+    {
+      "id": "var_dev",
+      "name": "Dev",
+      "vars": [
+        {
+          "name": "baseUrl",
+          "value": "https://dev.example.com"
+        }
+      ]
+    },
+    {
+      "id": "var_prod",
+      "name": "Prod",
+      "vars": [
+        {
+          "name": "baseUrl",
+          "value": "https://api.example.com"
+        }
+      ]
+    }
+  ]
 }
 ```
 
-## Directory `_index.json`
+The order of the `variants` array determines the display order of variants in the UI.
 
-Each subdirectory of `requests` directory contains `_index.json`. The purpose of this file is to hold the display order of subdirectories and requests. The following is the format:
+---
 
-```TypeScript
-interface FolderIndex {
-  /**
-   * A globally unique identifier.
-   */
-  id: string;
+## Dimension `README.md`
 
-  /**
-   * Contains ids of sub-folders of this folder. The folders inside this folder are displayed in this order.
-   */
-  folders: string[];
+A dimension may optionally contain a `README.md` file containing documentation for the dimension.
 
-  /**
-   * Contains is of requests inside this folder. The requests are displayed in this order.
-   */
-  requests: string[];
-}
+For example:
+
+```text
+Environment/
+├── dimension.json
+└── README.md
 ```
 
-One question remain. Since sub-directories and requests are represented as a directory. How do we distinguish between folder and request directories?
+---
+
+# Stable Identifiers
+
+Every folder, request, dimension, and variant has a stable unique identifier.
+
+These identifiers:
+
+- **must remain stable** when the resource is renamed or moved;
+- **must be unique within the project**;
+- **must not be derived from the resource's filesystem path**;
+- **must not be used as the resource's filesystem name**.
+
+The filesystem path and name are user-facing organizational concepts, while the `id` identifies the underlying resource.
+
+For example, a request may initially be stored at:
+
+```text
+requests/Users/Get User/
+```
+
+and later moved to:
+
+```text
+requests/Accounts/Find User/
+```
+
+Its `id` remains unchanged.
+
+Stable identifiers allow future features such as cross-resource references, bookmarks, request history, and other persistent references to identify resources independently of their filesystem location.
+
+---
+
+# Loading Considerations
+
+IDP does not require a particular loading or caching strategy.
+
+An implementation may traverse the filesystem directly when opening a project. For large projects, however, recursively examining the entire project directory can itself become expensive.
+
+An implementation may therefore maintain a hidden cache file in the project root. A hidden file may be identified by a filename beginning with `.`.
+
+For example:
+
+```text
+my-api/
+├── .project-tree
+├── project.json
+├── requests/
+└── dimensions/
+```
+
+The cache may contain a serialized representation of the project tree and a fingerprint of the filesystem tree from which the cache was generated.
+
+The implementation can determine whether the cached tree is still valid by calculating a hash of the project directory tree and comparing it with the hash stored in the cache.
+
+A tree hash may be generated using an algorithm similar to tools such as `folder-hash` or `node-dir-tree`.
+
+The cache is an implementation detail and is **not part of the canonical project data**.
+
+Therefore:
+
+- users may delete the cache at any time;
+- the project must remain valid without the cache;
+- the cache must be regenerated when it is missing or invalid;
+- the cache must not contain information that cannot be reconstructed from the canonical project files.
+
+The exact cache format and tree-hashing algorithm are implementation-defined and are not part of IDP 1.0.
+
+---
+
+# Unknown Files and Directories
+
+Implementations should ignore files and directories that are not defined by this specification when they do not affect the interpretation of a known IDP resource.
+
+This allows users and future versions of IDP to add additional files without necessarily making existing implementations unable to open the project.
+
+In particular, hidden files used for caching or editor metadata must not affect the semantic contents of the project.
+
+---
+
+# Compatibility
+
+A project conforming to IDP 1.0 must:
+
+- contain a `project.json` file at its root;
+- contain `spec: "IDP-1.0"` in `project.json`;
+- represent requests using directories containing `request.json`;
+- represent request folders using directories containing `folder.json`, or directories containing neither `folder.json` nor `request.json`;
+- represent dimensions using directories containing `dimension.json`.
+
+Implementations should reject projects whose `spec` value identifies an unsupported format version.
+
+Future versions of IDP may introduce additional resource types, files, and properties while preserving compatibility with existing resources.
