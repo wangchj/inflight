@@ -58,9 +58,16 @@ my-api/
 │           └── README.md
 └── dimensions/
     ├── Environment/
+    │   ├── variants/
+    │   │   ├── Dev.json
+    │   │   ├── Beta.json
+    │   │   └── Prod.json
     │   ├── dimension.json
     │   └── README.md
     └── Region/
+        ├── variants/
+        │   ├── US.json
+        │   └── EU.json
         ├── dimension.json
         └── README.md
 ```
@@ -71,9 +78,7 @@ The project root must contain `project.json`.
 
 The `requests` directory contains the request hierarchy. A directory containing `folder.json` represents a request folder. A directory containing `request.json` represents a request. If a directory contains neither `folder.json` nor `request.json`, it is considered a request folder.
 
-The `dimensions` directory contains dimensions. Each dimension is represented by a directory containing `dimension.json`.
-
----
+The `dimensions` directory contains dimensions. Variants are stored in the `variants` sub-directory. Each variant is stored in a `.json` file, with the file name defined by the user. Each dimension folder optionally contains a `dimension.json` and `README.md`.
 
 ## `project.json`
 
@@ -106,8 +111,6 @@ Example:
 
 `project.json` should contain only project-level metadata. It should not contain indexes of requests, folders, or dimensions.
 
----
-
 # Requests
 
 The `requests` directory contains the requests in the project.
@@ -125,68 +128,36 @@ requests/
     └── List Orders/
 ```
 
-A directory is considered a request folder if it contains `folder.json` or if it contains neither `folder.json` nor `request.json`.
+A directory is considered a request if it contains `request.json`. A directory is considered a folder if it does not contain `request.json`. These 2 files are mutually exclusive.
 
-A directory is considered a request if it contains `request.json`.
+## Folder
 
-A directory should not contain both `folder.json` and `request.json`.
-
----
-
-## Request Folder
-
-A request folder may contain a `folder.json` file.
-
-Example:
-
-```text
-Users/
-├── folder.json
-├── Get User/
-└── Create User/
-```
+A folder may contain a `folder.json` file.
 
 ### `folder.json`
 
 ```typescript
+/**
+ * Currently this interface is unused and empty.
+ */
 interface FolderFile {
   /**
-   * A globally unique identifier for the folder.
+   * Contains the name of the items (sub-folders or request folders). This determines the display
+   * order of the items.
+   *
+   * TODO: Need to determine if this should be broken into `folderChildren` and `requestChildren`.
    */
-  id: string;
+  children?: string[];
 }
 ```
 
-The `id` is the only metadata currently stored for a folder.
-
-Child folders and requests are displayed in alphabetical order according to their filesystem names. No explicit ordering information is stored in the project format.
-
 The root `requests` directory is also a request folder and may contain a `folder.json`.
-
----
 
 # Request
 
-A request is represented by a directory containing `request.json`.
-
-Example:
-
-```text
-Get User/
-├── request.json
-└── README.md
-```
-
-The request directory may contain the following files:
-
-| File | Required | Description |
-|---|---|---|
-| `request.json` | Yes | Request metadata and configuration |
-| `README.md` | No | Markdown documentation |
+A request is represented by a directory under the `requests` top-level folder. A request folder must contain a `request.json`.
 
 Additional files may be present in the request directory. Payload files referenced by parts are not required to have a particular filename or location.
-
----
 
 ## `request.json`
 
@@ -196,16 +167,6 @@ The file intentionally contains both the request's basic metadata and its relati
 
 ```typescript
 interface RequestFile {
-  /**
-   * A globally unique identifier for the request.
-   */
-  id: string;
-
-  /**
-   * Human-readable request name.
-   */
-  name: string;
-
   /**
    * HTTP request method, such as GET or POST.
    */
@@ -250,8 +211,6 @@ Example:
 
 ```json
 {
-  "id": "req_get_user",
-  "name": "Get User",
   "method": "GET",
   "url": "{{baseUrl}}/users/{{userId}}",
   "headers": [
@@ -374,70 +333,46 @@ The `parts` field is required when a request has a payload. Its absence means th
 
 The format therefore does not infer the existence of a request body from the presence of files in the request directory.
 
----
-
 ## `README.md`
 
 An optional `README.md` file contains Markdown documentation associated with the request.
 
 The file is a plain Markdown document.
 
----
-
 # Dimensions
 
-The `dimensions` directory contains user-defined dimensions.
-
-A dimension is represented by a directory containing a single `dimension.json` file.
-
-For example:
-
-```text
-dimensions/
-└── Environment/
-    ├── dimension.json
-    └── README.md
-```
-
-The name of the dimension directory is user-defined and is used as the dimension's display name.
-
----
+The `dimensions` directory contains user-defined dimensions. A dimension is represented by a sub-directory under `dimensions` directory. The name of the dimension directory is user-defined. A dimension directory optionally contains a `dimension.json`. The dimension directory also contains the `variants` directory that contains the variants of the dimension. Each variants is a `.json` files with the name that is the same as display name of the variant, which is defined by the user.
 
 ## `dimension.json`
 
-`dimension.json` contains the variants belonging to the dimension.
+The following is the structure of `dimension.json` and variant file.
 
 A variant is not treated as an independent resource. A variant exists only as part of its containing dimension.
 
 ```typescript
 interface DimensionFile {
   /**
-   * A globally unique identifier for the dimension.
+   * The name of the variants. This determines the display order of the variants.
    */
-  id: string;
-
-  /**
-   * Human-readable dimension name.
-   */
-  name: string;
-
-  /**
-   * Variants belonging to this dimension.
-   */
-  variants?: Variant[];
+  children?: string[];
 }
+```
 
-interface Variant {
-  /**
-   * A globally unique identifier for the variant.
-   */
-  id: string;
+The following shows an example of `dimension.json`:
 
-  /**
-   * Human-readable variant name.
-   */
-  name: string;
 
+```json
+{
+  "children": [
+    "Dev",
+    "Beta",
+    "Prod"
+  ]
+}
+```
+
+```typescript
+interface VariantFile {
   /**
    * Variables provided by this variant.
    */
@@ -450,122 +385,11 @@ interface Variable {
 }
 ```
 
-Example:
-
-```json
-{
-  "id": "dim_environment",
-  "name": "Environment",
-  "variants": [
-    {
-      "id": "var_dev",
-      "name": "Dev",
-      "vars": [
-        {
-          "name": "baseUrl",
-          "value": "https://dev.example.com"
-        }
-      ]
-    },
-    {
-      "id": "var_prod",
-      "name": "Prod",
-      "vars": [
-        {
-          "name": "baseUrl",
-          "value": "https://api.example.com"
-        }
-      ]
-    }
-  ]
-}
-```
-
 The order of the `variants` array determines the display order of variants in the UI.
-
----
 
 ## Dimension `README.md`
 
 A dimension may optionally contain a `README.md` file containing documentation for the dimension.
-
-For example:
-
-```text
-Environment/
-├── dimension.json
-└── README.md
-```
-
----
-
-# Stable Identifiers
-
-Every folder, request, dimension, and variant has a stable unique identifier.
-
-These identifiers:
-
-- **must remain stable** when the resource is renamed or moved;
-- **must be unique within the project**;
-- **must not be derived from the resource's filesystem path**;
-- **must not be used as the resource's filesystem name**.
-
-The filesystem path and name are user-facing organizational concepts, while the `id` identifies the underlying resource.
-
-For example, a request may initially be stored at:
-
-```text
-requests/Users/Get User/
-```
-
-and later moved to:
-
-```text
-requests/Accounts/Find User/
-```
-
-Its `id` remains unchanged.
-
-Stable identifiers allow future features such as cross-resource references, bookmarks, request history, and other persistent references to identify resources independently of their filesystem location.
-
----
-
-# Loading Considerations
-
-IDP does not require a particular loading or caching strategy.
-
-An implementation may traverse the filesystem directly when opening a project. For large projects, however, recursively examining the entire project directory can itself become expensive.
-
-An implementation may therefore maintain a hidden cache file in the project root. A hidden file may be identified by a filename beginning with `.`.
-
-For example:
-
-```text
-my-api/
-├── .project-tree
-├── project.json
-├── requests/
-└── dimensions/
-```
-
-The cache may contain a serialized representation of the project tree and a fingerprint of the filesystem tree from which the cache was generated.
-
-The implementation can determine whether the cached tree is still valid by calculating a hash of the project directory tree and comparing it with the hash stored in the cache.
-
-A tree hash may be generated using an algorithm similar to tools such as `folder-hash` or `node-dir-tree`.
-
-The cache is an implementation detail and is **not part of the canonical project data**.
-
-Therefore:
-
-- users may delete the cache at any time;
-- the project must remain valid without the cache;
-- the cache must be regenerated when it is missing or invalid;
-- the cache must not contain information that cannot be reconstructed from the canonical project files.
-
-The exact cache format and tree-hashing algorithm are implementation-defined and are not part of IDP 1.0.
-
----
 
 # Unknown Files and Directories
 
@@ -574,8 +398,6 @@ Implementations should ignore files and directories that are not defined by this
 This allows users and future versions of IDP to add additional files without necessarily making existing implementations unable to open the project.
 
 In particular, hidden files used for caching or editor metadata must not affect the semantic contents of the project.
-
----
 
 # Compatibility
 
