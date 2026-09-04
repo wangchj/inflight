@@ -28,7 +28,7 @@ export default function NoProject() {
         return;
       }
 
-      const path = await window.showNewProjectDialog(name);
+      const path = await window.bridge.showNewProjectDialog(name);
       const project = await Persistence.openProject(path);
 
       if (project) {
@@ -77,7 +77,7 @@ export default function NoProject() {
    * Handles the event when the open project button is clicked.
    */
   async function onOpenProjectButtonClick() {
-    const path = await window.showOpenProjectDialog();
+    const path = await window.bridge.showOpenProjectDialog();
     openProject(path);
   }
 
@@ -99,7 +99,7 @@ export default function NoProject() {
 
     try {
       const file = event.dataTransfer.files[0];
-      const path = window.getFilePath(file);
+      const path = window.bridge.getFilePath(file);
       openProject(path);
     }
     catch (error) {

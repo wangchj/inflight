@@ -51,7 +51,7 @@ export default function RequestForm({openedResource} : {openedResource: OpenedRe
 
     try {
       const resolved = Env.resolve(request);
-      const resp = await window.sendRequest(resolved);
+      const resp = await window.bridge.sendRequest(resolved);
       dispatch(resultsSlice.actions.setResult({id: openedResource.id, result: resp}));
       dispatch(historySlice.actions.pushRequest(resolved));
       saveHistory();

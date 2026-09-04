@@ -33,20 +33,16 @@ import { notifications, Notifications } from '@mantine/notifications';
 import { loader } from '@monaco-editor/react';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
+import { projectSlice } from 'renderer/redux/project-slice';
+import { workspaceSlice } from 'renderer/redux/workspace-slice';
 import { dispatch, store } from 'renderer/redux/store';
 import { App } from 'renderer/ui/app';
+import 'renderer/ui/app.css';
+import * as Env from "renderer/utils/env";
 import onCloseProject from 'renderer/utils/on-close-project';
 import onSave from 'renderer/utils/on-save';
 import * as Persistence from 'renderer/utils/persistence';
-import { History } from 'types/history';
-import { Project } from 'types/project';
-import { Request } from 'types/request';
-import { Workspace } from 'types/workspace';
-import { RequestResult } from 'types/request-result';
-import * as Env from "renderer/utils/env";
-import { projectSlice } from 'renderer/redux/project-slice';
-import { workspaceSlice } from 'renderer/redux/workspace-slice';
-import 'renderer/ui/app.css';
+import { Bridge } from 'types/bridge';
 import './preload-web';
 
 self.MonacoEnvironment = {
@@ -59,20 +55,7 @@ loader.config({ paths: { vs: WEB_BUILD ? 'vs' : '../vs' } });
 
 declare global {
   interface Window {
-    openWorkspace: () => Promise<Workspace>;
-    saveWorkspace: (workspace: Workspace) => Promise<void>;
-    openProject: (path: string) => Promise<Project>;
-    closeProject: () => Promise<void>;
-    saveProject: (path: string, project: Project) => Promise<void>;
-    openHistory: () => Promise<History>;
-    saveHistory: (history: History) => Promise<void>;
-    sendRequest: (request: Request) => Promise<RequestResult>;
-    showOpenProjectDialog: () => Promise<string>;
-    showNewProjectDialog: (name?: string) => Promise<string>;
-    onSave: (callback: () => void) => void;
-    onOpenProject: (callback: (filePath: string) => void) => void;
-    onCloseProject: (callback: () => void) => void;
-    onCloseTab: (callback: () => void) => void;
+    bridge: Bridge;
     monaco: any;
     printWorkspace: () => void;
     printProject: () => void;
@@ -80,7 +63,6 @@ declare global {
     printUi: () => void;
     printPersistence: () => void;
     printHistory: () => void;
-    getFilePath: (file: any) => string;
   }
 }
 
@@ -189,7 +171,7 @@ createRoot(document.querySelector('#root')).render(
 /**
  * Handles the save event from app menu.
  */
-window.onSave(() => {
+window.bridge.onSaveMenuItemSelect(() => {
   onSave();
 });
 
@@ -209,7 +191,7 @@ if (WEB_BUILD) {
 /**
  * Handles open project event from app menu.
  */
-window.onOpenProject(async filePath => {
+window.bridge.onOpenProjectMenuItemSelect(async filePath => {
   try {
     const project = await Persistence.openProject(filePath);
 
@@ -233,10 +215,13 @@ window.onOpenProject(async filePath => {
 /**
  * Handles close project event from app menu.
  */
-window.onCloseProject(async () => {
+window.bridge.onCloseProjectMenuItemSelect(async () => {
   onCloseProject();
 });
 
-window.onCloseTab(() => {
+/**
+ * Handles close tab event from app menu.
+ */
+window.bridge.onCloseTabMenuItemSelect(() => {
   dispatch(workspaceSlice.actions.closeResource());
 });

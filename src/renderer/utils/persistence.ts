@@ -19,7 +19,7 @@ let saveProjectTimeout: number;
  * Loads workspace from storage.
  */
 export async function openWorkspace(): Promise<Workspace> {
-  let workspace = await window.openWorkspace();
+  let workspace = await window.bridge.openWorkspace();
   workspace = migrateWorkspace(workspace);
 
   clearTimeout(saveWorkspaceTimeout);
@@ -40,7 +40,7 @@ export async function saveWorkspace() {
     throw new Error('Workspace is not saved because it is undefined.');
   }
 
-  await window.saveWorkspace(workspace);
+  await window.bridge.saveWorkspace(workspace);
 }
 
 /**
@@ -56,7 +56,7 @@ export function saveWorkspaceDelay() {
       throw new Error('Workspace is not saved because it is undefined.');
     }
 
-    window.saveWorkspace(workspace);
+    window.bridge.saveWorkspace(workspace);
   }, 500);
 }
 
@@ -66,7 +66,7 @@ export function saveWorkspaceDelay() {
  * @param path The project file path.
  */
 export async function openProject(path: string): Promise<Project> {
-  let project = path ? await window.openProject(path) : undefined;
+  let project = path ? await window.bridge.openProject(path) : undefined;
   project = migrateProject(project);
 
   clearTimeout(saveProjectTimeout);
@@ -93,7 +93,7 @@ export async function saveProject() {
     throw new Error('Project is not saved because it is undefined.');
   }
 
-  await window.saveProject(workspace.projectPath, project);
+  await window.bridge.saveProject(workspace.projectPath, project);
 }
 
 /**
@@ -110,7 +110,7 @@ export function saveProjectDelay() {
  * @return The history object or undefined.
  */
 export async function openHistory(): Promise<History> {
-  let history = await window.openHistory();
+  let history = await window.bridge.openHistory();
   return history;
 }
 
@@ -119,5 +119,5 @@ export async function openHistory(): Promise<History> {
  */
 export function saveHistory() {
   const history = store.getState().history;
-  window.saveHistory(history);
+  window.bridge.saveHistory(history);
 }

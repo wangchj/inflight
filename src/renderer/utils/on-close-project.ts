@@ -13,5 +13,5 @@ export default async function onCloseProject() {
   dispatch(projectSlice.actions.closeProject());
   dispatch(workspaceSlice.actions.closeProject());
 
-  window.closeProject();
+  window.bridge.closeProject();
 }

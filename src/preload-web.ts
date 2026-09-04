@@ -16,13 +16,13 @@ if (WEB_BUILD) {
  *
  * @returns The workspace object or undefined if workspace does not exist.
  */
-window.openWorkspace = async () => {
+window.bridge.openWorkspace = async () => {
   try {
     const str = localStorage.getItem('workspace');
     return str ? JSON.parse(str) : undefined;
   }
   catch (error) {
-    console.warn('Fail to open worksapce', error.message);
+    console.warn('Fail to open workspace', error.message);
   }
 }
 
@@ -31,7 +31,7 @@ window.openWorkspace = async () => {
  *
  * @param workspace The workspace object to save.
  */
-window.saveWorkspace = async (workspace: Workspace) => {
+window.bridge.saveWorkspace = async (workspace: Workspace) => {
   try {
     localStorage.setItem('workspace', JSON.stringify(workspace));
   }
@@ -46,7 +46,7 @@ window.saveWorkspace = async (workspace: Workspace) => {
  * @param path The project path.
  * @returns The project object or undefined if project does not exist.
  */
-window.openProject = async (path: string) => {
+window.bridge.openProject = async (path: string) => {
   try {
     const str = localStorage.getItem(`proj/${path}`);
     return str ? JSON.parse(str) : undefined;
@@ -59,7 +59,7 @@ window.openProject = async (path: string) => {
 /**
  * Notifies the main process to close the project. This is not implemented for web build.
  */
-window.closeProject = async() => {}
+window.bridge.closeProject = async() => {}
 
 /**
  * Saves the project to local storage.
@@ -67,7 +67,7 @@ window.closeProject = async() => {}
  * @param path The project path.
  * @param project The project object to save.
  */
-window.saveProject = async (path: string, project: Project): Promise<void> => {
+window.bridge.saveProject = async (path: string, project: Project): Promise<void> => {
   localStorage.setItem(`proj/${path}`, JSON.stringify(project));
 }
 
@@ -76,7 +76,7 @@ window.saveProject = async (path: string, project: Project): Promise<void> => {
  *
  * @returns The history object or undefined if history does not exist.
  */
-window.openHistory = async (): Promise<History> => {
+window.bridge.openHistory = async (): Promise<History> => {
   try {
     const str = localStorage.getItem('history');
     return str ? JSON.parse(str) : undefined;
@@ -91,7 +91,7 @@ window.openHistory = async (): Promise<History> => {
  *
  * @param history The history object to save.
  */
-window.saveHistory = async (history: History): Promise<void> => {
+window.bridge.saveHistory = async (history: History): Promise<void> => {
   try {
     localStorage.setItem('history', JSON.stringify(history));
   }
@@ -100,32 +100,23 @@ window.saveHistory = async (history: History): Promise<void> => {
   }
 }
 
-window.sendRequest = sendRequestWeb;
+window.bridge.sendRequest = sendRequestWeb;
 
 /**
  * Opens file selection dialog window to allow user to select a project file from disk.
  *
  * @returns A promise that resolves to the path of the project file in local storage; or undefined.
  */
-window.showOpenProjectDialog = async (): Promise<string> => {
-
-  console.log('showOpenProjectDialog');
-
+window.bridge.showOpenProjectDialog = async (): Promise<string> => {
   return new Promise((resolve, reject) => {
     const input = document.createElement("input");
     input.type = "file";
     input.accept = "application/json,.json";
 
     input.addEventListener('change', async () => {
-
-      console.log('showOpenProjectDialog input.onchange');
-
       try {
         const file = input.files?.[0];
         const text = await file.text();
-
-        console.log(`showOpenProjectDialog file: ${file}`);
-        console.log(`showOpenProjectDialog text: ${text}`);
 
         if (!file || !text) {
           resolve(undefined);
@@ -135,17 +126,14 @@ window.showOpenProjectDialog = async (): Promise<string> => {
         resolve(file.name);
       }
       catch (error) {
-        console.log(`showOpenProjectDialog error: ${error}`);
         resolve(undefined);
       }
       finally {
-        console.log(`showOpenProjectDialog finally`);
         input?.remove();
       }
     });
 
     input.addEventListener('cancel', () => {
-      console.log(`showOpenProjectDialog oncancel`);
       resolve(undefined);
     });
 
@@ -159,25 +147,28 @@ window.showOpenProjectDialog = async (): Promise<string> => {
  * @param name The name of the project.
  * @returns The name of the project.
  */
-window.showNewProjectDialog = async (name: string): Promise<string> => {
+window.bridge.showNewProjectDialog = async (name?: string): Promise<string> => {
+  if (!name) {
+    name = "New Project"
+  }
   const project = new CProject(name);
   localStorage.setItem(`proj/${name}`, JSON.stringify(project));
   return name;
 }
 
-window.onSave = async () => {
+window.bridge.onSaveMenuItemSelect = async () => {
   return null;
 }
 
-window.onCloseProject = async () => {
+window.bridge.onCloseProjectMenuItemSelect = async () => {
   return null;
 }
 
-window.onOpenProject = async () => {
+window.bridge.onOpenProjectMenuItemSelect = async () => {
   return null;
 }
 
-window.onCloseTab = async () => {
+window.bridge.onCloseTabMenuItemSelect = async () => {
   return null;
 }
 }

@@ -2,80 +2,55 @@
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 
 import { contextBridge, ipcRenderer, webUtils } from 'electron'
+import { Bridge } from 'types/bridge';
 import { History } from 'types/history';
 import { Project } from 'types/project';
 import { Request } from 'types/request';
 import { Workspace } from 'types/workspace';
 
-contextBridge.exposeInMainWorld('openWorkspace',
-  () => ipcRenderer.invoke('openWorkspace')
-);
+/**
+ * An alias to `ipcRenderer.on`.
+ */
+const on = ipcRenderer.on;
 
-contextBridge.exposeInMainWorld('saveWorkspace',
-  (workspace: Workspace) => ipcRenderer.invoke('saveWorkspace', workspace)
-);
-
-contextBridge.exposeInMainWorld('openProject',
-  (path: string) => ipcRenderer.invoke('openProject', path)
-);
-
-contextBridge.exposeInMainWorld('closeProject',
-  () => ipcRenderer.invoke('closeProject')
-);
-
-contextBridge.exposeInMainWorld('saveProject',
-  (path: string, project: Project) => ipcRenderer.invoke('saveProject', path, project)
-);
-
-contextBridge.exposeInMainWorld('loadProject',
-  () => ipcRenderer.invoke('loadProject')
-);
-
-contextBridge.exposeInMainWorld('openHistory',
-  () => ipcRenderer.invoke('openHistory')
-);
-
-contextBridge.exposeInMainWorld('saveHistory',
-  (history: History) => ipcRenderer.invoke('saveHistory', history)
-);
-
-contextBridge.exposeInMainWorld('sendRequest',
-  (request: Request) => ipcRenderer.invoke('sendRequest', request)
-);
-
-contextBridge.exposeInMainWorld('showOpenProjectDialog',
-  () => ipcRenderer.invoke('showOpenProjectDialog')
-);
-
-contextBridge.exposeInMainWorld('showNewProjectDialog',
-  (name: string) => ipcRenderer.invoke('showNewProjectDialog', name)
-);
-
-contextBridge.exposeInMainWorld('onSave',
-  (callback: () => void) => ipcRenderer.on('save', () => callback())
-);
-
-contextBridge.exposeInMainWorld('onCloseProject',
-  (callback: () => void) => ipcRenderer.on('closeProject', () => callback())
-);
-
-contextBridge.exposeInMainWorld('onOpenProject',
-  (callback: (filePath: string) => void) => ipcRenderer.on('openProject',
-    (event, filePath) => callback(filePath)
-  )
-);
-
-contextBridge.exposeInMainWorld('onCloseTab',
-  (callback: () => void) => ipcRenderer.on('closeTab', () => callback())
-);
-
-contextBridge.exposeInMainWorld('getFilePath',
-  (file: any) => {
-    const path = webUtils.getPathForFile(file);
-    return path;
+/**
+ * Invokes a handler in the main process.
+ *
+ * @param args The invoke parameters. The first must be the name of the main process handler
+ * followed by optional handler parameters.
+ * @return The handler response.
+ */
+function invoke(...args: any[]): Promise<any> {
+  if (!Array.isArray(args) || args.length === 0) {
+    return Promise.reject();
   }
-);
 
+  return ipcRenderer.invoke('invoke', args[0], ...args.slice(1));
+}
+
+/**
+ * The IPC bridge.
+ */
+const bridge: Bridge = {
+  openWorkspace: () => invoke('openWorkspace'),
+  saveWorkspace: (workspace: Workspace) => invoke('saveWorkspace', workspace),
+  openProject: (path: string) => invoke('openProject', path),
+  closeProject: () => invoke('closeProject'),
+  saveProject: (path: string, project: Project) => invoke('saveProject', path, project),
+  showOpenProjectDialog: () => invoke('showOpenProjectDialog'),
+  showNewProjectDialog: (name?: string) => invoke('showNewProjectDialog', name),
+  sendRequest: (request: Request) => invoke('sendRequest', request),
+  openHistory: () => invoke('openHistory'),
+  saveHistory: (history: History) => invoke('saveHistory', history),
+  onSaveMenuItemSelect: (callback: () => void) => on('saveMenuItemSelect', () => callback()),
+  onCloseProjectMenuItemSelect: (callback: () => void) => on('closeProjectMenuItemSelect', () => callback()),
+  onOpenProjectMenuItemSelect: (callback: (filePath: string) => void) => on('openProjectMenuItemSelect',
+    (event, filePath) => callback(filePath)
+  ),
+  onCloseTabMenuItemSelect: (callback: () => void) => on('closeTabMenuItemSelect', () => callback()),
+  getFilePath: (file: any) => webUtils.getPathForFile(file),
+};
+
+contextBridge.exposeInMainWorld('bridge', bridge);
 contextBridge.exposeInMainWorld('MAC_BUILD', process.platform === 'darwin');
-
 contextBridge.exposeInMainWorld('WIN_BUILD', process.platform === 'win32');
