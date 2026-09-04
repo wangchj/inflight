@@ -1,7 +1,6 @@
 import { createSlice, nanoid } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { set } from 'lodash';
-import * as Persistence from 'renderer/utils/persistence';
 import { Workspace } from 'types/workspace';
 import { AwsSigv4Auth, AwsSigv4CliProfileAuth, AwsSigv4InlineAuth } from 'types/auth';
 import { Request } from 'types/request';
@@ -24,7 +23,6 @@ export const workspaceSlice = createSlice({
      */
     openProject(state, action: PayloadAction<string>) {
       const projectPath = action.payload;
-      Persistence.saveWorkspaceDelay();
       return {
         ...initialState,
         projectPath
@@ -38,7 +36,6 @@ export const workspaceSlice = createSlice({
      */
     closeProject(state) {
       delete state.projectPath;
-      Persistence.saveWorkspaceDelay();
     },
 
     /**
@@ -85,8 +82,6 @@ export const workspaceSlice = createSlice({
 
         state.selectedResourceIndex = state.openedResources.length - 1;
       }
-
-      Persistence.saveWorkspaceDelay();
     },
 
     /**
@@ -119,8 +114,6 @@ export const workspaceSlice = createSlice({
 
         state.selectedResourceIndex = state.openedResources.length - 1;
       }
-
-      Persistence.saveWorkspaceDelay();
     },
 
     /**
@@ -149,8 +142,6 @@ export const workspaceSlice = createSlice({
       });
 
       state.selectedResourceIndex = state.openedResources.length - 1;
-
-      Persistence.saveWorkspaceDelay();
     },
 
     /**
@@ -183,8 +174,6 @@ export const workspaceSlice = createSlice({
       else if (state.selectedResourceIndex > index) {
         state.selectedResourceIndex = state.selectedResourceIndex - 1;
       }
-
-      Persistence.saveWorkspaceDelay();
     },
 
     /**
@@ -203,7 +192,6 @@ export const workspaceSlice = createSlice({
         const path = `props.request.${action.payload.path}`;
         set(openedResource, path, (typeof value !== 'string' || value) ? value : undefined);
         openedResource.dirty = true;
-        Persistence.saveWorkspaceDelay();
       }
     },
 
@@ -224,8 +212,6 @@ export const workspaceSlice = createSlice({
       }
 
       openedResources[index] = action.payload;
-
-      Persistence.saveWorkspaceDelay();
     },
 
     /**
@@ -244,8 +230,6 @@ export const workspaceSlice = createSlice({
           delete openedResource.dirty;
         }
       }
-
-      Persistence.saveWorkspaceDelay();
     },
 
     /**
@@ -277,8 +261,6 @@ export const workspaceSlice = createSlice({
       }
 
       openedResource.dirty = true;
-
-      Persistence.saveWorkspaceDelay();
     },
 
     /**
@@ -319,8 +301,6 @@ export const workspaceSlice = createSlice({
       }
 
       openedResource.dirty = true;
-
-      Persistence.saveWorkspaceDelay();
     },
 
     /**
@@ -341,7 +321,6 @@ export const workspaceSlice = createSlice({
       }
 
       state.selectedResourceIndex = index;
-      Persistence.saveWorkspaceDelay();
     },
 
     /**
@@ -365,8 +344,6 @@ export const workspaceSlice = createSlice({
       request.headers.push({key: '', value: '', enabled: true});
 
       openedResource.dirty = true;
-
-      Persistence.saveWorkspaceDelay();
     },
 
     /**
@@ -385,8 +362,6 @@ export const workspaceSlice = createSlice({
       const request = openedResource.props.request;
       request.headers[action.payload.index].key = action.payload.value;
       openedResource.dirty = true;
-
-      Persistence.saveWorkspaceDelay();
     },
 
     /**
@@ -405,8 +380,6 @@ export const workspaceSlice = createSlice({
       const request = openedResource.props.request;
       request.headers[action.payload.index].value = action.payload.value;
       openedResource.dirty = true;
-
-      Persistence.saveWorkspaceDelay();
     },
 
     /**
@@ -425,8 +398,6 @@ export const workspaceSlice = createSlice({
       const request = openedResource.props.request;
       request.headers[action.payload].enabled = !request.headers[action.payload].enabled;
       openedResource.dirty = true;
-
-      Persistence.saveWorkspaceDelay();
     },
 
     /**
@@ -450,8 +421,6 @@ export const workspaceSlice = createSlice({
         }
         openedResource.dirty = true;
       }
-
-      Persistence.saveWorkspaceDelay();
     },
 
     /**
@@ -466,8 +435,6 @@ export const workspaceSlice = createSlice({
       }
 
       state.treeExpandedState[action.payload] = true;
-
-      Persistence.saveWorkspaceDelay();
     },
 
     /**
@@ -482,8 +449,6 @@ export const workspaceSlice = createSlice({
       }
 
       state.treeExpandedState[action.payload] = false;
-
-      Persistence.saveWorkspaceDelay();
     },
 
     /**
@@ -502,8 +467,6 @@ export const workspaceSlice = createSlice({
       if (Object.keys(state.treeExpandedState).length === 0) {
         delete state.treeExpandedState;
       }
-
-      Persistence.saveWorkspaceDelay();
     },
 
     /**
@@ -534,8 +497,6 @@ export const workspaceSlice = createSlice({
           }
         }
       }
-
-      Persistence.saveWorkspaceDelay();
     },
 
     /**
@@ -563,8 +524,6 @@ export const workspaceSlice = createSlice({
 
       // Adjust selectedIndex
       state.selectedResourceIndex = toIndex;
-
-      Persistence.saveWorkspaceDelay();
     },
 
     /**
@@ -582,8 +541,6 @@ export const workspaceSlice = createSlice({
       }
 
       res.props.request.name = name;
-
-      Persistence.saveWorkspaceDelay();
     },
 
     /**

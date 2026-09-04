@@ -4,7 +4,6 @@ import { createSlice, nanoid } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import getDescendantFolderIds from 'renderer/utils/get-descendant-folder-ids';
 import getDescendantRequestIds from 'renderer/utils/get-descendant-request-ids';
-import * as Persistence from 'renderer/utils/persistence';
 import validTreeMove from 'renderer/utils/valid-tree-move';
 import { Project } from 'types/project';
 import { Request } from 'types/request';
@@ -46,8 +45,6 @@ export const projectSlice = createSlice({
       }
 
       state.requests[action.payload.id] = JSON.parse(JSON.stringify(action.payload.request));
-
-      Persistence.saveProjectDelay();
     },
 
     /**
@@ -79,8 +76,6 @@ export const projectSlice = createSlice({
       if (!folder.requests.includes(id)) {
         folder.requests.push(id);
       }
-
-      Persistence.saveProjectDelay();
     },
 
     /**
@@ -109,8 +104,6 @@ export const projectSlice = createSlice({
       if (parent && Array.isArray(parent.folders)) {
         parent.folders = parent.folders.filter(i => i !== id);
       }
-
-      Persistence.saveProjectDelay();
     },
 
     /**
@@ -130,8 +123,6 @@ export const projectSlice = createSlice({
       if (Array.isArray(folder.requests)) {
         folder.requests = folder.requests.filter(requestId => requestId !== id);
       }
-
-      Persistence.saveProjectDelay();
     },
 
     /**
@@ -157,8 +148,6 @@ export const projectSlice = createSlice({
       duplicate.name = name;
       state.requests[newId] = duplicate;
       folder.requests.push(newId);
-
-      Persistence.saveProjectDelay();
     },
 
     /**
@@ -188,8 +177,6 @@ export const projectSlice = createSlice({
       }
 
       parent.folders.push(newId);
-
-      Persistence.saveProjectDelay();
     },
 
     /**
@@ -217,8 +204,6 @@ export const projectSlice = createSlice({
 
       // Add the new dimension to the order array
       state.dimOrder.push(dimensionId);
-
-      Persistence.saveProjectDelay();
     },
 
     /**
@@ -246,8 +231,6 @@ export const projectSlice = createSlice({
       }
 
       dim.variants.push(id);
-
-      Persistence.saveProjectDelay();
     },
 
     /**
@@ -262,8 +245,6 @@ export const projectSlice = createSlice({
       if (v) {
         v.name = value;
       }
-
-      Persistence.saveProjectDelay();
     },
 
     /**
@@ -278,8 +259,6 @@ export const projectSlice = createSlice({
       if (v) {
         v.value = value;
       }
-
-      Persistence.saveProjectDelay();
     },
 
     /**
@@ -299,8 +278,6 @@ export const projectSlice = createSlice({
 
         variant.vars.push({name: '', value: ''});
       }
-
-      Persistence.saveProjectDelay();
     },
 
     /**
@@ -320,8 +297,6 @@ export const projectSlice = createSlice({
       else if (index >= 0 && index < vars.length) {
         vars.splice(index, 1);
       }
-
-      Persistence.saveProjectDelay();
     },
 
     /**
@@ -357,8 +332,6 @@ export const projectSlice = createSlice({
         delete state.variants;
         delete state.dimOrder;
       }
-
-      Persistence.saveProjectDelay();
     },
 
     /**
@@ -381,8 +354,6 @@ export const projectSlice = createSlice({
       if (dim && Array.isArray(dim.variants)) {
         dim.variants = dim.variants.filter(i => i !== id);
       }
-
-      Persistence.saveProjectDelay();
     },
 
     /**
@@ -408,8 +379,6 @@ export const projectSlice = createSlice({
       duplicate.name = name;
       state.variants[newId] = duplicate;
       dim.variants.push(newId);
-
-      Persistence.saveProjectDelay();
     },
 
     /**
@@ -432,8 +401,6 @@ export const projectSlice = createSlice({
       }
 
       res.name = name;
-
-      Persistence.saveProjectDelay();
     },
 
     /**
@@ -522,8 +489,6 @@ export const projectSlice = createSlice({
             dropParent.folders.splice(op === 'reorder-before' ? index : index + 1, 0, dragId);
         }
       }
-
-      Persistence.saveProjectDelay();
     },
 
     /**
@@ -549,8 +514,6 @@ export const projectSlice = createSlice({
 
       state.dimOrder.splice(dragIndex, 1);
       state.dimOrder.splice(op === 'reorder-before' ? dropIndex : dropIndex + 1, 0, drag.value);
-
-      Persistence.saveProjectDelay();
     },
 
     /**
@@ -587,8 +550,6 @@ export const projectSlice = createSlice({
 
       dimension.variants.splice(dragIndex, 1);
       dimension.variants.splice(op === 'reorder-before' ? dropIndex : dropIndex + 1, 0, drag.value);
-
-      Persistence.saveProjectDelay();
     },
   }
 });

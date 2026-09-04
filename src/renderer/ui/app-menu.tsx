@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { workspaceSlice } from 'renderer/redux/workspace-slice';
 import onCloseProject from 'renderer/utils/on-close-project';
 import onSave from 'renderer/utils/on-save';
+import { saveWorkspace } from 'renderer/utils/persistence'
 import "./app-menu.css";
 
 /**
@@ -55,7 +56,10 @@ function FileMenu() {
               Ctrl+W
             </Text>
           }
-          onClick={() => dispatch(workspaceSlice.actions.closeResource())}
+          onClick={() => {
+            dispatch(workspaceSlice.actions.closeResource())
+            saveWorkspace()
+          }}
         >
           Close Tab
         </Menu.Item>

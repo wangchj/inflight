@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from 'renderer/redux/store';
 import { workspaceSlice } from 'renderer/redux/workspace-slice';
+import { saveWorkspaceDelay } from 'renderer/utils/persistence';
 import RequestForm from './request-form';
 import OpenedResourceTab from './opened-resource-tab';
 import Variant from './variant';
@@ -50,6 +51,14 @@ export default function OpenedResources() {
   }, [selectedId]);
 
   /**
+   * Handles new request button click.
+   */
+  function onNewRequestClick() {
+    dispatch(workspaceSlice.actions.newRequest());
+    saveWorkspaceDelay();
+  }
+
+  /**
    * Scrolls the tabs list element to the active tab.
    */
   function scrollToActiveTab() {
@@ -76,7 +85,10 @@ export default function OpenedResources() {
           'tab': 'major-tabs-tab'
         }}
         value={selectedId}
-        onChange={id => dispatch(workspaceSlice.actions.setSelectedTab(id))}
+        onChange={id => {
+          dispatch(workspaceSlice.actions.setSelectedTab(id));
+          saveWorkspaceDelay();
+        }}
         style={{
           display: 'flex',
           flexDirection: 'column',
@@ -116,7 +128,7 @@ export default function OpenedResources() {
             <Button
               variant="transparent"
               color="dark"
-              onClick={() => dispatch(workspaceSlice.actions.newRequest())}
+              onClick={onNewRequestClick}
             >
               <IconPlus size="18"/>
             </Button>
@@ -149,7 +161,7 @@ export default function OpenedResources() {
       }>
         <Button
           leftSection={<IconPlus/>}
-          onClick={() => dispatch(workspaceSlice.actions.newRequest())}
+          onClick={onNewRequestClick}
         >
           New Request
         </Button>

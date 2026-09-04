@@ -3,8 +3,9 @@ import { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "renderer/redux/store";
 import { workspaceSlice } from "renderer/redux/workspace-slice";
-import TreeNode from "./tree-node";
 import makeDimensionsTree from "renderer/utils/make-dimensions-tree";
+import { saveWorkspaceDelay } from "renderer/utils/persistence";
+import TreeNode from "./tree-node";
 
 export default function DimensionTree() {
   const dispatch = useDispatch();
@@ -16,9 +17,11 @@ export default function DimensionTree() {
     initialExpandedState: workspace.treeExpandedState,
     onNodeExpand: (value: string) => {
       dispatch(workspaceSlice.actions.expandTreeNode(value));
+      saveWorkspaceDelay();
     },
     onNodeCollapse: (value: string) => {
       dispatch(workspaceSlice.actions.collapseTreeNode(value));
+      saveWorkspaceDelay();
     }
   });
 

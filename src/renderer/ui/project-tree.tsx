@@ -4,7 +4,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from 'renderer/redux/store';
 import { workspaceSlice } from 'renderer/redux/workspace-slice';
 import makeTree from 'renderer/utils/make-tree';
+import { saveWorkspaceDelay } from 'renderer/utils/persistence';
 import TreeNode from './tree-node';
+
 
 /**
  * The project tree hierarchy component.
@@ -21,9 +23,11 @@ export default function ProjectTree() {
     initialExpandedState: workspace.treeExpandedState,
     onNodeExpand: (value: string) => {
       dispatch(workspaceSlice.actions.expandTreeNode(value));
+      saveWorkspaceDelay();
     },
     onNodeCollapse: (value: string) => {
       dispatch(workspaceSlice.actions.collapseTreeNode(value));
+      saveWorkspaceDelay();
     }
   });
 

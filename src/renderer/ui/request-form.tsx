@@ -19,7 +19,7 @@ import { SaveRequestModal } from "./save-request-modal";
 import { OpenedResource } from "types/opened-resource";
 import Input from "./input";
 import { historySlice } from "renderer/redux/history-slice";
-import { saveHistory } from 'renderer/utils/persistence';
+import { saveHistory, saveWorkspaceDelay } from 'renderer/utils/persistence';
 
 export default function RequestForm({openedResource} : {openedResource: OpenedResource}) {
   const [sending, setSending] = useState<boolean>(false);
@@ -51,7 +51,7 @@ export default function RequestForm({openedResource} : {openedResource: OpenedRe
 
     try {
       const resolved = Env.resolve(request);
-      const resp = await window.sendRequest(resolved);
+      const resp = await window.bridge.sendRequest(resolved);
       dispatch(resultsSlice.actions.setResult({id: openedResource.id, result: resp}));
       dispatch(historySlice.actions.pushRequest(resolved));
       saveHistory();
@@ -105,16 +105,20 @@ export default function RequestForm({openedResource} : {openedResource: OpenedRe
             style={{flexGrow: 0, width: '120px'}}
             data={['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS']}
             value={request.method}
-            onChange={
-              value => value === null ? null : dispatch(
-                workspaceSlice.actions.updateRequest({path: 'method', value})
-              )
-            }
+            onChange={value => {
+              if (value) {
+                dispatch(workspaceSlice.actions.updateRequest({path: 'method', value}));
+                saveWorkspaceDelay();
+              }
+            }}
           />
 
           <Input
             value={request.url}
-            onChange={value => dispatch(workspaceSlice.actions.updateRequest({path: 'url', value}))}
+            onChange={value => {
+              dispatch(workspaceSlice.actions.updateRequest({path: 'url', value}));
+              saveWorkspaceDelay();
+            }}
             placeholder="Request URL"
           />
         </div>

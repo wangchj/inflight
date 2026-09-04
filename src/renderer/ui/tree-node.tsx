@@ -220,6 +220,8 @@ export default function TreeNode({ payload }: { payload: RenderTreeNodePayload }
                 }));
                 break;
             }
+
+            Persistence.saveProject();
           },
         }
       )
@@ -251,6 +253,8 @@ export default function TreeNode({ payload }: { payload: RenderTreeNodePayload }
         dispatch(workspaceSlice.actions.newRequest(history?.entries?.[node.value].request));
         break;
     }
+
+    Persistence.saveWorkspace();
   }
 
   /**
@@ -345,6 +349,8 @@ export default function TreeNode({ payload }: { payload: RenderTreeNodePayload }
         }));
         break;
     }
+
+    Persistence.saveProject();
   }
 
   /**

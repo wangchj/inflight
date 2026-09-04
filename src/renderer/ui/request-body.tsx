@@ -1,6 +1,7 @@
 import { Box, Select, Stack, useComputedColorScheme } from "@mantine/core";
 import { useDispatch } from "react-redux";
 import { workspaceSlice } from "renderer/redux/workspace-slice";
+import { saveWorkspaceDelay } from "renderer/utils/persistence";
 import Monaco from "./monaco";
 import { Request } from "types/request";
 
@@ -22,9 +23,10 @@ export default function RequestBody({request}: {request: Request}) {
         <Monaco
           defaultLanguage="json"
           value={request.body ?? ''}
-          onChange={
-            value => dispatch(workspaceSlice.actions.updateRequest({path: 'body', value}))
-          }
+          onChange={value => {
+            dispatch(workspaceSlice.actions.updateRequest({path: 'body', value}));
+            saveWorkspaceDelay();
+          }}
           options={{
             minimap: {enabled: false},
             automaticLayout: true,

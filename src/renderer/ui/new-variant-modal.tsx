@@ -33,6 +33,7 @@ export function NewVariantModal() {
 
     try {
       await Persistence.saveProject();
+      await Persistence.saveWorkspace();
     }
     catch (error) {
       console.error("Error saving project", error);

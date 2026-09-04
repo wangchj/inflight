@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { projectSlice } from "renderer/redux/project-slice";
 import { RootState } from "renderer/redux/store";
 import * as Env from "renderer/utils/env";
+import * as Persistence from "renderer/utils/persistence";
 import { OpenedResource } from "types/opened-resource";
 
 type VariantProps = {openedResource: OpenedResource};
@@ -36,6 +37,7 @@ export default function Variant({openedResource}: VariantProps) {
         value
       })
     );
+    Persistence.saveProjectDelay();
   }
 
   /**
@@ -56,6 +58,7 @@ export default function Variant({openedResource}: VariantProps) {
         value
       })
     );
+    Persistence.saveProjectDelay();
   }
 
   /**
@@ -70,6 +73,15 @@ export default function Variant({openedResource}: VariantProps) {
     proj.variants[variantId].vars.splice(index, 1);
     Env.combine(proj, workspace.selectedVariants);
     dispatch(projectSlice.actions.deleteVar({id: variantId, index}));
+    Persistence.saveProjectDelay();
+  }
+
+  /**
+   * Handles add variable button click event.
+   */
+  function onAddVarClick() {
+    dispatch(projectSlice.actions.addEmptyVar(openedResource.id));
+    Persistence.saveProjectDelay();
   }
 
   return (
@@ -132,7 +144,7 @@ export default function Variant({openedResource}: VariantProps) {
 
       <Box>
         <Button
-          onClick={() => dispatch(projectSlice.actions.addEmptyVar(openedResource.id))}
+          onClick={onAddVarClick}
         >
           Add variable
         </Button>

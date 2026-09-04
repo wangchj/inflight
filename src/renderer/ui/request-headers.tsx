@@ -2,6 +2,7 @@ import { Box, Button, Checkbox, Stack, Table, TextInput, Text } from "@mantine/c
 import { IconTrash } from '@tabler/icons-react';
 import { useDispatch } from "react-redux";
 import { workspaceSlice } from "renderer/redux/workspace-slice";
+import { saveWorkspaceDelay } from "renderer/utils/persistence";
 import { Header } from "types/header";
 import Input from "./input";
 
@@ -37,37 +38,28 @@ export default function RequestHeaders({ headers }: { headers: Header[] }) {
                   <div className="cell fixed">
                     <Checkbox
                       checked={header.enabled}
-                      onChange={
-                        () => dispatch(
-                          workspaceSlice.actions.toggleHeader(index)
-                        )
-                      }
+                      onChange={() => {
+                        dispatch(workspaceSlice.actions.toggleHeader(index));
+                        saveWorkspaceDelay();
+                      }}
                     />
                   </div>
                   <div className="cell" style={{ minWidth: '0px' }}>
                     <Input
                       value={header.key}
-                      onChange={
-                        value => dispatch(
-                          workspaceSlice.actions.updateHeaderKey({
-                            index,
-                            value
-                          })
-                        )
-                      }
+                      onChange={value => {
+                        dispatch(workspaceSlice.actions.updateHeaderKey({index, value}));
+                        saveWorkspaceDelay();
+                      }}
                     />
                   </div>
                   <div className="cell" style={{ minWidth: '0px' }}>
                     <Input
                       value={header.value}
-                      onChange={
-                        value => dispatch(
-                          workspaceSlice.actions.updateHeaderValue({
-                            index,
-                            value
-                          })
-                        )
-                      }
+                      onChange={value => {
+                        dispatch(workspaceSlice.actions.updateHeaderValue({index, value}));
+                        saveWorkspaceDelay();
+                      }}
                     />
                   </div>
                   <div className="cell fixed">
@@ -75,7 +67,10 @@ export default function RequestHeaders({ headers }: { headers: Header[] }) {
                       color="dark"
                       variant="transparent"
                       p={0}
-                      onClick={() => dispatch(workspaceSlice.actions.deleteHeader(index))}
+                      onClick={() => {
+                        dispatch(workspaceSlice.actions.deleteHeader(index));
+                        saveWorkspaceDelay();
+                      }}
                     >
                       <IconTrash />
                     </Button>
@@ -89,7 +84,10 @@ export default function RequestHeaders({ headers }: { headers: Header[] }) {
 
       <Box>
         <Button
-          onClick={() => dispatch(workspaceSlice.actions.addEmptyHeader())}
+          onClick={() => {
+            dispatch(workspaceSlice.actions.addEmptyHeader());
+            saveWorkspaceDelay();
+          }}
         >
           Add header
         </Button>

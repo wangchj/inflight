@@ -1,6 +1,7 @@
 import { Select, Stack } from "@mantine/core";
 import { useDispatch } from "react-redux";
 import { workspaceSlice } from "renderer/redux/workspace-slice";
+import { saveWorkspaceDelay } from "renderer/utils/persistence";
 import { Auth, AwsSigv4Auth, AwsSigv4CliProfileAuth, AwsSigv4InlineAuth } from "types/auth";
 import Input from "./input";
 
@@ -23,11 +24,12 @@ export default function RequestAuth({ auth }: { auth: Auth }) {
         label="Type"
         data={authTypeOptions}
         value={auth ? auth.type : 'none'}
-        onChange={
-          value => value === null ? null : dispatch(
-            workspaceSlice.actions.setAuthType(value)
-          )
-        }
+        onChange={value => {
+          if (value) {
+            dispatch(workspaceSlice.actions.setAuthType(value));
+            saveWorkspaceDelay();
+          }
+        }}
       />
 
       {
@@ -52,11 +54,12 @@ function AwsAuthSigv4Form({ auth }: { auth: AwsSigv4Auth }) {
         label="Credentials source"
         data={credentialSourceOptions}
         value={auth.source}
-        onChange={
-          value => value === null ? null : dispatch(
-            workspaceSlice.actions.setAwsCredsSource(value)
-          )
-        }
+        onChange={value => {
+          if (value) {
+            dispatch(workspaceSlice.actions.setAwsCredsSource(value));
+            saveWorkspaceDelay();
+          }
+        }}
       />
 
       {auth.source === 'aws_cli_profile' && (
@@ -64,13 +67,10 @@ function AwsAuthSigv4Form({ auth }: { auth: AwsSigv4Auth }) {
           label="Profile"
           descr="The AWS CLI profile. If not specified, the default profile is used."
           value={(auth as AwsSigv4CliProfileAuth).profile}
-          onChange={
-            value => dispatch(
-              workspaceSlice.actions.updateRequest(
-                { path: 'auth.profile', value }
-              )
-            )
-          }
+          onChange={value => {
+            dispatch(workspaceSlice.actions.updateRequest({ path: 'auth.profile', value }));
+            saveWorkspaceDelay();
+          }}
         />
       )}
 
@@ -81,25 +81,19 @@ function AwsAuthSigv4Form({ auth }: { auth: AwsSigv4Auth }) {
       <Input
         label="Region"
         value={auth.region}
-        onChange={
-          value => dispatch(
-            workspaceSlice.actions.updateRequest(
-              { path: 'auth.region', value }
-            )
-          )
-        }
+        onChange={value => {
+          dispatch(workspaceSlice.actions.updateRequest({ path: 'auth.region', value }));
+          saveWorkspaceDelay();
+        }}
       />
 
       <Input
         label="Service name"
         value={auth.service || ''}
-        onChange={
-          value => dispatch(
-            workspaceSlice.actions.updateRequest(
-              { path: 'auth.service', value }
-            )
-          )
-        }
+        onChange={value => {
+            dispatch(workspaceSlice.actions.updateRequest({ path: 'auth.service', value }));
+            saveWorkspaceDelay();
+        }}
       />
     </Stack>
   )
@@ -118,37 +112,28 @@ function AwsAuthSigv4Inline({auth}: {auth: AwsSigv4InlineAuth}) {
       <Input
           label="Access key"
           value={auth.accessKey ?? ''}
-          onChange={
-            value => dispatch(
-              workspaceSlice.actions.updateRequest(
-                { path: 'auth.accessKey', value }
-              )
-            )
-          }
+          onChange={value => {
+            dispatch(workspaceSlice.actions.updateRequest({ path: 'auth.accessKey', value }));
+            saveWorkspaceDelay();
+          }}
         />
 
         <Input
           label="Secret key"
           value={auth.secretKey ?? ''}
-          onChange={
-            value => dispatch(
-              workspaceSlice.actions.updateRequest(
-                { path: 'auth.secretKey', value }
-              )
-            )
-          }
+          onChange={value => {
+            dispatch(workspaceSlice.actions.updateRequest({ path: 'auth.secretKey', value }));
+            saveWorkspaceDelay();
+          }}
         />
 
         <Input
           label="Session token"
           value={auth.sessionToken ?? ''}
-          onChange={
-            value => dispatch(
-              workspaceSlice.actions.updateRequest(
-                { path: 'auth.sessionToken', value }
-              )
-            )
-          }
+          onChange={value => {
+            dispatch(workspaceSlice.actions.updateRequest({ path: 'auth.sessionToken', value }));
+            saveWorkspaceDelay();
+          }}
         />
     </>
   )

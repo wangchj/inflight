@@ -3,6 +3,7 @@ import { IconCheck } from "@tabler/icons-react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "renderer/redux/store";
 import { workspaceSlice } from "renderer/redux/workspace-slice";
+import { saveWorkspaceDelay } from "renderer/utils/persistence";
 import * as Env from "renderer/utils/env";
 
 /**
@@ -34,6 +35,7 @@ function DimensionMenu({dimensionId}: {dimensionId: string}) {
     variantId ? selectMap[dimensionId] = variantId : delete selectMap[dimensionId];
     Env.combine(project, selectMap);
     dispatch(workspaceSlice.actions.selectVariant({dimensionId, variantId}));
+    saveWorkspaceDelay();
   }
 
   return dimension && (

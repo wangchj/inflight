@@ -19,6 +19,7 @@ import MethodIcon from "./method-icon";
 import resultEditorPath from "renderer/utils/result-editor-path";
 import { IconCircleFilled, IconLayersSelected } from "@tabler/icons-react";
 import { RootState } from "renderer/redux/store";
+import { saveWorkspace, saveWorkspaceDelay } from "renderer/utils/persistence";
 import { Project } from "types/project";
 
 type OpenedResourceTabProps = {
@@ -95,7 +96,8 @@ export default function OpenedResourceTab({index} : OpenedResourceTabProps) {
         },
         onDragStart({source}) {
           if (source?.data) {
-            dispatch(workspaceSlice.actions.setSelectedTab(index))
+            dispatch(workspaceSlice.actions.setSelectedTab(index));
+            saveWorkspaceDelay();
           }
         },
       }),
@@ -184,6 +186,7 @@ export default function OpenedResourceTab({index} : OpenedResourceTabProps) {
           }
 
           dispatch(workspaceSlice.actions.reorderResource({fromIndex, toIndex}));
+          saveWorkspaceDelay();
         },
       })
     );
@@ -242,6 +245,7 @@ export default function OpenedResourceTab({index} : OpenedResourceTabProps) {
 
               dispatch(resultsSlice.actions.deleteResult(openedResource.id));
               dispatch(workspaceSlice.actions.closeResource(index));
+              saveWorkspace();
             }}
           />
         </div>
