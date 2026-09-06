@@ -31,7 +31,7 @@ export function createWindow(): void {
   window.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
   // Open the DevTools.
-  window.webContents.openDevTools();
+  // window.webContents.openDevTools();
 };
 
 /**
