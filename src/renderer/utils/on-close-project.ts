@@ -11,11 +11,8 @@ export default async function onCloseProject() {
     return;
   }
 
-  await Persistence.saveProject();
-  await Persistence.saveWorkspace();
-
   dispatch(projectSlice.actions.closeProject());
   dispatch(workspaceSlice.actions.closeProject());
-
+  Persistence.saveWorkspace();
   window.bridge.closeProject();
 }
