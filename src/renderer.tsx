@@ -44,6 +44,7 @@ import onSave from 'renderer/utils/on-save';
 import * as Persistence from 'renderer/utils/persistence';
 import { Bridge } from 'types/bridge';
 import './preload-web';
+import { openProject } from 'renderer/utils/on-open-project-location';
 
 self.MonacoEnvironment = {
 	getWorkerUrl: function (moduleId, label) {
@@ -189,28 +190,9 @@ if (WEB_BUILD) {
 }
 
 /**
- * Handles open project event from app menu.
+ * Handles project location selected event from the main process.
  */
-window.bridge.on('openProjectLocationSelected', async (event: any, filePath) => {
-  try {
-    const project = await Persistence.openProject(filePath);
-
-    if (project) {
-      dispatch(projectSlice.actions.setProject(project));
-      dispatch(workspaceSlice.actions.openProject(filePath));
-      Env.combine(project, {});
-    }
-  }
-  catch (error) {
-    notifications.show({
-      id: 'openProject',
-      color: 'red',
-      title: 'Unable to open project',
-      message: (error instanceof Error ? error.message : String(error)),
-      withBorder: true,
-    });
-  }
-});
+window.bridge.on('openProjectLocationSelected', (event: any, path: string) => openProject(path));
 
 /**
  * Handles close project event from app menu.

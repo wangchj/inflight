@@ -9,6 +9,7 @@ import { Workspace } from 'types/workspace';
 import * as client from './client';
 import makeRequestOptions from './make-request-options';
 import { updateMenu } from './menu-manager';
+export { readFile } from './read-file';
 import signRequestSigv4 from './sign-request-sigv4';
 import { getWindow } from './window-manager';
 export { showOpenProjectDialog } from './show-open-project-dialog';

@@ -18,6 +18,7 @@ export interface Bridge {
   sendRequest: (request: Request) => Promise<RequestResult>;
   openHistory: () => Promise<History>;
   saveHistory: (history: History) => Promise<void>;
+  readFile: (path: string) => Promise<string>;
   on: (name: string, listener: (event: any, ...args: any[]) => void) => void;
   getFilePath: (file: any) => string;
 }

@@ -63,11 +63,19 @@ export function saveWorkspaceDelay() {
 /**
  * Loads project from storage.
  *
- * @param path The project file path.
+ * @param path The project path.
  */
-export async function openProject(path: string): Promise<Project> {
-  let project = path ? await window.bridge.openProject(path) : undefined;
-  project = migrateProject(project);
+export async function openProject(path: string): Promise<Project | undefined> {
+  if (!path || typeof path !== 'string') {
+    return;
+  }
+
+  const isFileProject = !path.endsWith('/');
+  let project = await window.bridge.openProject(path);
+
+  if (isFileProject) {
+    project = migrateProject(project);
+  }
 
   clearTimeout(saveProjectTimeout);
   return project;

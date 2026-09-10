@@ -14,7 +14,7 @@ export async function showOpenProjectDialog(): Promise<string | undefined> {
   }
 
   const res = await dialog.showOpenDialog(window, {
-    properties: ['openFile'],
+    properties: ['openFile', 'openDirectory'],
     filters: [
       {
         name: 'Custom File Type',

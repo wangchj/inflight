@@ -20,7 +20,7 @@ function invoke(...args: any[]): Promise<any> {
     return Promise.reject();
   }
 
-  return ipcRenderer.invoke('invoke', args[0], ...args.slice(1));
+  return ipcRenderer.invoke('invoke', ...args);
 }
 
 /**
@@ -37,6 +37,7 @@ const bridge: Bridge = {
   sendRequest: (request: Request) => invoke('sendRequest', request),
   openHistory: () => invoke('openHistory'),
   saveHistory: (history: History) => invoke('saveHistory', history),
+  readFile: (path: string) => invoke('readFile', path),
   on: (name: string, listener: (event: any, ...args: any[]) => void) => ipcRenderer.on(name, listener),
   getFilePath: (file: any) => webUtils.getPathForFile(file),
 };

@@ -4,7 +4,8 @@ import { Folder } from 'types/folder';
 import { Variant } from './variant';
 
 export interface Project {
-  schemaVersion: '2.0';
+  spec?: string;
+  schemaVersion?: '2.0';
   name: string;
   folders?: Record<string, Folder>;
   requests?: Record<string, Request>;
