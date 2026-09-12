@@ -18,7 +18,7 @@ export function loadRequestsTree(projPath: string) {
   }
 
   if (fs.statSync(dirPath).isFile()) {
-    throw new Error(`Invalid project: \`${dirPath}\` is not a directory.`)
+    throw new Error(`Invalid project: \`${dirPath}\` is a file. This must be a directory.`);
   }
 
   const foldersMap: Record<string, Folder> = {};
@@ -167,7 +167,9 @@ function loadFolderChildrenOrdering(dirPath: string): Map<string, number> | unde
     const str = fs.readFileSync(filePath, 'utf-8');
     const metadata = JSON.parse(str);
     const children = metadata?.children as string[];
-    return children?.reduce((a, c, i) => a.set(c, i), new Map<string, number>());
+    return Array.isArray(children) ?
+      children.reduce((a, c, i) => a.set(c, i), new Map<string, number>()) :
+      new Map<string, number>();
   } catch (error) {
     return;
   }
@@ -181,10 +183,10 @@ function loadFolderChildrenOrdering(dirPath: string): Map<string, number> | unde
  * @param ordering The ordering name to index map.
  * @returns Same as array sort compare function.
  */
-function compareChildren(path1: string, path2: string, ordering: Map<string, number>) {
+export function compareChildren(path1: string, path2: string, ordering: Map<string, number>) {
   const name1 = path.basename(path1);
   const name2 = path.basename(path2);
-  const index1 = ordering.get(name1) ?? Number.MAX_SAFE_INTEGER;
-  const index2 = ordering.get(name2) ?? Number.MAX_SAFE_INTEGER;
+  const index1 = ordering?.get(name1) ?? Number.MAX_SAFE_INTEGER;
+  const index2 = ordering?.get(name2) ?? Number.MAX_SAFE_INTEGER;
   return index1 - index2;
 }
