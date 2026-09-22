@@ -18,8 +18,12 @@ let saveProjectTimeout: number;
 /**
  * Loads workspace from storage.
  */
-export async function openWorkspace(): Promise<Workspace> {
-  let workspace = await window.bridge.openWorkspace();
+export async function openWorkspace(projPath?: string): Promise<Workspace | undefined> {
+  if (!projPath || typeof projPath !== 'string') {
+    return;
+  }
+
+  let workspace = await window.bridge.openWorkspace(projPath);
   workspace = migrateWorkspace(workspace);
 
   clearTimeout(saveWorkspaceTimeout);
@@ -31,7 +35,7 @@ export async function openWorkspace(): Promise<Workspace> {
  *
  * @param workspace The workspace model object to save.
  */
-export async function saveWorkspace() {
+export async function saveWorkspace(projPath: string) {
   clearTimeout(saveWorkspaceTimeout);
 
   const workspace = store.getState().workspace;
@@ -65,15 +69,15 @@ export function saveWorkspaceDelay() {
  *
  * @param path The project path.
  */
-export async function openProject(path: string): Promise<Project | undefined> {
+export async function openProject(path?: string): Promise<Project | undefined> {
   if (!path || typeof path !== 'string') {
     return;
   }
 
-  const isFileProject = !path.endsWith('/');
   let project = await window.bridge.openProject(path);
 
-  if (isFileProject) {
+  // If not directory based project, run migration.
+  if (!project?.spec?.includes('idp')) {
     project = migrateProject(project);
   }
 

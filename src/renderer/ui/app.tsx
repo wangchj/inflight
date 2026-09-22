@@ -39,22 +39,29 @@ export function App() {
   const project = useSelector((state: RootState) => state.project);
 
   /**
-   * Loads workspace from disk.
+   * Loads app state from disk.
    */
-  async function openWorkspace() {
+  async function restoreAppState() {
     setLoading(true);
 
     try {
-      const workspace = await Persistence.openWorkspace();
-      const project = await Persistence.openProject(workspace?.projectPath);
-      const history = await Persistence.openHistory();
+      const appState = await window.bridge.openAppState();
 
-      if (project) {
-        dispatch(workspaceSlice.actions.setWorkspace(workspace));
-        dispatch(projectSlice.actions.setProject(project));
-        dispatch(historySlice.actions.setHistory(history));
-        Env.combine(project, workspace?.selectedVariants ?? {});
-      }
+      console.log('------appState', appState);
+
+      const project = await Persistence.openProject(appState?.projectPath);
+      const workspace = await Persistence.openWorkspace(appState?.projectPath);
+
+      console.log('------project', project);
+      console.log('-----------ws', workspace);
+      // const history = await Persistence.openHistory();
+
+      // if (project) {
+      //   dispatch(workspaceSlice.actions.setWorkspace(workspace));
+      //   dispatch(projectSlice.actions.setProject(project));
+      //   dispatch(historySlice.actions.setHistory(history));
+      //   Env.combine(project, workspace?.selectedVariants ?? {});
+      // }
     }
     catch (error) {
       console.log(error);
@@ -67,7 +74,7 @@ export function App() {
    * Inits the page.
    */
   useEffect(() => {
-    openWorkspace();
+    restoreAppState();
   }, []);
 
   if (loading) {

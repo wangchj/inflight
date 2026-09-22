@@ -1,3 +1,4 @@
+import { AppState } from "./app-state";
 import { History } from "./history";
 import { Project } from "./project";
 import { Request } from "./request";
@@ -8,8 +9,9 @@ import { Workspace } from "./workspace";
  * Electron IPC bridge.
  */
 export interface Bridge {
-  openWorkspace: () => Promise<Workspace>;
-  saveWorkspace: (workspace: Workspace) => Promise<void>;
+  openAppState: () => Promise<AppState | undefined>;
+  openWorkspace: (projPath: string) => Promise<Workspace | undefined>;
+  saveWorkspace: (projPath: string, workspace: Workspace) => Promise<void>;
   openProject: (path: string) => Promise<Project>;
   closeProject: () => Promise<void>;
   saveProject: (path: string, project: Project) => Promise<void>;

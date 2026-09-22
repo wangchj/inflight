@@ -18,3 +18,10 @@ declare const MAC_BUILD: boolean;
  * This is set in `preload*.ts` and only available in renderer process (not available in web build).
  */
 declare const WIN_BUILD: boolean;
+
+/**
+ * Tell TypeScript that .css files are valid modules.
+ *
+ * This fixes `Cannot find module or type declarations for side-effect`.
+ */
+declare module '*.css';

@@ -15,17 +15,18 @@ export async function openProject(path: string) {
     return;
   }
 
+  console.log('--------openProject path', path)
   if (path.endsWith('/')) {
-    openDirProject(path);
+    // openDirProject(path);
   }
   else if (path.endsWith('.json')) {
     openFileProject(path);
   }
 }
 
-async function openDirProject(path: string) {
+// async function openDirProject(path: string) {
 
-}
+// }
 
 /**
  * Opens a file project.

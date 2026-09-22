@@ -12,6 +12,11 @@ import { History } from 'types/history';
 if (WEB_BUILD) {
 
 /**
+ * Gets the app session.
+ */
+window.bridge.openAppState = async () => undefined;
+
+/**
  * Gets the workspace object from local storage.
  *
  * @returns The workspace object or undefined if workspace does not exist.
@@ -31,7 +36,7 @@ window.bridge.openWorkspace = async () => {
  *
  * @param workspace The workspace object to save.
  */
-window.bridge.saveWorkspace = async (workspace: Workspace) => {
+window.bridge.saveWorkspace = async (projPath: string, workspace: Workspace) => {
   try {
     localStorage.setItem('workspace', JSON.stringify(workspace));
   }

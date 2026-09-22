@@ -43,9 +43,10 @@ function openProjectFile(dirPath: string): Project {
   try {
     str = fs.readFileSync(path.resolve(dirPath, 'project.json'), 'utf-8');
   } catch (error) {
+    // Currently tsconfig.json target is ES6. We can add error cause when we upgrade the target
+    // (e.g., to es2022).
     throw new Error(
-      'The selected location is not a valid project. Unable to open `project.json`.',
-      { cause: error }
+      'The selected location is not a valid project. Unable to open `project.json`.'
     );
   }
 
@@ -54,7 +55,6 @@ function openProjectFile(dirPath: string): Project {
   } catch (error) {
     throw new Error(
       'The selected location is not a valid project. Unable to parse `project.json`.',
-      { cause: error }
     );
   }
 

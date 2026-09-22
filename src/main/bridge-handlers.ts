@@ -1,6 +1,8 @@
 import { app, dialog } from 'electron';
 import fs from 'fs';
+import path from 'path';
 import CProject from "model/project";
+import { AppState } from 'types/app-state';
 import { Project } from 'types/project';
 import { History } from 'types/history';
 import { Request } from 'types/request';
@@ -12,6 +14,8 @@ import { updateMenu } from './menu-manager';
 export { readFile } from './read-file';
 import signRequestSigv4 from './sign-request-sigv4';
 import { getWindow } from './window-manager';
+import { openFileProject } from './open-file-project';
+import { openDirProject } from './open-dir-project';
 export { showOpenProjectDialog } from './show-open-project-dialog';
 
 /**
@@ -20,27 +24,49 @@ export { showOpenProjectDialog } from './show-open-project-dialog';
 const dataDirPath = app.getPath('userData');
 
 /**
- * Workspace file path
+ * Workspace file path for single file projects.
  */
-const workspaceFilePath = `${dataDirPath}/workspace.json`;
+const wsFilePath = `${dataDirPath}/workspace.json`;
 
 /**
  * History file path.
  */
 const historyFilePath = `${dataDirPath}/history.json`;
 
+/**
+ * App session file path.
+ */
+const appStateFilePath = `${dataDirPath}/app-state.json`;
 
 /**
- * Opens workspace file from disk.
+ * Opens the app state file from disk.
  *
+ * @returns The app state object or undefined if not exist.
+ */
+export async function openAppState(): Promise<AppState | undefined> {
+  try {
+    const str = fs.readFileSync(appStateFilePath, 'utf-8');
+    return JSON.parse(str);
+  } catch (error) {
+    return;
+  }
+}
+
+/**
+ * Opens workspace from disk.
+ *
+ * @param projPath The project path. This can be a path of a project directory or a file.
  * @returns The workspace object or undefined if workspace does not exist.
  */
-export async function openWorkspace(): Promise<Workspace | undefined> {
+export async function openWorkspace(projPath: string): Promise<Workspace | undefined> {
   try {
-    const str = fs.readFileSync(workspaceFilePath, 'utf-8');
+    const isFile = fs.statSync(projPath).isFile();
+    const filePath = isFile ? wsFilePath : path.join(projPath, '.inflight', 'workspace.json');
+    const str = fs.readFileSync(filePath, 'utf-8');
     return JSON.parse(str);
   }
   catch (error) {
+    console.log('openworkspace error', error);
     return;
   }
 }
@@ -48,16 +74,14 @@ export async function openWorkspace(): Promise<Workspace | undefined> {
 /**
  * Saves workspace to disk.
  *
- * @param event Electron invoke event.
+ * @param projPath The project path. This can be the path of a directory project or file project.
  * @param workspace The workspace object to save.
  */
-export async function saveWorkspace(workspace: Workspace) {
+export async function saveWorkspace(projPath: string, workspace: Workspace) {
   try {
-    fs.writeFileSync(
-      workspaceFilePath,
-      JSON.stringify(workspace, null, 2),
-      'utf-8'
-    );
+    const isFile = fs.statSync(projPath).isFile();
+    const filePath = isFile ? wsFilePath : path.join(projPath, '.inflight', 'workspace.json');
+    fs.writeFileSync(filePath, JSON.stringify(workspace, null, 2), 'utf-8');
   }
   catch (error: any) {
     console.warn('Fail to save workspace:', error.message);
@@ -67,13 +91,15 @@ export async function saveWorkspace(workspace: Workspace) {
 /**
  * Opens a project from disk.
  *
- * @param path The project file absolute path.
- * @returns The project object or undefined if project can't be opened.
+ * @param projPath The project absolute path. This can be the path of a directory or a file.
+ * @returns The project object.
+ * @throws This function throws an error if the project can't be opened.
  */
-export async function openProject(path: string): Promise<Project> {
-  const str = fs.readFileSync(path, 'utf-8');
+export async function openProject(projPath: string): Promise<Project> {
+  const isFile = fs.statSync(projPath).isFile();
+  const proj = isFile ? openFileProject(projPath) : openDirProject(projPath);
   updateMenu(true);
-  return JSON.parse(str);
+  return proj;
 }
 
 /**

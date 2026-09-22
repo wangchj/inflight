@@ -27,8 +27,9 @@ function invoke(...args: any[]): Promise<any> {
  * The IPC bridge.
  */
 const bridge: Bridge = {
-  openWorkspace: () => invoke('openWorkspace'),
-  saveWorkspace: (workspace: Workspace) => invoke('saveWorkspace', workspace),
+  openAppState: () => invoke('openAppState'),
+  openWorkspace: (projPath: string) => invoke('openWorkspace', projPath),
+  saveWorkspace: (projPath: string, workspace: Workspace) => invoke('saveWorkspace', projPath, workspace),
   openProject: (path: string) => invoke('openProject', path),
   closeProject: () => invoke('closeProject'),
   saveProject: (path: string, project: Project) => invoke('saveProject', path, project),
